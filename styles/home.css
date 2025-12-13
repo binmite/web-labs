@@ -56,6 +56,10 @@
   font-size: 1.25rem;
 }
 
+.fa-play img{
+  padding-top: 25px;
+}
+
 .features {
   padding: 80px 0;
 }
@@ -99,7 +103,7 @@
 .feature-icon {
   width: 56px;
   height: 56px;
-  background-color: var(--color-light);
+  background-color: var(--color-5D5DFF);
   border-radius: 50%;
   display: flex;
   align-items: center;
