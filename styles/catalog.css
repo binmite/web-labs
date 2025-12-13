@@ -1,0 +1,141 @@
+    .catalog-container {
+      padding: 80px 0;
+    }
+
+    .container h2{
+        color: var(--color-D9E3EA);
+    }
+
+    .flex-col{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+
+    .catalog-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+      margin-top: 40px;
+    }
+
+    .service-card {
+      background: var(--color-25282C);
+      padding: 24px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      transition: transform 0.3s ease;
+    }
+
+    .service-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .service-image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: var(--radius);
+      margin-bottom: 16px;
+      background-color: var(--color-light);
+    }
+
+    .service-title {
+      font-size: 1.25rem;
+      margin-bottom: 8px;
+      color: var(--color-D9E3EA);
+    }
+
+    .service-price {
+      font-weight: 700;
+      color: var(--color-primary);
+      margin-bottom: 8px;
+    }
+
+    .service-category {
+      display: inline-block;
+      background: #e0e7ff;
+      color: #4f46e5;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.875rem;
+      margin-bottom: 8px;
+    }
+
+    .service-description {
+      color: var(--color-gray);
+      font-size: 0.9375rem;
+      margin-bottom: 16px;
+    }
+
+    .service-rating {
+      color: #f59e0b;
+      font-size: 1.125rem;
+    }
+
+    .filter-buttons, .array-methods {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 32px;
+      justify-content: center;
+    }
+
+    .filter-btn, .method-btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: var(--radius);
+      background: var(--color-light);
+      color: var(--color-dark);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active,
+    .method-btn:hover,
+    .method-btn.active {
+      background: var(--color-primary);
+      color: white;
+    }
+
+    .search-sort {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .search-input {
+      padding: 12px 16px;
+      border: 1px solid var(--color-gray);
+      border-radius: var(--radius);
+      width: 100%;
+      max-width: 300px;
+      font-size: 1rem;
+    }
+
+    .sort-select {
+      padding: 12px 16px;
+      border: 1px solid var(--color-gray);
+      border-radius: var(--radius);
+      background: white;
+      font-size: 1rem;
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 40px;
+      color: var(--color-gray);
+      font-size: 1.25rem;
+      grid-column: 1 / -1;
+    }
+
+    .instructions {
+      text-align: center;
+      margin-bottom: 20px;
+      color: var(--color-gray);
+    }

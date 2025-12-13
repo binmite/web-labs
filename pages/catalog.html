@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Catalog of Services</title>
+  <link rel="stylesheet" href="../styles/global.css" />
+  <link rel="stylesheet" href="../styles/header.css" />
+  <link rel="stylesheet" href="../styles/footer.css" />
+  <link rel="stylesheet" href="../styles/catalog.css">
+</head>
+<body>
+  <header class="header">
+    <div class="container header-container">
+      <div class="logo">
+        <img src="../assets/Logo.png" alt="Logo" />
+      </div>
+      <nav class="nav">
+        <a href="home.html" class="nav-link">Home</a>
+        <a href="#" class="nav-link">Sign in</a>
+        <button class="btn btn-primary">Sign up</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="catalog-container">
+        <div class="container flex-col">
+        <h2>Our Services Catalog</h2>
+        <p class="subtitle">Browse our wide range of professional services designed for startups and businesses.</p>
+
+        <div class="array-methods" id="methodButtons">>
+        </div>
+
+        <div class="filter-buttons" id="filterButtons">
+        </div>
+
+        <div class="search-sort">
+            <input type="text" class="search-input" placeholder="Search by name or description..." id="searchInput" />
+            <select class="sort-select" id="sortSelect">
+            <option value="default">Sort by...</option>
+            <option value="nameAsc">Name (A-Z)</option>
+            <option value="nameDesc">Name (Z-A)</option>
+            <option value="priceAsc">Price (Low-High)</option>
+            <option value="priceDesc">Price (High-Low)</option>
+            <option value="ratingDesc">Rating (High-Low)</option>
+            </select>
+        </div>
+
+        <div class="catalog-grid" id="catalogGrid">
+        </div>
+        </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <div class="logo">
+            <img src="../assets/Logo.png" alt="Logo" />
+          </div>
+          <p>Professional services for modern startups.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Products</h4>
+          <ul>
+            <li><a href="#">Web Studio</a></li>
+            <li><a href="#">DynamicBox Flex</a></li>
+            <li><a href="#">Programming Forms</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Resources</h4>
+          <ul>
+            <li><a href="#">Documentation</a></li>
+            <li><a href="#">Tutorials</a></li>
+            <li><a href="#">Support</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Careers</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+        <div class="footer-bottom-left">
+            <p class="copyright">Made by <strong>Cruip</strong>. All right reserved</p>
+        </div>
+        <div class="footer-bottom-right">
+          <ul>
+            <li><a href="#"><img src="../assets/twitter.png" alt="twitter" /></a></li>
+            <li><a href="#"><img src="../assets/git.png" alt="git" /></a></li>
+            <li><a href="#"><img src="../assets/facebook.png" alt="facebook" /></a></li>
+            <li><a href="#"><img src="../assets/inst.png" alt="inst" /></a></li>
+            <li><a href="#"><img src="../assets/in.png" alt="in" /></a></li>
+          </ul>
+        </div>
+    </div>
+  </footer>
+
+  <script src="../scripts/catalog.js"></script>
+</body>
+</html>
