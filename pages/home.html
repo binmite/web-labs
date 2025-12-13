@@ -9,15 +9,25 @@
   <link rel="stylesheet" href="../styles/header.css" />
   <link rel="stylesheet" href="../styles/home.css" />
   <link rel="stylesheet" href="../styles/animations.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
   <header class="header">
     <div class="container header-container">
-      <div class="logo">
-        <img src="../assets/Logo.png" alt="Logo" />
-      </div>
+      <a href="./home.html" class="logo">
+        <img src="../assets/Logo.png" alt="ServiceHub Logo">
+      </a>
       <nav class="nav">
-        <a href="catalog.html" class="nav-link">Catalog</a>
+        <a href="./home.html" class="nav-link">Home</a>
+        <a href="./catalog.html" class="nav-link active">Catalog</a>
+        <a href="./favorites.html" class="nav-link">
+          <i class="far fa-heart"></i> Favorites
+          <span id="favoritesCount" class="badge">0</span>
+        </a>
+        <a href="./cart.html" class="nav-link">
+          <i class="fas fa-shopping-cart"></i> Cart
+          <span id="cartCount" class="badge">0</span>
+        </a>
         <a href="#" class="nav-link">Sign in</a>
         <button class="btn btn-primary">Sign up</button>
       </nav>
@@ -35,7 +45,7 @@
       <div class="hero-image">
         <img src="../assets/hero.png" alt="Team working on laptops" />
         <div class="play-button">
-          <i class="fas fa-play"><img src="../assets/play.png" alt="Logo" /></i>
+          <i class="fas fa-play"></i>
         </div>
       </div>
     </div>
@@ -47,32 +57,32 @@
       <p class="subtitle">Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
       <div class="features-grid">
         <div class="feature-card">
-          <div class="feature-icon"><i class="fas fa-star"><img src="../assets/Shapes.png" alt="Shapes"></i></div>
+          <div class="feature-icon"><i class="fas fa-star"></i></div>
           <h3>Instant Features</h3>
           <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat.</p>
         </div>
         <div class="feature-card">
-          <div class="feature-icon"><i class="fas fa-list"><img src="../assets/Shapes1.png" alt="Shapes1"></i></div>
+          <div class="feature-icon"><i class="fas fa-list"></i></div>
           <h3>Instant Features</h3>
           <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat.</p>
         </div>
         <div class="feature-card">
-          <div class="feature-icon"><i class="fas fa-globe"><img src="../assets/Shapes2.png" alt="Shapes2"></i></div>
+          <div class="feature-icon"><i class="fas fa-globe"></i></div>
           <h3>Instant Features</h3>
           <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat.</p>
         </div>
         <div class="feature-card">
-          <div class="feature-icon"><i class="fas fa-user"><img src="../assets/Shapes3.png" alt="Shapes3"></i></div>
+          <div class="feature-icon"><i class="fas fa-user"></i></div>
           <h3>Instant Features</h3>
           <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat.</p>
         </div>
         <div class="feature-card">
-          <div class="feature-icon"><i class="fas fa-thumbs-up"><img src="../assets/Shapes4.png" alt="Shapes4"></i></div>
+          <div class="feature-icon"><i class="fas fa-thumbs-up"></i></div>
           <h3>Instant Features</h3>
           <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat.</p>
         </div>
         <div class="feature-card">
-          <div class="feature-icon"><i class="fas fa-comments"><img src="../assets/Shapes5.png" alt="Shapes5"></i></div>
+          <div class="feature-icon"><i class="fas fa-comments"></i></div>
           <h3>Instant Features</h3>
           <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat.</p>
         </div>
@@ -228,5 +238,6 @@
         </div>
     </div>
   </footer>
+  <script src="../scripts/globalCounters.js"></script>
 </body>
 </html>

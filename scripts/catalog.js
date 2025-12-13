@@ -1,200 +1,538 @@
-// === Этап 1: Массив из 15 объектов ===
-const services = [
-  { id: 1, name: "Web Design", category: "design", price: 299, rating: 4.7, description: "Modern responsive website design for startups.", image: "../assets/solution1.png" },
-  { id: 2, name: "UI/UX Audit", category: "design", price: 199, rating: 4.5, description: "Comprehensive usability and interface review.", image: "../assets/solution2.png" },
-  { id: 3, name: "Frontend Development", category: "development", price: 899, rating: 4.9, description: "React, Vue, or Angular implementation.", image: "../assets/solution3.png" },
-  { id: 4, name: "Backend API", category: "development", price: 1200, rating: 4.8, description: "Secure and scalable RESTful or GraphQL API.", image: "../assets/solution1.png" },
-  { id: 5, name: "SEO Optimization", category: "marketing", price: 349, rating: 4.3, description: "Improve your search engine visibility.", image: "../assets/solution2.png" },
-  { id: 6, name: "Social Media Campaign", category: "marketing", price: 599, rating: 4.6, description: "Targeted ad campaigns on major platforms.", image: "../assets/solution3.png" },
-  { id: 7, name: "Business Strategy", category: "consulting", price: 750, rating: 4.8, description: "Growth roadmap for early-stage startups.", image: "../assets/solution1.png" },
-  { id: 8, name: "Tech Consulting", category: "consulting", price: 650, rating: 4.7, description: "Architecture and stack selection advice.", image: "../assets/solution2.png" },
-  { id: 9, name: "Data Analytics", category: "analytics", price: 950, rating: 4.9, description: "Custom dashboards and KPI tracking.", image: "../assets/solution3.png" },
-  { id: 10, name: "User Behavior Analysis", category: "analytics", price: 499, rating: 4.4, description: "Heatmaps and session recording.", image: "../assets/solution1.png" },
-  { id: 11, name: "24/7 Support", category: "support", price: 149, rating: 4.2, description: "Live chat and ticketing system.", image: "../assets/solution2.png" },
-  { id: 12, name: "Incident Response", category: "support", price: 299, rating: 4.5, description: "Rapid issue resolution for critical bugs.", image: "../assets/solution3.png" },
-  { id: 13, name: "Penetration Testing", category: "security", price: 1500, rating: 5.0, description: "Ethical hacking to find vulnerabilities.", image: "../assets/solution1.png" },
-  { id: 14, name: "Cloud Migration", category: "cloud", price: 1100, rating: 4.8, description: "Move your infrastructure to AWS/Azure/GCP.", image: "../assets/solution2.png" },
-  { id: 15, name: "AI Chatbot", category: "ai", price: 899, rating: 4.6, description: "Custom NLP-powered chatbot for your business.", image: "../assets/solution3.png" }
-];
+const API_BASE_URL = 'http://localhost:3000';
+const SERVICES_ENDPOINT = `${API_BASE_URL}/services`;
+const FAVORITES_ENDPOINT = `${API_BASE_URL}/favorites`;
+const CART_ENDPOINT = `${API_BASE_URL}/cart`;
 
-const methodsMap = {
-  map: mapExample,
-  filter: filterExample,
-  sortPrice: sortExample,
-  reduce: reduceExample,
-  find: findExample,
-  every: everyExample,
-  some: someExample,
-  slice: sliceExample,
-  flatMap: flatMapExample,
-  reverse: reverseExample
-};
+let currentServices = [];
+let favorites = [];
+let cartItems = [];
+let categories = [];
+let currentPage = 1;
+let itemsPerPage = 9;
+let totalItems = 0;
+let currentCategory = 'all';
+let currentSort = 'default';
+let currentSearch = '';
+let minPrice = null;
+let maxPrice = null;
+let minRating = 0;
 
-let currentData = [...services];
-let activeMethod = null;
-let activeFilter = 'all';
-
-const catalogGrid = document.getElementById('catalogGrid');
+const servicesGrid = document.getElementById('servicesGrid');
 const searchInput = document.getElementById('searchInput');
+const clearSearchBtn = document.getElementById('clearSearch');
 const sortSelect = document.getElementById('sortSelect');
-const filterButtonsContainer = document.getElementById('filterButtons');
-const methodButtonsContainer = document.getElementById('methodButtons');
+const categoryFilters = document.getElementById('categoryFilters');
+const prevPageBtn = document.getElementById('prevPage');
+const nextPageBtn = document.getElementById('nextPage');
+const currentPageEl = document.getElementById('currentPage');
+const totalPagesEl = document.getElementById('totalPages');
+const showingCountEl = document.getElementById('showingCount');
+const totalCountEl = document.getElementById('totalCount');
+const itemsPerPageSelect = document.getElementById('itemsPerPage');
+const toggleAdvancedFiltersBtn = document.getElementById('toggleAdvancedFilters');
+const advancedFiltersPanel = document.getElementById('advancedFiltersPanel');
+const minPriceInput = document.getElementById('minPrice');
+const maxPriceInput = document.getElementById('maxPrice');
+const minRatingSelect = document.getElementById('minRatingSelect');
+const applyAdvancedFiltersBtn = document.getElementById('applyAdvancedFilters');
+const resetFiltersBtn = document.getElementById('resetFilters');
+const resetAllFiltersBtn = document.getElementById('resetAllFilters');
+const noResults = document.getElementById('noResults');
+const favoritesCount = document.getElementById('favoritesCount');
+const cartCount = document.getElementById('cartCount');
 
-// === Этап 3: Вспомогательные функции ===
+async function fetchData(url, options = {}) {
+  try {
+    const response = await fetch(url, options);
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    showNotification('Failed to load data. Please try again.', 'error');
+    return null;
+  }
+}
 
-function renderServices(servicesArray) {
-  if (servicesArray.length === 0) {
-    catalogGrid.innerHTML = '<div class="no-results">No services match your criteria.</div>';
+function showNotification(message, type = 'info') {
+  const notification = document.createElement('div');
+  notification.className = `notification ${type}`;
+  notification.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 1000;
+    animation: slideInRight 0.3s ease;
+  `;
+  notification.innerHTML = `
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+      <span>${message}</span>
+    </div>
+  `;
+  
+  document.body.appendChild(notification);
+  
+  setTimeout(() => {
+    notification.style.animation = 'slideOutRight 0.3s ease forwards';
+    setTimeout(() => notification.remove(), 300);
+  }, 3000);
+}
+
+async function fetchServices() {
+  try {
+    servicesGrid.innerHTML = `
+      <div class="loading-spinner">
+        <i class="fas fa-spinner fa-spin"></i>
+        <p>Loading services...</p>
+      </div>
+    `;
+
+    const allServices = await fetchData(SERVICES_ENDPOINT);
+    if (!allServices) return;
+
+    let filteredServices = [...allServices];
+
+    if (currentCategory !== 'all') {
+      filteredServices = filteredServices.filter(service => 
+        service.category === currentCategory
+      );
+    }
+
+    if (currentSearch) {
+      const searchTerm = currentSearch.toLowerCase().trim();
+      filteredServices = filteredServices.filter(service =>
+        service.name.toLowerCase().includes(searchTerm) ||
+        service.description.toLowerCase().includes(searchTerm) ||
+        service.category.toLowerCase().includes(searchTerm)
+      );
+    }
+
+    if (minPrice !== null) {
+      filteredServices = filteredServices.filter(service => 
+        service.price >= minPrice
+      );
+    }
+    if (maxPrice !== null) {
+      filteredServices = filteredServices.filter(service => 
+        service.price <= maxPrice
+      );
+    }
+
+    if (minRating > 0) {
+      filteredServices = filteredServices.filter(service => 
+        service.rating >= minRating
+      );
+    }
+
+    if (currentSort !== 'default') {
+      filteredServices.sort((a, b) => {
+        switch (currentSort) {
+          case 'name_asc':
+            return a.name.localeCompare(b.name);
+          case 'name_desc':
+            return b.name.localeCompare(a.name);
+          case 'price_asc':
+            return a.price - b.price;
+          case 'price_desc':
+            return b.price - a.price;
+          case 'rating_desc':
+            return b.rating - a.rating;
+          default:
+            return 0;
+        }
+      });
+    }
+
+    totalItems = filteredServices.length;
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+    currentServices = filteredServices.slice(startIndex, endIndex);
+
+    renderServices();
+    updatePagination();
+    updateCounts();
+
+  } catch (error) {
+    console.error('Error in fetchServices:', error);
+  }
+}
+
+async function fetchFavorites() {
+  favorites = await fetchData(FAVORITES_ENDPOINT) || [];
+  updateFavoriteButtons();
+}
+
+async function fetchCart() {
+  cartItems = await fetchData(CART_ENDPOINT) || [];
+  updateCartButtons();
+}
+
+async function fetchCategories() {
+  try {
+    const data = await fetchData(SERVICES_ENDPOINT);
+    if (data) {
+      categories = ['all', ...new Set(data.map(service => service.category))];
+      renderCategoryFilters();
+    }
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+  }
+}
+
+async function toggleFavorite(service) {
+  try {
+    const existingFavorite = favorites.find(fav => fav.serviceId === service.id);
+    
+    if (existingFavorite) {
+      await fetchData(`${FAVORITES_ENDPOINT}/${existingFavorite.id}`, {
+        method: 'DELETE'
+      });
+      showNotification('Removed from favorites', 'info');
+    } else {
+      const favoriteItem = {
+        serviceId: service.id,
+        name: service.name,
+        category: service.category,
+        price: service.price,
+        rating: service.rating,
+        description: service.description,
+        image: service.image,
+        addedAt: new Date().toISOString()
+      };
+      
+      await fetchData(FAVORITES_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(favoriteItem)
+      });
+      showNotification('Added to favorites!', 'success');
+    }
+    
+    await fetchFavorites();
+  } catch (error) {
+    console.error('Error toggling favorite:', error);
+    showNotification('Failed to update favorites', 'error');
+  }
+}
+
+async function addToCart(service) {
+  try {
+    const existingCartItem = cartItems.find(item => item.serviceId === service.id);
+    
+    if (existingCartItem) {
+      await fetchData(`${CART_ENDPOINT}/${existingCartItem.id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          quantity: existingCartItem.quantity + 1
+        })
+      });
+    } else {
+      const cartItem = {
+        serviceId: service.id,
+        name: service.name,
+        category: service.category,
+        price: service.price,
+        rating: service.rating,
+        description: service.description,
+        image: service.image,
+        quantity: 1,
+        addedAt: new Date().toISOString()
+      };
+      
+      await fetchData(CART_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(cartItem)
+      });
+    }
+    
+    await fetchCart();
+    showNotification('Added to cart!', 'success');
+  } catch (error) {
+    console.error('Error adding to cart:', error);
+    showNotification('Failed to add to cart', 'error');
+  }
+}
+
+function renderServices() {
+  if (!currentServices || currentServices.length === 0) {
+    servicesGrid.style.display = 'none';
+    noResults.style.display = 'block';
     return;
   }
-
-  catalogGrid.innerHTML = servicesArray.map(service => `
-    <div class="service-card">
-      <div class="service-image" style="background: #f0f0f0 url('${service.image}') center/cover no-repeat;"></div>
-      <div class="service-category">${service.category}</div>
-      <h3 class="service-title">${service.name}</h3>
-      <p class="service-description">${service.description}</p>
-      <div class="service-price">$${service.price}</div>
-      <div class="service-rating">${"★".repeat(Math.floor(service.rating))}${service.rating % 1 >= 0.5 ? "½" : ""}</div>
-    </div>
-  `).join('');
+  
+  servicesGrid.style.display = 'grid';
+  noResults.style.display = 'none';
+  
+  servicesGrid.innerHTML = currentServices.map(service => {
+    const isFavorite = favorites.some(fav => fav.serviceId === service.id);
+    const inCart = cartItems.find(item => item.serviceId === service.id);
+    
+    return `
+      <div class="service-card" data-service-id="${service.id}">
+        <div class="service-image" style="background-image: url('${service.image}')">
+          <div class="service-actions">
+            <button class="favorite-btn ${isFavorite ? 'active' : ''}" 
+                    data-service-id="${service.id}"
+                    aria-label="${isFavorite ? 'Remove from favorites' : 'Add to favorites'}">
+              <i class="${isFavorite ? 'fas' : 'far'} fa-heart"></i>
+            </button>
+          </div>
+        </div>
+        <div class="service-content">
+          <div class="service-category">${service.category}</div>
+          <h3 class="service-title">${service.name}</h3>
+          <p class="service-description">${service.description}</p>
+          <div class="service-meta">
+            <div class="service-price">$${service.price}</div>
+            <div class="service-rating">
+              ${'★'.repeat(Math.floor(service.rating))}
+              ${service.rating % 1 >= 0.5 ? '½' : ''}
+              <span class="rating-value">${service.rating.toFixed(1)}</span>
+            </div>
+          </div>
+          <div class="service-buttons">
+            <button class="btn-cart ${inCart ? 'in-cart' : ''}" 
+                    data-service-id="${service.id}">
+              <i class="fas fa-shopping-cart"></i>
+              ${inCart ? `In Cart (${inCart.quantity})` : 'Add to Cart'}
+            </button>
+            <button class="btn-details" data-service-id="${service.id}">
+              <i class="fas fa-info-circle"></i> Details
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+  
+  attachServiceEventListeners();
 }
 
-function applyFiltersAndSort() {
-  let result = [...services];
+function renderCategoryFilters() {
+  categoryFilters.innerHTML = categories.map(category => {
+    const displayName = category === 'all' ? 'All Categories' : 
+                       category.charAt(0).toUpperCase() + category.slice(1);
+    return `
+      <button class="category-btn ${category === currentCategory ? 'active' : ''}" 
+              data-category="${category}">
+        ${displayName}
+      </button>
+    `;
+  }).join('');
+}
 
-  if (activeMethod) {
-    try {
-      if (activeMethod && methodsMap[activeMethod]) {
-        result = methodsMap[activeMethod](result);
-        }
-    } catch (e) {
-      console.error("Method error:", e);
+function updatePagination() {
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  
+  currentPageEl.textContent = currentPage;
+  totalPagesEl.textContent = totalPages;
+  showingCountEl.textContent = currentServices.length;
+  totalCountEl.textContent = totalItems;
+  
+  prevPageBtn.disabled = currentPage <= 1;
+  nextPageBtn.disabled = currentPage >= totalPages;
+  
+  document.querySelector('.pagination-info').style.display = 
+    totalPages <= 1 ? 'none' : 'flex';
+}
+
+function updateFavoriteButtons() {
+  document.querySelectorAll('.favorite-btn').forEach(btn => {
+    const serviceId = parseInt(btn.dataset.serviceId);
+    const isFavorite = favorites.some(fav => fav.serviceId === serviceId);
+    
+    btn.classList.toggle('active', isFavorite);
+    btn.innerHTML = `<i class="${isFavorite ? 'fas' : 'far'} fa-heart"></i>`;
+  });
+}
+
+function updateCartButtons() {
+  document.querySelectorAll('.btn-cart').forEach(btn => {
+    const serviceId = parseInt(btn.dataset.serviceId);
+    const cartItem = cartItems.find(item => item.serviceId === serviceId);
+    
+    if (cartItem) {
+      btn.classList.add('in-cart');
+      btn.innerHTML = `<i class="fas fa-shopping-cart"></i> In Cart (${cartItem.quantity})`;
+    } else {
+      btn.classList.remove('in-cart');
+      btn.innerHTML = `<i class="fas fa-shopping-cart"></i> Add to Cart`;
     }
-  }
+  });
+}
 
-  if (activeFilter !== 'all') {
-    result = result.filter(s => s.category === activeFilter);
-  }
+function updateCounts() {
+  favoritesCount.textContent = favorites.length;
+  cartCount.textContent = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+}
 
-  const searchTerm = searchInput.value.toLowerCase().trim();
-  if (searchTerm) {
-    result = result.filter(s =>
-      s.name.toLowerCase().includes(searchTerm) ||
-      s.description.toLowerCase().includes(searchTerm)
-    );
-  }
-
-  const sortValue = sortSelect.value;
-  if (sortValue !== 'default') {
-    result.sort((a, b) => {
-      switch (sortValue) {
-        case 'nameAsc': return a.name.localeCompare(b.name);
-        case 'nameDesc': return b.name.localeCompare(a.name);
-        case 'priceAsc': return a.price - b.price;
-        case 'priceDesc': return b.price - a.price;
-        case 'ratingDesc': return b.rating - a.rating;
-        default: return 0;
+function attachServiceEventListeners() {
+  document.querySelectorAll('.favorite-btn').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const serviceId = parseInt(btn.dataset.serviceId);
+      const service = currentServices.find(s => s.id === serviceId);
+      
+      if (service) {
+        await toggleFavorite(service);
       }
     });
-  }
-
-  currentData = result;
-  renderServices(result);
+  });
+  
+  document.querySelectorAll('.btn-cart').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const serviceId = parseInt(btn.dataset.serviceId);
+      const service = currentServices.find(s => s.id === serviceId);
+      
+      if (service) {
+        await addToCart(service);
+      }
+    });
+  });
+  
+  document.querySelectorAll('.btn-details').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const serviceId = btn.dataset.serviceId;
+      showNotification(`Details for service #${serviceId}`, 'info');
+    });
+  });
 }
 
-// === Этап 2: 10 методов массивов ===
-
-function mapExample(arr) {
-  return arr.map(s => ({ ...s, name: `[Mapped] ${s.name}` }));
-}
-
-function filterExample(arr) {
-  return arr.filter(s => s.price > 500);
-}
-
-function sortExample(arr) {
-  return [...arr].sort((a, b) => a.price - b.price);
-}
-
-function reduceExample(arr) {
-  const avgPrice = arr.reduce((sum, s) => sum + s.price, 0) / arr.length;
-  return arr.filter(s => s.price > avgPrice);
-}
-
-function findExample(arr) {
-  const found = arr.find(s => s.rating >= 4.9);
-  return found ? [found] : [];
-}
-
-function everyExample(arr) {
-  const allHighRated = arr.every(s => s.rating >= 4.5);
-  return allHighRated ? arr : [];
-}
-
-function someExample(arr) {
-  const hasCheap = arr.some(s => s.price < 200);
-  return hasCheap ? arr.filter(s => s.price < 200) : [];
-}
-
-function sliceExample(arr) {
-  return arr.slice(0, 5); 
-}
-
-function flatMapExample(arr) {
-  return arr.flatMap(s => [s, { ...s, name: `${s.name} (Pro)` }]);
-}
-
-function reverseExample(arr) {
-  return [...arr].reverse();
-}
-
-const methods = [
-  { name: 'map', fn: mapExample, label: 'Map: Add prefix' },
-  { name: 'filter', fn: filterExample, label: 'Filter: Price > $500' },
-  { name: 'sortPrice', fn: sortExample, label: 'Sort: By price ↑' },
-  { name: 'reduce', fn: reduceExample, label: 'Reduce: Above avg price' },
-  { name: 'find', fn: findExample, label: 'Find: Rating ≥ 4.9' },
-  { name: 'every', fn: everyExample, label: 'Every: All ≥ 4.5?' },
-  { name: 'some', fn: someExample, label: 'Some: Cheap (<$200)?' },
-  { name: 'slice', fn: sliceExample, label: 'Slice: First 5' },
-  { name: 'flatMap', fn: flatMapExample, label: 'FlatMap: Duplicate' },
-  { name: 'reverse', fn: reverseExample, label: 'Reverse order' }
-];
-
-document.addEventListener('DOMContentLoaded', () => {
-  methodButtonsContainer.innerHTML = methods.map(m => 
-    `<button class="method-btn" data-method="${m.name}">${m.label}</button>`
-  ).join('');
-
-  const categories = [...new Set(services.map(s => s.category))];
-  filterButtonsContainer.innerHTML = `
-    <button class="filter-btn active" data-filter="all">All</button>
-    ${categories.map(cat => 
-      `<button class="filter-btn" data-filter="${cat}">${cat.charAt(0).toUpperCase() + cat.slice(1)}</button>`
-    ).join('')}
-  `;
-
-  methodButtonsContainer.addEventListener('click', (e) => {
-    if (e.target.classList.contains('method-btn')) {
-      document.querySelectorAll('.method-btn').forEach(btn => btn.classList.remove('active'));
+async function init() {
+  console.log('Initializing catalog...');
+  
+  await Promise.all([
+    fetchCategories(),
+    fetchFavorites(),
+    fetchCart()
+  ]);
+  
+  await fetchServices();
+  
+  let searchTimeout;
+  searchInput.addEventListener('input', (e) => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+      currentSearch = e.target.value.trim();
+      currentPage = 1;
+      fetchServices();
+    }, 500);
+  });
+  
+  clearSearchBtn.addEventListener('click', () => {
+    searchInput.value = '';
+    currentSearch = '';
+    currentPage = 1;
+    fetchServices();
+  });
+  
+  sortSelect.addEventListener('change', (e) => {
+    currentSort = e.target.value;
+    currentPage = 1;
+    fetchServices();
+  });
+  
+  categoryFilters.addEventListener('click', (e) => {
+    if (e.target.classList.contains('category-btn')) {
+      currentCategory = e.target.dataset.category;
+      currentPage = 1;
+      
+      document.querySelectorAll('.category-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
       e.target.classList.add('active');
-      activeMethod = e.target.dataset.method;
-      applyFiltersAndSort();
+      
+      fetchServices();
     }
   });
-
-  filterButtonsContainer.addEventListener('click', (e) => {
-    if (e.target.classList.contains('filter-btn')) {
-      document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-      e.target.classList.add('active');
-      activeFilter = e.target.dataset.filter;
-      applyFiltersAndSort();
+  
+  prevPageBtn.addEventListener('click', () => {
+    if (currentPage > 1) {
+      currentPage--;
+      fetchServices();
     }
   });
+  
+  nextPageBtn.addEventListener('click', () => {
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    if (currentPage < totalPages) {
+      currentPage++;
+      fetchServices();
+    }
+  });
+  
+  itemsPerPageSelect.addEventListener('change', (e) => {
+    itemsPerPage = parseInt(e.target.value);
+    currentPage = 1;
+    fetchServices();
+  });
+  
+  toggleAdvancedFiltersBtn.addEventListener('click', () => {
+    advancedFiltersPanel.classList.toggle('show');
+  });
+  
+  applyAdvancedFiltersBtn.addEventListener('click', () => {
+    minPrice = minPriceInput.value ? parseInt(minPriceInput.value) : null;
+    maxPrice = maxPriceInput.value ? parseInt(maxPriceInput.value) : null;
+    minRating = parseFloat(minRatingSelect.value);
+    currentPage = 1;
+    fetchServices();
+  });
+  
+  resetFiltersBtn.addEventListener('click', () => {
+    minPriceInput.value = '';
+    maxPriceInput.value = '';
+    minRatingSelect.value = '0';
+    minPrice = null;
+    maxPrice = null;
+    minRating = 0;
+    currentPage = 1;
+    fetchServices();
+  });
+  
+  resetAllFiltersBtn.addEventListener('click', () => {
+    currentCategory = 'all';
+    currentSort = 'default';
+    currentSearch = '';
+    minPrice = null;
+    maxPrice = null;
+    minRating = 0;
+    currentPage = 1;
+    
+    searchInput.value = '';
+    sortSelect.value = 'default';
+    minPriceInput.value = '';
+    maxPriceInput.value = '';
+    minRatingSelect.value = '0';
+    
+    document.querySelectorAll('.category-btn').forEach(btn => {
+      btn.classList.remove('active');
+      if (btn.dataset.category === 'all') {
+        btn.classList.add('active');
+      }
+    });
+    
+    fetchServices();
+  });
+  
+  console.log('Catalog initialized successfully');
+}
 
-  searchInput.addEventListener('input', applyFiltersAndSort);
-  sortSelect.addEventListener('change', applyFiltersAndSort);
-
-  applyFiltersAndSort();
-});
+document.addEventListener('DOMContentLoaded', init);

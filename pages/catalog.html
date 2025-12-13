@@ -3,20 +3,30 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Catalog of Services</title>
-  <link rel="stylesheet" href="../styles/global.css" />
-  <link rel="stylesheet" href="../styles/header.css" />
-  <link rel="stylesheet" href="../styles/footer.css" />
+  <title>Service Catalog</title>
+  <link rel="stylesheet" href="../styles/global.css">
+  <link rel="stylesheet" href="../styles/header.css">
+  <link rel="stylesheet" href="../styles/footer.css">
   <link rel="stylesheet" href="../styles/catalog.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
   <header class="header">
     <div class="container header-container">
-      <div class="logo">
-        <img src="../assets/Logo.png" alt="Logo" />
-      </div>
+      <a href="./home.html" class="logo">
+        <img src="../assets/Logo.png" alt="ServiceHub Logo">
+      </a>
       <nav class="nav">
-        <a href="home.html" class="nav-link">Home</a>
+        <a href="./home.html" class="nav-link">Home</a>
+        <a href="./catalog.html" class="nav-link active">Catalog</a>
+        <a href="./favorites.html" class="nav-link">
+          <i class="far fa-heart"></i> Favorites
+          <span id="favoritesCount" class="badge">0</span>
+        </a>
+        <a href="./cart.html" class="nav-link">
+          <i class="fas fa-shopping-cart"></i> Cart
+          <span id="cartCount" class="badge">0</span>
+        </a>
         <a href="#" class="nav-link">Sign in</a>
         <button class="btn btn-primary">Sign up</button>
       </nav>
@@ -24,32 +34,124 @@
   </header>
 
   <main class="container">
-    <section class="catalog-container">
-        <div class="container flex-col">
-        <h2>Our Services Catalog</h2>
-        <p class="subtitle">Browse our wide range of professional services designed for startups and businesses.</p>
+    <section class="catalog-section">
+      <div class="catalog-header">
+        <h1>Our Service Catalog</h1>
+        <p class="subtitle">Discover professional services tailored for your business needs</p>
+      </div>
 
-        <div class="array-methods" id="methodButtons">>
+      <div class="controls-section">
+        <div class="filter-group">
+          <h3><i class="fas fa-filter"></i> Filter by Category</h3>
+          <div class="category-filters" id="categoryFilters">
+          </div>
         </div>
 
-        <div class="filter-buttons" id="filterButtons">
-        </div>
+        <div class="search-sort-group">
+          <div class="search-container">
+            <i class="fas fa-search search-icon"></i>
+            <input 
+              type="text" 
+              id="searchInput" 
+              class="search-input" 
+              placeholder="Search services by name or description..."
+            >
+            <button id="clearSearch" class="clear-search-btn">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
 
-        <div class="search-sort">
-            <input type="text" class="search-input" placeholder="Search by name or description..." id="searchInput" />
-            <select class="sort-select" id="sortSelect">
-            <option value="default">Sort by...</option>
-            <option value="nameAsc">Name (A-Z)</option>
-            <option value="nameDesc">Name (Z-A)</option>
-            <option value="priceAsc">Price (Low-High)</option>
-            <option value="priceDesc">Price (High-Low)</option>
-            <option value="ratingDesc">Rating (High-Low)</option>
+          <div class="sort-container">
+            <label for="sortSelect">
+              <i class="fas fa-sort-amount-down"></i> Sort by:
+            </label>
+            <select id="sortSelect" class="sort-select">
+              <option value="default">Default</option>
+              <option value="name_asc">Name (A-Z)</option>
+              <option value="name_desc">Name (Z-A)</option>
+              <option value="price_asc">Price (Low to High)</option>
+              <option value="price_desc">Price (High to Low)</option>
+              <option value="rating_desc">Rating (High to Low)</option>
             </select>
+          </div>
         </div>
 
-        <div class="catalog-grid" id="catalogGrid">
+        <div class="advanced-filters">
+          <button id="toggleAdvancedFilters" class="btn btn-secondary">
+            <i class="fas fa-sliders-h"></i> Advanced Filters
+          </button>
+          
+          <div id="advancedFiltersPanel" class="advanced-filters-panel">
+            <div class="advanced-filter-group">
+              <label for="priceRange">Price Range:</label>
+              <div class="price-inputs">
+                <input type="number" id="minPrice" placeholder="Min $" min="0" step="10">
+                <span class="price-separator">to</span>
+                <input type="number" id="maxPrice" placeholder="Max $" min="0" step="10">
+              </div>
+            </div>
+
+            <div class="advanced-filter-group">
+              <label for="minRatingSelect">Minimum Rating:</label>
+              <select id="minRatingSelect" class="rating-select">
+                <option value="0">Any Rating</option>
+                <option value="3.5">3.5+ Stars</option>
+                <option value="4.0">4.0+ Stars</option>
+                <option value="4.5">4.5+ Stars</option>
+                <option value="5">5 Stars Only</option>
+              </select>
+            </div>
+
+            <div class="advanced-filter-actions">
+              <button id="applyAdvancedFilters" class="btn btn-primary">
+                <i class="fas fa-check"></i> Apply Filters
+              </button>
+              <button id="resetFilters" class="btn btn-secondary">
+                <i class="fas fa-redo"></i> Reset
+              </button>
+            </div>
+          </div>
         </div>
+      </div>
+
+      <div class="pagination-info">
+        <div class="results-count">
+          Showing <span id="showingCount">0</span> of <span id="totalCount">0</span> services
         </div>
+        <div class="pagination-controls">
+          <button id="prevPage" class="pagination-btn" disabled>
+            <i class="fas fa-chevron-left"></i> Previous
+          </button>
+          <span class="page-info">
+            Page <span id="currentPage">1</span> of <span id="totalPages">1</span>
+          </span>
+          <button id="nextPage" class="pagination-btn" disabled>
+            Next <i class="fas fa-chevron-right"></i>
+          </button>
+          <select id="itemsPerPage" class="items-per-page">
+            <option value="6">6 per page</option>
+            <option value="9" selected>9 per page</option>
+            <option value="12">12 per page</option>
+            <option value="15">15 per page</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="services-grid" id="servicesGrid">
+        <div class="loading-spinner">
+          <i class="fas fa-spinner fa-spin"></i>
+          <p>Loading services...</p>
+        </div>
+      </div>
+
+      <div id="noResults" class="no-results" style="display: none;">
+        <i class="fas fa-search fa-3x"></i>
+        <h3>No services found</h3>
+        <p>Try adjusting your search or filter criteria</p>
+        <button id="resetAllFilters" class="btn btn-primary">
+          <i class="fas fa-redo"></i> Reset All Filters
+        </button>
+      </div>
     </section>
   </main>
 
@@ -60,7 +162,7 @@
           <div class="logo">
             <img src="../assets/Logo.png" alt="Logo" />
           </div>
-          <p>Professional services for modern startups.</p>
+          <p>Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.</p>
         </div>
         <div class="footer-col">
           <h4>Products</h4>
@@ -73,17 +175,20 @@
         <div class="footer-col">
           <h4>Resources</h4>
           <ul>
-            <li><a href="#">Documentation</a></li>
-            <li><a href="#">Tutorials</a></li>
-            <li><a href="#">Support</a></li>
+            <li><a href="#">Nostrud exercitation</a></li>
+            <li><a href="#">Visual mockups</a></li>
+            <li><a href="#">Nostrud exercitation</a></li>
+            <li><a href="#">Visual mockups</a></li>
           </ul>
         </div>
         <div class="footer-col">
           <h4>Company</h4>
           <ul>
-            <li><a href="#">About</a></li>
-            <li><a href="#">Careers</a></li>
-            <li><a href="#">Contact</a></li>
+            <li><a href="#">Consectetur adipiscing</a></li>
+            <li><a href="#">Labore et dolore</a></li>
+            <li><a href="#">Sed do eiusmod</a></li>
+            <li><a href="#">Tempor incididunt</a></li>
+            <li><a href="#">Labore et dolore</a></li>
           </ul>
         </div>
       </div>
@@ -103,6 +208,8 @@
         </div>
     </div>
   </footer>
+
+  <div id="notificationContainer" class="notification-container"></div>
 
   <script src="../scripts/catalog.js"></script>
 </body>

@@ -1,0 +1,141 @@
+{
+  "services": [
+    {
+      "id": 1,
+      "name": "Web Design",
+      "category": "design",
+      "price": 299,
+      "rating": 4.7,
+      "description": "Modern responsive website design for startups.",
+      "image": "../assets/solution1.png"
+    },
+    {
+      "id": 2,
+      "name": "UI/UX Audit",
+      "category": "design",
+      "price": 199,
+      "rating": 4.5,
+      "description": "Comprehensive usability and interface review.",
+      "image": "../assets/solution2.png"
+    },
+    {
+      "id": 3,
+      "name": "Frontend Development",
+      "category": "development",
+      "price": 899,
+      "rating": 4.9,
+      "description": "React, Vue, or Angular implementation.",
+      "image": "../assets/solution3.png"
+    },
+    {
+      "id": 4,
+      "name": "Backend API",
+      "category": "development",
+      "price": 1200,
+      "rating": 4.8,
+      "description": "Secure and scalable RESTful or GraphQL API.",
+      "image": "../assets/solution1.png"
+    },
+    {
+      "id": 5,
+      "name": "SEO Optimization",
+      "category": "marketing",
+      "price": 349,
+      "rating": 4.3,
+      "description": "Improve your search engine visibility.",
+      "image": "../assets/solution2.png"
+    },
+    {
+      "id": 6,
+      "name": "Social Media Campaign",
+      "category": "marketing",
+      "price": 599,
+      "rating": 4.6,
+      "description": "Targeted ad campaigns on major platforms.",
+      "image": "../assets/solution3.png"
+    },
+    {
+      "id": 7,
+      "name": "Business Strategy",
+      "category": "consulting",
+      "price": 750,
+      "rating": 4.8,
+      "description": "Growth roadmap for early-stage startups.",
+      "image": "../assets/solution1.png"
+    },
+    {
+      "id": 8,
+      "name": "Tech Consulting",
+      "category": "consulting",
+      "price": 650,
+      "rating": 4.7,
+      "description": "Architecture and stack selection advice.",
+      "image": "../assets/solution2.png"
+    },
+    {
+      "id": 9,
+      "name": "Data Analytics",
+      "category": "analytics",
+      "price": 950,
+      "rating": 4.9,
+      "description": "Custom dashboards and KPI tracking.",
+      "image": "../assets/solution3.png"
+    },
+    {
+      "id": 10,
+      "name": "User Behavior Analysis",
+      "category": "analytics",
+      "price": 499,
+      "rating": 4.4,
+      "description": "Heatmaps and session recording.",
+      "image": "../assets/solution1.png"
+    },
+    {
+      "id": 11,
+      "name": "24/7 Support",
+      "category": "support",
+      "price": 149,
+      "rating": 4.2,
+      "description": "Live chat and ticketing system.",
+      "image": "../assets/solution2.png"
+    },
+    {
+      "id": 12,
+      "name": "Incident Response",
+      "category": "support",
+      "price": 299,
+      "rating": 4.5,
+      "description": "Rapid issue resolution for critical bugs.",
+      "image": "../assets/solution3.png"
+    },
+    {
+      "id": 13,
+      "name": "Penetration Testing",
+      "category": "security",
+      "price": 1500,
+      "rating": 5,
+      "description": "Ethical hacking to find vulnerabilities.",
+      "image": "../assets/solution1.png"
+    },
+    {
+      "id": 14,
+      "name": "Cloud Migration",
+      "category": "cloud",
+      "price": 1100,
+      "rating": 4.8,
+      "description": "Move your infrastructure to AWS/Azure/GCP.",
+      "image": "../assets/solution2.png"
+    },
+    {
+      "id": 15,
+      "name": "AI Chatbot",
+      "category": "ai",
+      "price": 899,
+      "rating": 4.6,
+      "description": "Custom NLP-powered chatbot for your business.",
+      "image": "../assets/solution3.png"
+    }
+  ],
+  "favorites": [],
+  "cart": []
+}
