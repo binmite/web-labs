@@ -15,6 +15,8 @@
   --color-151719: #151719;
   --color-5D5DFF: #5D5DFF;
   --color-9BA9B4: #9BA9B4;
+  --color-25282C: #25282C;
+  --color-D9E3EA: #D9E3EA;
   --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   --radius: 8px;
 }
@@ -52,7 +54,7 @@ h3 {
 
 p {
   margin: 0 0 16px;
-  color: var(--color-gray);
+  color: var(--color-9BA9B4);
 }
 
 a {
