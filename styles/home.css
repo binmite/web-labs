@@ -1,0 +1,258 @@
+.hero {
+  padding: 80px 0 60px;
+  text-align: center;
+}
+
+.hero h1 {
+  margin-bottom: 24px;
+  max-width: 700px;
+  margin-left: auto;
+  color: #D9E3EA;
+  margin-right: auto;
+}
+
+.hero p {
+  margin-bottom: 32px;
+  font-size: 1.125rem;
+  color: #9BA9B4;
+}
+
+.hero-buttons {
+  margin-bottom: 60px;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.hero-image {
+  position: relative;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.hero-image img {
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.play-button {
+  position: absolute;
+  bottom: 40%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(255, 255, 255, 0.9);
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.play-button i {
+  color: var(--color-primary);
+  font-size: 1.25rem;
+}
+
+.features {
+  padding: 80px 0;
+}
+
+.features h2 {
+  text-align: center;
+  color: #D9E3EA;
+  margin-bottom: 16px;
+}
+
+.subtitle{
+    color: #9BA9B4;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 32px;
+  margin-top: 40px;
+}
+
+.feature-card {
+  background: var(--color-white);
+  padding: 32px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.feature-icon {
+  width: 56px;
+  height: 56px;
+  background-color: var(--color-light);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  color: var(--color-primary);
+  font-size: 1.5rem;
+}
+
+.solutions {
+  padding: 100px 0;
+}
+
+.solutions h2 {
+  text-align: center;
+  color: #D9E3EA;
+  margin-bottom: 16px;
+}
+
+.solutions-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 60px;
+  margin-top: 50px;
+}
+
+.solution-item {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.solution-image img {
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.solution-text .label {
+  color: var(--color-primary);
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.solution-text h3 {
+  margin: 12px 0;
+}
+
+.solution-text ul {
+  margin-top: 16px;
+}
+
+.solution-text li {
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.testimonials {
+  padding: 100px 0;
+}
+
+.testimonials h2 {
+  text-align: center;
+  color: #D9E3EA;
+  margin-bottom: 16px;
+}
+
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 32px;
+  margin-top: 50px;
+}
+
+.testimonial-card {
+  background: var(--color-white);
+  padding: 32px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  position: relative;
+}
+
+.testimonial-card::before {
+  content: "''";
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  font-size: 4rem;
+  color: var(--color-light);
+  font-family: Georgia, serif;
+  line-height: 1;
+}
+
+.avatar img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  margin-bottom: 20px;
+  object-fit: cover;
+}
+
+.testimonial-card blockquote {
+  font-style: italic;
+  margin-bottom: 20px;
+  color: var(--color-dark);
+}
+
+.author {
+  font-weight: 600;
+  color: var(--color-gray);
+}
+
+.newsletter {
+  padding: 80px 0;
+  background: linear-gradient(135deg, var(--color-primary), #6366f1);
+  color: var(--color-white);
+  text-align: center;
+}
+
+.newsletter h2 {
+  margin-bottom: 16px;
+}
+
+.newsletter p {
+  margin-bottom: 24px;
+  color: #E2E1FF;
+}
+
+.newsletter-content{
+    display: flex;
+}
+
+.newsletter-content-text{
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    flex-direction: column;
+}
+
+.newsletter-form {
+  display: flex;
+  max-width: 500px;
+  margin: 0 auto;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+}
+
+.newsletter-form input {
+  flex: 1;
+  padding: 14px 82px 14px 25px;
+  height: 50px;
+  border: none;
+  background-color: var(--color-primary);
+  border-radius: var(--radius);
+  font-size: 1rem;
+}
+
+.newsletter-form input::placeholder {
+  color: rgba(255, 255, 255, 0.7); 
+  opacity: 1; 
+}
+
+.newsletter-form button {
+    height: 50px;
+  padding: 14px 28px;
+}
