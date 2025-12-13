@@ -56,6 +56,10 @@
   font-size: 1.25rem;
 }
 
+.fa-play img{
+  padding-top: 25px;
+}
+
 .features {
   padding: 80px 0;
 }
@@ -99,7 +103,7 @@
 .feature-icon {
   width: 56px;
   height: 56px;
-  background-color: var(--color-light);
+  background-color: var(--color-5D5DFF);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -314,4 +318,86 @@
 .newsletter-form button {
     height: 50px;
   padding: 14px 28px;
+}
+
+@media (max-width: 1024px) {
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .solution-item {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .solution-text {
+    text-align: center;
+  }
+
+  .solution-text .label {
+    display: block;
+  }
+
+  .newsletter-content {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .newsletter-content-text {
+    align-items: center;
+    text-align: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .hero h1 {
+    font-size: 1.75rem;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .solution-item {
+    padding: 30px 0;
+    gap: 20px;
+  }
+
+  .testimonials-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .newsletter-content {
+    flex-direction: column;
+  }
+
+  .newsletter-form {
+    flex-direction: column;
+  }
+
+  .newsletter-form input,
+  .newsletter-form button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero h1 {
+    font-size: 1.5rem;
+  }
+
+  .solution-text h3 {
+    font-size: 1.125rem;
+  }
+
+  .newsletter-form input,
+  .newsletter-form button {
+    padding: 12px;
+    font-size: 0.9rem;
+  }
 }

@@ -88,4 +88,8 @@
   .solution-item {
     flex-direction: column;
   }
+  
+  .footer-bottom{
+    flex-direction: column;
+  }
 }
