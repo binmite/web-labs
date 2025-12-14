@@ -1,7 +1,7 @@
-const API_BASE_URL = 'http://localhost:3000';
-const SERVICES_ENDPOINT = `${API_BASE_URL}/services`;
-const FAVORITES_ENDPOINT = `${API_BASE_URL}/favorites`;
-const CART_ENDPOINT = `${API_BASE_URL}/cart`;
+const CATALOG_API_BASE = 'http://localhost:3000';
+const CATALOG_SERVICES_ENDPOINT = `${CATALOG_API_BASE}/services`;
+const CATALOG_FAVORITES_ENDPOINT = `${CATALOG_API_BASE}/favorites`;
+const CATALOG_CART_ENDPOINT = `${CATALOG_API_BASE}/cart`;
 
 let currentServices = [];
 let favorites = [];
@@ -94,7 +94,7 @@ async function fetchServices() {
       </div>
     `;
 
-    const allServices = await fetchData(SERVICES_ENDPOINT);
+    const allServices = await fetchData(CATALOG_SERVICES_ENDPOINT);
     if (!allServices) return;
 
     let filteredServices = [...allServices];
@@ -165,18 +165,46 @@ async function fetchServices() {
 }
 
 async function fetchFavorites() {
-  favorites = await fetchData(FAVORITES_ENDPOINT) || [];
-  updateFavoriteButtons();
+  try {
+    const currentUser = window.authService?.getCurrentUser();
+    if (!currentUser) {
+      favorites = [];
+      updateFavoriteButtons();
+      return;
+    }
+    
+    const allFavorites = await fetchData(CATALOG_FAVORITES_ENDPOINT) || [];
+    favorites = allFavorites.filter(fav => fav.userId === currentUser.id);
+    console.log('Loaded favorites:', favorites);
+    updateFavoriteButtons();
+  } catch (error) {
+    console.error('Error fetching favorites:', error);
+    favorites = [];
+  }
 }
 
 async function fetchCart() {
-  cartItems = await fetchData(CART_ENDPOINT) || [];
-  updateCartButtons();
+  try {
+    const currentUser = window.authService?.getCurrentUser();
+    if (!currentUser) {
+      cartItems = [];
+      updateCartButtons();
+      return;
+    }
+    
+    const allCartItems = await fetchData(CATALOG_CART_ENDPOINT) || [];
+    cartItems = allCartItems.filter(item => item.userId === currentUser.id);
+    console.log('Loaded cart items:', cartItems);
+    updateCartButtons();
+  } catch (error) {
+    console.error('Error fetching cart:', error);
+    cartItems = [];
+  }
 }
 
 async function fetchCategories() {
   try {
-    const data = await fetchData(SERVICES_ENDPOINT);
+    const data = await fetchData(CATALOG_SERVICES_ENDPOINT);
     if (data) {
       categories = ['all', ...new Set(data.map(service => service.category))];
       renderCategoryFilters();
@@ -188,26 +216,38 @@ async function fetchCategories() {
 
 async function toggleFavorite(service) {
   try {
-    const existingFavorite = favorites.find(fav => fav.serviceId === service.id);
+    const currentUser = window.authService?.getCurrentUser();
+    if (!currentUser) {
+      showNotification('Please sign in to add to favorites', 'error');
+      setTimeout(() => {
+        window.location.href = 'login.html';
+      }, 1500);
+      return;
+    }
+    
+    const existingFavorite = favorites.find(fav => 
+      fav.serviceId === service.id.toString() && fav.userId === currentUser.id
+    );
     
     if (existingFavorite) {
-      await fetchData(`${FAVORITES_ENDPOINT}/${existingFavorite.id}`, {
+      await fetchData(`${CATALOG_FAVORITES_ENDPOINT}/${existingFavorite.id}`, {
         method: 'DELETE'
       });
       showNotification('Removed from favorites', 'info');
     } else {
       const favoriteItem = {
-        serviceId: service.id,
+        serviceId: service.id.toString(), 
         name: service.name,
         category: service.category,
         price: service.price,
         rating: service.rating,
         description: service.description,
         image: service.image,
+        userId: currentUser.id,
         addedAt: new Date().toISOString()
       };
       
-      await fetchData(FAVORITES_ENDPOINT, {
+      await fetchData(CATALOG_FAVORITES_ENDPOINT, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -218,6 +258,7 @@ async function toggleFavorite(service) {
     }
     
     await fetchFavorites();
+    updateCounts();
   } catch (error) {
     console.error('Error toggling favorite:', error);
     showNotification('Failed to update favorites', 'error');
@@ -226,10 +267,21 @@ async function toggleFavorite(service) {
 
 async function addToCart(service) {
   try {
-    const existingCartItem = cartItems.find(item => item.serviceId === service.id);
+    const currentUser = window.authService?.getCurrentUser();
+    if (!currentUser) {
+      showNotification('Please sign in to add to cart', 'error');
+      setTimeout(() => {
+        window.location.href = 'login.html';
+      }, 1500);
+      return;
+    }
+    
+    const existingCartItem = cartItems.find(item => 
+      item.serviceId === service.id.toString() && item.userId === currentUser.id
+    );
     
     if (existingCartItem) {
-      await fetchData(`${CART_ENDPOINT}/${existingCartItem.id}`, {
+      await fetchData(`${CATALOG_CART_ENDPOINT}/${existingCartItem.id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -240,7 +292,7 @@ async function addToCart(service) {
       });
     } else {
       const cartItem = {
-        serviceId: service.id,
+        serviceId: service.id.toString(), 
         name: service.name,
         category: service.category,
         price: service.price,
@@ -248,10 +300,11 @@ async function addToCart(service) {
         description: service.description,
         image: service.image,
         quantity: 1,
+        userId: currentUser.id,
         addedAt: new Date().toISOString()
       };
       
-      await fetchData(CART_ENDPOINT, {
+      await fetchData(CATALOG_CART_ENDPOINT, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -261,6 +314,7 @@ async function addToCart(service) {
     }
     
     await fetchCart();
+    updateCounts();
     showNotification('Added to cart!', 'success');
   } catch (error) {
     console.error('Error adding to cart:', error);
@@ -270,17 +324,24 @@ async function addToCart(service) {
 
 function renderServices() {
   if (!currentServices || currentServices.length === 0) {
-    servicesGrid.style.display = 'none';
-    noResults.style.display = 'block';
+    if (servicesGrid) servicesGrid.style.display = 'none';
+    if (noResults) noResults.style.display = 'block';
     return;
   }
   
-  servicesGrid.style.display = 'grid';
-  noResults.style.display = 'none';
+  if (servicesGrid) servicesGrid.style.display = 'grid';
+  if (noResults) noResults.style.display = 'none';
+  
+  const currentUser = window.authService?.getCurrentUser();
   
   servicesGrid.innerHTML = currentServices.map(service => {
-    const isFavorite = favorites.some(fav => fav.serviceId === service.id);
-    const inCart = cartItems.find(item => item.serviceId === service.id);
+    const isFavorite = currentUser ? 
+      favorites.some(fav => fav.serviceId === service.id && fav.userId === currentUser.id) : 
+      false;
+    
+    const inCart = currentUser ? 
+      cartItems.find(item => item.serviceId === service.id && item.userId === currentUser.id) : 
+      null;
     
     return `
       <div class="service-card" data-service-id="${service.id}">
@@ -324,6 +385,8 @@ function renderServices() {
 }
 
 function renderCategoryFilters() {
+  if (!categoryFilters) return;
+  
   categoryFilters.innerHTML = categories.map(category => {
     const displayName = category === 'all' ? 'All Categories' : 
                        category.charAt(0).toUpperCase() + category.slice(1);
@@ -339,22 +402,28 @@ function renderCategoryFilters() {
 function updatePagination() {
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   
-  currentPageEl.textContent = currentPage;
-  totalPagesEl.textContent = totalPages;
-  showingCountEl.textContent = currentServices.length;
-  totalCountEl.textContent = totalItems;
+  if (currentPageEl) currentPageEl.textContent = currentPage;
+  if (totalPagesEl) totalPagesEl.textContent = totalPages;
+  if (showingCountEl) showingCountEl.textContent = currentServices.length;
+  if (totalCountEl) totalCountEl.textContent = totalItems;
   
-  prevPageBtn.disabled = currentPage <= 1;
-  nextPageBtn.disabled = currentPage >= totalPages;
+  if (prevPageBtn) prevPageBtn.disabled = currentPage <= 1;
+  if (nextPageBtn) nextPageBtn.disabled = currentPage >= totalPages;
   
-  document.querySelector('.pagination-info').style.display = 
-    totalPages <= 1 ? 'none' : 'flex';
+  const paginationInfo = document.querySelector('.pagination-info');
+  if (paginationInfo) {
+    paginationInfo.style.display = totalPages <= 1 ? 'none' : 'flex';
+  }
 }
 
 function updateFavoriteButtons() {
+  const currentUser = window.authService?.getCurrentUser();
+  
   document.querySelectorAll('.favorite-btn').forEach(btn => {
-    const serviceId = parseInt(btn.dataset.serviceId);
-    const isFavorite = favorites.some(fav => fav.serviceId === serviceId);
+    const serviceId = btn.dataset.serviceId; 
+    const isFavorite = currentUser ? 
+      favorites.some(fav => fav.serviceId === serviceId && fav.userId === currentUser.id) : 
+      false;
     
     btn.classList.toggle('active', isFavorite);
     btn.innerHTML = `<i class="${isFavorite ? 'fas' : 'far'} fa-heart"></i>`;
@@ -362,9 +431,13 @@ function updateFavoriteButtons() {
 }
 
 function updateCartButtons() {
+  const currentUser = window.authService?.getCurrentUser();
+  
   document.querySelectorAll('.btn-cart').forEach(btn => {
-    const serviceId = parseInt(btn.dataset.serviceId);
-    const cartItem = cartItems.find(item => item.serviceId === serviceId);
+    const serviceId = btn.dataset.serviceId; 
+    const cartItem = currentUser ? 
+      cartItems.find(item => item.serviceId === serviceId && item.userId === currentUser.id) : 
+      null;
     
     if (cartItem) {
       btn.classList.add('in-cart');
@@ -377,16 +450,33 @@ function updateCartButtons() {
 }
 
 function updateCounts() {
-  favoritesCount.textContent = favorites.length;
-  cartCount.textContent = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const currentUser = window.authService?.getCurrentUser();
+  
+  if (favoritesCount) {
+    if (currentUser) {
+      const userFavorites = favorites.filter(fav => fav.userId === currentUser.id);
+      favoritesCount.textContent = userFavorites.length;
+    } else {
+      favoritesCount.textContent = 0;
+    }
+  }
+  
+  if (cartCount) {
+    if (currentUser) {
+      const userCartItems = cartItems.filter(item => item.userId === currentUser.id);
+      cartCount.textContent = userCartItems.reduce((sum, item) => sum + item.quantity, 0);
+    } else {
+      cartCount.textContent = 0;
+    }
+  }
 }
 
 function attachServiceEventListeners() {
   document.querySelectorAll('.favorite-btn').forEach(btn => {
     btn.addEventListener('click', async (e) => {
       e.preventDefault();
-      const serviceId = parseInt(btn.dataset.serviceId);
-      const service = currentServices.find(s => s.id === serviceId);
+      const serviceId = btn.dataset.serviceId; 
+      const service = currentServices.find(s => s.id.toString() === serviceId);
       
       if (service) {
         await toggleFavorite(service);
@@ -397,8 +487,8 @@ function attachServiceEventListeners() {
   document.querySelectorAll('.btn-cart').forEach(btn => {
     btn.addEventListener('click', async (e) => {
       e.preventDefault();
-      const serviceId = parseInt(btn.dataset.serviceId);
-      const service = currentServices.find(s => s.id === serviceId);
+      const serviceId = btn.dataset.serviceId; 
+      const service = currentServices.find(s => s.id.toString() === serviceId);
       
       if (service) {
         await addToCart(service);
@@ -418,121 +508,166 @@ function attachServiceEventListeners() {
 async function init() {
   console.log('Initializing catalog...');
   
-  await Promise.all([
-    fetchCategories(),
-    fetchFavorites(),
-    fetchCart()
-  ]);
+  if (!window.authService) {
+    console.warn('Auth service not available, retrying in 500ms...');
+    setTimeout(init, 500);
+    return;
+  }
   
+  await fetchCategories();
   await fetchServices();
   
+  const onAuthChange = async (user) => {
+    console.log('Auth changed in catalog, user:', user?.nickname || 'none');
+    await Promise.all([
+      fetchFavorites(),
+      fetchCart()
+    ]);
+    renderServices();
+    updateCounts();
+  };
+  
+  window.authService.onAuthChange(onAuthChange);
+  
+  if (window.authService.initialized) {
+    await onAuthChange(window.authService.getCurrentUser());
+  }
+  
   let searchTimeout;
-  searchInput.addEventListener('input', (e) => {
-    clearTimeout(searchTimeout);
-    searchTimeout = setTimeout(() => {
-      currentSearch = e.target.value.trim();
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        currentSearch = e.target.value.trim();
+        currentPage = 1;
+        fetchServices();
+      }, 500);
+    });
+  }
+  
+  if (clearSearchBtn) {
+    clearSearchBtn.addEventListener('click', () => {
+      if (searchInput) searchInput.value = '';
+      currentSearch = '';
       currentPage = 1;
       fetchServices();
-    }, 500);
-  });
+    });
+  }
   
-  clearSearchBtn.addEventListener('click', () => {
-    searchInput.value = '';
-    currentSearch = '';
-    currentPage = 1;
-    fetchServices();
-  });
-  
-  sortSelect.addEventListener('change', (e) => {
-    currentSort = e.target.value;
-    currentPage = 1;
-    fetchServices();
-  });
-  
-  categoryFilters.addEventListener('click', (e) => {
-    if (e.target.classList.contains('category-btn')) {
-      currentCategory = e.target.dataset.category;
+  if (sortSelect) {
+    sortSelect.addEventListener('change', (e) => {
+      currentSort = e.target.value;
       currentPage = 1;
+      fetchServices();
+    });
+  }
+  
+  if (categoryFilters) {
+    categoryFilters.addEventListener('click', (e) => {
+      if (e.target.classList.contains('category-btn')) {
+        currentCategory = e.target.dataset.category;
+        currentPage = 1;
+        
+        document.querySelectorAll('.category-btn').forEach(btn => {
+          btn.classList.remove('active');
+        });
+        e.target.classList.add('active');
+        
+        fetchServices();
+      }
+    });
+  }
+  
+  if (prevPageBtn) {
+    prevPageBtn.addEventListener('click', () => {
+      if (currentPage > 1) {
+        currentPage--;
+        fetchServices();
+      }
+    });
+  }
+  
+  if (nextPageBtn) {
+    nextPageBtn.addEventListener('click', () => {
+      const totalPages = Math.ceil(totalItems / itemsPerPage);
+      if (currentPage < totalPages) {
+        currentPage++;
+        fetchServices();
+      }
+    });
+  }
+  
+  if (itemsPerPageSelect) {
+    itemsPerPageSelect.addEventListener('change', (e) => {
+      itemsPerPage = parseInt(e.target.value);
+      currentPage = 1;
+      fetchServices();
+    });
+  }
+  
+  if (toggleAdvancedFiltersBtn) {
+    toggleAdvancedFiltersBtn.addEventListener('click', () => {
+      if (advancedFiltersPanel) {
+        advancedFiltersPanel.classList.toggle('show');
+      }
+    });
+  }
+  
+  if (applyAdvancedFiltersBtn) {
+    applyAdvancedFiltersBtn.addEventListener('click', () => {
+      minPrice = minPriceInput?.value ? parseInt(minPriceInput.value) : null;
+      maxPrice = maxPriceInput?.value ? parseInt(maxPriceInput.value) : null;
+      minRating = minRatingSelect?.value ? parseFloat(minRatingSelect.value) : 0;
+      currentPage = 1;
+      fetchServices();
+    });
+  }
+  
+  if (resetFiltersBtn) {
+    resetFiltersBtn.addEventListener('click', () => {
+      if (minPriceInput) minPriceInput.value = '';
+      if (maxPriceInput) maxPriceInput.value = '';
+      if (minRatingSelect) minRatingSelect.value = '0';
+      minPrice = null;
+      maxPrice = null;
+      minRating = 0;
+      currentPage = 1;
+      fetchServices();
+    });
+  }
+  
+  if (resetAllFiltersBtn) {
+    resetAllFiltersBtn.addEventListener('click', () => {
+      currentCategory = 'all';
+      currentSort = 'default';
+      currentSearch = '';
+      minPrice = null;
+      maxPrice = null;
+      minRating = 0;
+      currentPage = 1;
+      
+      if (searchInput) searchInput.value = '';
+      if (sortSelect) sortSelect.value = 'default';
+      if (minPriceInput) minPriceInput.value = '';
+      if (maxPriceInput) maxPriceInput.value = '';
+      if (minRatingSelect) minRatingSelect.value = '0';
       
       document.querySelectorAll('.category-btn').forEach(btn => {
         btn.classList.remove('active');
+        if (btn.dataset.category === 'all') {
+          btn.classList.add('active');
+        }
       });
-      e.target.classList.add('active');
       
       fetchServices();
-    }
-  });
-  
-  prevPageBtn.addEventListener('click', () => {
-    if (currentPage > 1) {
-      currentPage--;
-      fetchServices();
-    }
-  });
-  
-  nextPageBtn.addEventListener('click', () => {
-    const totalPages = Math.ceil(totalItems / itemsPerPage);
-    if (currentPage < totalPages) {
-      currentPage++;
-      fetchServices();
-    }
-  });
-  
-  itemsPerPageSelect.addEventListener('change', (e) => {
-    itemsPerPage = parseInt(e.target.value);
-    currentPage = 1;
-    fetchServices();
-  });
-  
-  toggleAdvancedFiltersBtn.addEventListener('click', () => {
-    advancedFiltersPanel.classList.toggle('show');
-  });
-  
-  applyAdvancedFiltersBtn.addEventListener('click', () => {
-    minPrice = minPriceInput.value ? parseInt(minPriceInput.value) : null;
-    maxPrice = maxPriceInput.value ? parseInt(maxPriceInput.value) : null;
-    minRating = parseFloat(minRatingSelect.value);
-    currentPage = 1;
-    fetchServices();
-  });
-  
-  resetFiltersBtn.addEventListener('click', () => {
-    minPriceInput.value = '';
-    maxPriceInput.value = '';
-    minRatingSelect.value = '0';
-    minPrice = null;
-    maxPrice = null;
-    minRating = 0;
-    currentPage = 1;
-    fetchServices();
-  });
-  
-  resetAllFiltersBtn.addEventListener('click', () => {
-    currentCategory = 'all';
-    currentSort = 'default';
-    currentSearch = '';
-    minPrice = null;
-    maxPrice = null;
-    minRating = 0;
-    currentPage = 1;
-    
-    searchInput.value = '';
-    sortSelect.value = 'default';
-    minPriceInput.value = '';
-    maxPriceInput.value = '';
-    minRatingSelect.value = '0';
-    
-    document.querySelectorAll('.category-btn').forEach(btn => {
-      btn.classList.remove('active');
-      if (btn.dataset.category === 'all') {
-        btn.classList.add('active');
-      }
     });
-    
-    fetchServices();
-  });
+  }
   
   console.log('Catalog initialized successfully');
 }
 
-document.addEventListener('DOMContentLoaded', init);
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}

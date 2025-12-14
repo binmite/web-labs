@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Feedback - ServiceHub</title>
+  <link rel="stylesheet" href="../styles/global.css">
+  <link rel="stylesheet" href="../styles/header.css">
+  <link rel="stylesheet" href="../styles/footer.css">
+  <link rel="stylesheet" href="../styles/feedback.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <header class="header">
+    <div class="container header-container">
+      <a href="./home.html" class="logo">
+        <img src="../assets/Logo.png" alt="ServiceHub Logo">
+      </a>
+      <nav class="nav">
+        <a href="./home.html" class="nav-link">Home</a>
+        <a href="./catalog.html" class="nav-link">Catalog</a>
+        <a href="./favorites.html" class="nav-link">
+          <i class="far fa-heart"></i> Favorites
+          <span id="favoritesCount" class="badge">0</span>
+        </a>
+        <a href="./cart.html" class="nav-link">
+          <i class="fas fa-shopping-cart"></i> Cart
+          <span id="cartCount" class="badge">0</span>
+        </a>
+        <a href="./feedback.html" class="nav-link">
+          <i class="far fa-comment"></i> Feedback
+        </a>
+        <div class="auth-buttons" id="authButtons">
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="feedback-section">
+      <div class="feedback-header">
+        <h1><i class="fas fa-comment-dots"></i> Customer Feedback</h1>
+        <p class="subtitle">Share your experience with our services</p>
+      </div>
+
+      <div class="feedback-container">
+        <div class="feedback-form-card">
+          <h2><i class="fas fa-pen"></i> Write a Review</h2>
+          <p class="form-description">Tell us about your experience with our services</p>
+
+          <form id="feedbackForm" class="feedback-form">
+            <div class="form-group">
+              <label for="serviceSelect">
+                <i class="fas fa-box"></i> Select Service
+                <span class="required">*</span>
+              </label>
+              <select id="serviceSelect" name="serviceSelect" required disabled>
+                <option value="">Loading services...</option>
+              </select>
+              <div class="error-message" id="serviceError"></div>
+              <div class="hint" id="serviceHint">
+                <i class="fas fa-info-circle"></i> You can only review services you have purchased
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="rating">
+                <i class="fas fa-star"></i> Rating
+                <span class="required">*</span>
+              </label>
+              <div class="star-rating">
+                <input type="radio" id="star5" name="rating" value="5">
+                <label for="star5" title="5 stars">
+                  <i class="fas fa-star"></i>
+                </label>
+                <input type="radio" id="star4" name="rating" value="4">
+                <label for="star4" title="4 stars">
+                  <i class="fas fa-star"></i>
+                </label>
+                <input type="radio" id="star3" name="rating" value="3">
+                <label for="star3" title="3 stars">
+                  <i class="fas fa-star"></i>
+                </label>
+                <input type="radio" id="star2" name="rating" value="2">
+                <label for="star2" title="2 stars">
+                  <i class="fas fa-star"></i>
+                </label>
+                <input type="radio" id="star1" name="rating" value="1">
+                <label for="star1" title="1 star">
+                  <i class="fas fa-star"></i>
+                </label>
+              </div>
+              <div class="error-message" id="ratingError"></div>
+              <div class="rating-hint">
+                <span id="ratingText">Select your rating</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="feedbackTitle">
+                <i class="fas fa-heading"></i> Review Title
+                <span class="required">*</span>
+              </label>
+              <input 
+                type="text" 
+                id="feedbackTitle" 
+                name="feedbackTitle" 
+                placeholder="Brief summary of your experience"
+                maxlength="100"
+                required
+              >
+              <div class="error-message" id="titleError"></div>
+              <div class="char-counter">
+                <span id="titleCounter">0</span>/100 characters
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="feedbackText">
+                <i class="fas fa-comment"></i> Detailed Review
+                <span class="required">*</span>
+              </label>
+              <textarea 
+                id="feedbackText" 
+                name="feedbackText" 
+                rows="6" 
+                placeholder="Share your detailed experience with this service..."
+                minlength="50"
+                maxlength="1000"
+                required
+              ></textarea>
+              <div class="error-message" id="textError"></div>
+              <div class="char-counter">
+                <span id="textCounter">0</span>/1000 characters (minimum 50)
+              </div>
+              <div class="hint">
+                <i class="fas fa-lightbulb"></i> Be specific about what you liked or didn't like
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input type="checkbox" id="anonymous" name="anonymous">
+                <span class="checkbox-custom"></span>
+                Post as anonymous
+              </label>
+              <div class="hint">
+                <i class="fas fa-user-secret"></i> Your name will not be displayed
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" id="submitFeedback" class="btn btn-primary" disabled>
+                <i class="fas fa-paper-plane"></i> Submit Review
+              </button>
+              <button type="reset" id="resetFeedback" class="btn btn-secondary">
+                <i class="fas fa-redo"></i> Clear Form
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div class="feedback-list-card">
+          <div class="feedback-list-header">
+            <h2><i class="fas fa-comments"></i> Recent Reviews</h2>
+            <div class="feedback-stats">
+              <div class="stat-item">
+                <span class="stat-value" id="totalReviews">0</span>
+                <span class="stat-label">Total Reviews</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-value" id="averageRating">0.0</span>
+                <span class="stat-label">Average Rating</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="feedback-filters">
+            <div class="filter-group">
+              <label for="filterService">
+                <i class="fas fa-filter"></i> Filter by Service:
+              </label>
+              <select id="filterService" class="filter-select">
+                <option value="all">All Services</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label for="filterRating">
+                <i class="fas fa-star"></i> Filter by Rating:
+              </label>
+              <select id="filterRating" class="filter-select">
+                <option value="all">All Ratings</option>
+                <option value="5">5 Stars</option>
+                <option value="4">4+ Stars</option>
+                <option value="3">3+ Stars</option>
+                <option value="2">2+ Stars</option>
+                <option value="1">1 Star</option>
+              </select>
+            </div>
+            <button id="clearFilters" class="btn btn-secondary">
+              <i class="fas fa-redo"></i> Clear Filters
+            </button>
+          </div>
+
+          <div class="feedback-list" id="feedbackList">
+            <div class="loading-spinner">
+              <i class="fas fa-spinner fa-spin"></i>
+              <p>Loading reviews...</p>
+            </div>
+          </div>
+
+          <div id="noFeedback" class="no-feedback" style="display: none;">
+            <i class="far fa-comment fa-4x"></i>
+            <h3>No reviews yet</h3>
+            <p>Be the first to share your experience!</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <div class="logo">
+            <img src="../assets/Logo.png" alt="Logo" />
+          </div>
+          <p>Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Products</h4>
+          <ul>
+            <li><a href="#">Web Studio</a></li>
+            <li><a href="#">DynamicBox Flex</a></li>
+            <li><a href="#">Programming Forms</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Resources</h4>
+          <ul>
+            <li><a href="#">Nostrud exercitation</a></li>
+            <li><a href="#">Visual mockups</a></li>
+            <li><a href="#">Nostrud exercitation</a></li>
+            <li><a href="#">Visual mockups</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="#">Consectetur adipiscing</a></li>
+            <li><a href="#">Labore et dolore</a></li>
+            <li><a href="#">Sed do eiusmod</a></li>
+            <li><a href="#">Tempor incididunt</a></li>
+            <li><a href="#">Labore et dolore</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+        <div class="footer-bottom-left">
+            <p class="copyright">Made by <strong>Cruip</strong>. All right reserved</p>
+        </div>
+        <div class="footer-bottom-right">
+          <ul>
+            <li><a href="#"><img src="../assets/twitter.png" alt="twitter" /></a></li>
+            <li><a href="#"><img src="../assets/git.png" alt="git" /></a></li>
+            <li><a href="#"><img src="../assets/facebook.png" alt="facebook" /></a></li>
+            <li><a href="#"><img src="../assets/inst.png" alt="inst" /></a></li>
+            <li><a href="#"><img src="../assets/in.png" alt="in" /></a></li>
+          </ul>
+        </div>
+    </div>
+  </footer>
+
+  <div id="notificationContainer" class="notification-container"></div>
+
+  <script src="../scripts/auth.js"></script>
+  <script src="../scripts/feedback.js"></script>
+  <script src="../scripts/globalCounters.js"></script>
+</body>
+</html>

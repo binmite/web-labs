@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Panel - ServiceHub</title>
+  <link rel="stylesheet" href="../styles/global.css">
+  <link rel="stylesheet" href="../styles/header.css">
+  <link rel="stylesheet" href="../styles/footer.css">
+  <link rel="stylesheet" href="../styles/admin.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <header class="header">
+    <div class="container header-container">
+      <a href="./home.html" class="logo">
+        <img src="../assets/Logo.png" alt="ServiceHub Logo">
+      </a>
+      <nav class="nav">
+        <a href="./home.html" class="nav-link">Home</a>
+        <a href="./catalog.html" class="nav-link">Catalog</a>
+        <a href="./favorites.html" class="nav-link">
+          <i class="far fa-heart"></i> Favorites
+          <span id="favoritesCount" class="badge">0</span>
+        </a>
+        <a href="./cart.html" class="nav-link">
+          <i class="fas fa-shopping-cart"></i> Cart
+          <span id="cartCount" class="badge">0</span>
+        </a>
+        <a href="./feedback.html" class="nav-link">
+          <i class="far fa-comment"></i> Feedback
+        </a>
+        <div class="auth-buttons" id="authButtons">
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div id="adminAccessDenied" class="access-denied" style="display: none;">
+      <i class="fas fa-lock fa-4x"></i>
+      <h2>Access Denied</h2>
+      <p>This area is restricted to administrators only.</p>
+      <a href="./home.html" class="btn btn-primary">
+        <i class="fas fa-home"></i> Back to Home
+      </a>
+    </div>
+
+    <div id="adminPanel" style="display: none;">
+      <section class="admin-section">
+        <div class="admin-header">
+          <h1><i class="fas fa-cogs"></i> Admin Dashboard</h1>
+          <p class="subtitle">Manage services, feedback, and orders</p>
+          <div class="admin-stats">
+            <div class="stat-card">
+              <div class="stat-icon total-services">
+                <i class="fas fa-box"></i>
+              </div>
+              <div class="stat-info">
+                <span class="stat-value" id="totalServices">0</span>
+                <span class="stat-label">Total Services</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon total-orders">
+                <i class="fas fa-shopping-cart"></i>
+              </div>
+              <div class="stat-info">
+                <span class="stat-value" id="totalOrders">0</span>
+                <span class="stat-label">Total Orders</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon total-feedback">
+                <i class="fas fa-comments"></i>
+              </div>
+              <div class="stat-info">
+                <span class="stat-value" id="totalFeedback">0</span>
+                <span class="stat-label">Total Reviews</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon total-users">
+                <i class="fas fa-users"></i>
+              </div>
+              <div class="stat-info">
+                <span class="stat-value" id="totalUsers">0</span>
+                <span class="stat-label">Total Users</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-tabs">
+          <button class="tab-btn active" data-tab="services">
+            <i class="fas fa-box"></i> Services
+          </button>
+          <button class="tab-btn" data-tab="feedback">
+            <i class="fas fa-comments"></i> Feedback
+          </button>
+          <button class="tab-btn" data-tab="orders">
+            <i class="fas fa-shopping-cart"></i> Orders
+          </button>
+          <button class="tab-btn" data-tab="users">
+            <i class="fas fa-users"></i> Users
+          </button>
+        </div>
+
+        <div class="tab-content active" id="servicesTab">
+          <div class="tab-header">
+            <h2><i class="fas fa-box"></i> Services Management</h2>
+            <button class="btn btn-primary" id="addServiceBtn">
+              <i class="fas fa-plus"></i> Add New Service
+            </button>
+          </div>
+
+          <div class="services-controls">
+            <div class="search-container">
+              <i class="fas fa-search search-icon"></i>
+              <input 
+                type="text" 
+                id="searchServices" 
+                class="search-input" 
+                placeholder="Search services..."
+              >
+            </div>
+          </div>
+
+          <div class="services-list" id="servicesList">
+            <div class="loading-spinner">
+              <i class="fas fa-spinner fa-spin"></i>
+              <p>Loading services...</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-content" id="feedbackTab">
+          <div class="tab-header">
+            <h2><i class="fas fa-comments"></i> Feedback Management</h2>
+            <div class="feedback-filters">
+              <select id="filterFeedbackService" class="filter-select">
+                <option value="all">All Services</option>
+              </select>
+              <select id="filterFeedbackRating" class="filter-select">
+                <option value="all">All Ratings</option>
+                <option value="5">5 Stars</option>
+                <option value="4">4 Stars</option>
+                <option value="3">3 Stars</option>
+                <option value="2">2 Stars</option>
+                <option value="1">1 Star</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="feedback-list-admin" id="feedbackListAdmin">
+            <div class="loading-spinner">
+              <i class="fas fa-spinner fa-spin"></i>
+              <p>Loading feedback...</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-content" id="ordersTab">
+          <div class="tab-header">
+            <h2><i class="fas fa-shopping-cart"></i> Orders Management</h2>
+            <div class="orders-filters">
+              <select id="filterOrderStatus" class="filter-select">
+                <option value="all">All Statuses</option>
+                <option value="pending">Pending</option>
+                <option value="processing">Processing</option>
+                <option value="completed">Completed</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+              <input 
+                type="date" 
+                id="filterOrderDate" 
+                class="filter-select"
+                placeholder="Filter by date"
+              >
+            </div>
+          </div>
+
+          <div class="orders-list" id="ordersList">
+            <div class="loading-spinner">
+              <i class="fas fa-spinner fa-spin"></i>
+              <p>Loading orders...</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-content" id="usersTab">
+          <div class="tab-header">
+            <h2><i class="fas fa-users"></i> Users Management</h2>
+            <div class="users-filters">
+              <select id="filterUserRole" class="filter-select">
+                <option value="all">All Roles</option>
+                <option value="admin">Administrators</option>
+                <option value="user">Regular Users</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="users-list" id="usersList">
+            <div class="loading-spinner">
+              <i class="fas fa-spinner fa-spin"></i>
+              <p>Loading users...</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div id="serviceModal" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 id="modalTitle">
+              <i class="fas fa-box"></i> Add New Service
+            </h2>
+            <button class="close-modal">&times;</button>
+          </div>
+          <div class="modal-body">
+            <form id="serviceForm" class="service-form">
+              <input type="hidden" id="serviceId">
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="serviceName">
+                    <i class="fas fa-tag"></i> Service Name
+                    <span class="required">*</span>
+                  </label>
+                  <input 
+                    type="text" 
+                    id="serviceName" 
+                    name="serviceName" 
+                    placeholder="Web Design"
+                    required
+                  >
+                  <div class="error-message" id="serviceNameError"></div>
+                </div>
+
+                <div class="form-group">
+                  <label for="serviceCategory">
+                    <i class="fas fa-folder"></i> Category
+                    <span class="required">*</span>
+                  </label>
+                  <select id="serviceCategory" name="serviceCategory" required>
+                    <option value="">Select category</option>
+                    <option value="design">Design</option>
+                    <option value="development">Development</option>
+                    <option value="marketing">Marketing</option>
+                    <option value="consulting">Consulting</option>
+                    <option value="analytics">Analytics</option>
+                    <option value="support">Support</option>
+                    <option value="security">Security</option>
+                    <option value="cloud">Cloud</option>
+                    <option value="ai">AI</option>
+                  </select>
+                  <div class="error-message" id="serviceCategoryError"></div>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="servicePrice">
+                    <i class="fas fa-dollar-sign"></i> Price ($)
+                    <span class="required">*</span>
+                  </label>
+                  <input 
+                    type="number" 
+                    id="servicePrice" 
+                    name="servicePrice" 
+                    placeholder="299"
+                    min="0"
+                    step="1"
+                    required
+                  >
+                  <div class="error-message" id="servicePriceError"></div>
+                </div>
+
+                <div class="form-group">
+                  <label for="serviceRating">
+                    <i class="fas fa-star"></i> Rating (1-5)
+                    <span class="required">*</span>
+                  </label>
+                  <input 
+                    type="number" 
+                    id="serviceRating" 
+                    name="serviceRating" 
+                    placeholder="4.7"
+                    min="0"
+                    max="5"
+                    step="0.1"
+                    required
+                  >
+                  <div class="error-message" id="serviceRatingError"></div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="serviceDescription">
+                  <i class="fas fa-align-left"></i> Description
+                  <span class="required">*</span>
+                </label>
+                <textarea 
+                  id="serviceDescription" 
+                  name="serviceDescription" 
+                  rows="4" 
+                  placeholder="Describe the service..."
+                  required
+                ></textarea>
+                <div class="error-message" id="serviceDescriptionError"></div>
+                <div class="char-counter">
+                  <span id="descriptionCounter">0</span>/500 characters
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="serviceImage">
+                  <i class="fas fa-image"></i> Image URL
+                  <span class="required">*</span>
+                </label>
+                <input 
+                  type="url" 
+                  id="serviceImage" 
+                  name="serviceImage" 
+                  placeholder="../assets/solution1.png"
+                  required
+                >
+                <div class="error-message" id="serviceImageError"></div>
+                <div class="hint">
+                  <i class="fas fa-info-circle"></i> Use relative path or full URL
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" id="saveService" class="btn btn-primary">
+                  <i class="fas fa-save"></i> Save Service
+                </button>
+                <button type="button" class="btn btn-secondary" id="cancelService">
+                  <i class="fas fa-times"></i> Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <div class="logo">
+            <img src="../assets/Logo.png" alt="Logo" />
+          </div>
+          <p>Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Products</h4>
+          <ul>
+            <li><a href="#">Web Studio</a></li>
+            <li><a href="#">DynamicBox Flex</a></li>
+            <li><a href="#">Programming Forms</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Resources</h4>
+          <ul>
+            <li><a href="#">Nostrud exercitation</a></li>
+            <li><a href="#">Visual mockups</a></li>
+            <li><a href="#">Nostrud exercitation</a></li>
+            <li><a href="#">Visual mockups</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="#">Consectetur adipiscing</a></li>
+            <li><a href="#">Labore et dolore</a></li>
+            <li><a href="#">Sed do eiusmod</a></li>
+            <li><a href="#">Tempor incididunt</a></li>
+            <li><a href="#">Labore et dolore</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+        <div class="footer-bottom-left">
+            <p class="copyright">Made by <strong>Cruip</strong>. All right reserved</p>
+        </div>
+        <div class="footer-bottom-right">
+          <ul>
+            <li><a href="#"><img src="../assets/twitter.png" alt="twitter" /></a></li>
+            <li><a href="#"><img src="../assets/git.png" alt="git" /></a></li>
+            <li><a href="#"><img src="../assets/facebook.png" alt="facebook" /></a></li>
+            <li><a href="#"><img src="../assets/inst.png" alt="inst" /></a></li>
+            <li><a href="#"><img src="../assets/in.png" alt="in" /></a></li>
+          </ul>
+        </div>
+    </div>
+  </footer>
+
+  <div id="notificationContainer" class="notification-container"></div>
+
+  <script src="../scripts/auth.js"></script>
+  <script src="../scripts/admin.js"></script>
+  <script src="../scripts/globalCounters.js"></script>
+</body>
+</html>

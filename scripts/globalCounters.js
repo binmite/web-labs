@@ -2,19 +2,31 @@ async function updateAllCounters() {
   const API_BASE_URL = 'http://localhost:3000';
   
   try {
+    const currentUser = window.authService?.getCurrentUser();
+    if (!currentUser) {
+      updateCounter('favoritesCount', 0);
+      updateCounter('cartCount', 0);
+      return;
+    }
+    
     const [favoritesResponse, cartResponse] = await Promise.all([
       fetch(`${API_BASE_URL}/favorites`),
       fetch(`${API_BASE_URL}/cart`)
     ]);
     
-    const favorites = await favoritesResponse.json();
-    const cartItems = await cartResponse.json();
+    const allFavorites = await favoritesResponse.json();
+    const allCartItems = await cartResponse.json();
     
-    updateCounter('favoritesCount', favorites.length);
-    updateCounter('cartCount', cartItems.reduce((sum, item) => sum + item.quantity, 0));
+    const userFavorites = allFavorites.filter(fav => fav.userId === currentUser.id);
+    const userCartItems = allCartItems.filter(item => item.userId === currentUser.id);
+    
+    updateCounter('favoritesCount', userFavorites.length);
+    updateCounter('cartCount', userCartItems.reduce((sum, item) => sum + item.quantity, 0));
     
   } catch (error) {
     console.error('Error updating counters:', error);
+    updateCounter('favoritesCount', 0);
+    updateCounter('cartCount', 0);
   }
 }
 
@@ -33,6 +45,8 @@ function updateCounter(elementId, count) {
   }
 }
 
-window.updateAllCounters = updateAllCounters;
+document.addEventListener('DOMContentLoaded', async () => {
+  setTimeout(updateAllCounters, 100);
+});
 
-document.addEventListener('DOMContentLoaded', updateAllCounters);
+window.updateAllCounters = updateAllCounters;

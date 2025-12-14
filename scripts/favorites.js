@@ -1,6 +1,6 @@
-const API_BASE_URL = 'http://localhost:3000';
-const FAVORITES_ENDPOINT = `${API_BASE_URL}/favorites`;
-const CART_ENDPOINT = `${API_BASE_URL}/cart`;
+const FAVORITES_API_BASE = 'http://localhost:3000';
+const FAVORITES_FAVORITES_ENDPOINT = `${FAVORITES_API_BASE}/favorites`;
+const FAVORITES_CART_ENDPOINT = `${FAVORITES_API_BASE}/cart`;
 
 let favorites = [];
 let cartItems = [];
@@ -52,10 +52,23 @@ function showNotification(message, type = 'info') {
   }, 3000);
 }
 
-async function loadFavorites() {
+async function loadFavorites(user) {
   try {
-    favorites = await fetchData(FAVORITES_ENDPOINT) || [];
-    await loadCart();
+    if (!user) {
+      favorites = [];
+      cartItems = [];
+      renderFavorites();
+      updateCounts();
+      return;
+    }
+    
+    console.log('Loading favorites for user:', user.id);
+    
+    const allFavorites = await fetchData(FAVORITES_FAVORITES_ENDPOINT) || [];
+    favorites = allFavorites.filter(fav => fav.userId === user.id);
+    console.log('Found favorites:', favorites.length);
+    
+    await loadCart(user);
     renderFavorites();
     updateCounts();
   } catch (error) {
@@ -63,15 +76,21 @@ async function loadFavorites() {
   }
 }
 
-async function loadCart() {
-  cartItems = await fetchData(CART_ENDPOINT) || [];
+async function loadCart(user) {
+  if (!user) {
+    cartItems = [];
+    return;
+  }
+  
+  const allCartItems = await fetchData(FAVORITES_CART_ENDPOINT) || [];
+  cartItems = allCartItems.filter(item => item.userId === user.id);
 }
 
 async function removeFromFavorite(favoriteId) {
   try {
     console.log('Removing favorite with ID:', favoriteId);
     
-    await fetchData(`${FAVORITES_ENDPOINT}/${favoriteId}`, {
+    await fetchData(`${FAVORITES_FAVORITES_ENDPOINT}/${favoriteId}`, {
       method: 'DELETE'
     });
     
@@ -95,7 +114,7 @@ async function clearAllFavorites() {
   
   try {
     for (const favorite of favorites) {
-      await fetchData(`${FAVORITES_ENDPOINT}/${favorite.id}`, {
+      await fetchData(`${FAVORITES_FAVORITES_ENDPOINT}/${favorite.id}`, {
         method: 'DELETE'
       });
     }
@@ -112,10 +131,22 @@ async function clearAllFavorites() {
 
 async function addToCart(service) {
   try {
-    const existingCartItem = cartItems.find(item => item.serviceId === service.serviceId || item.serviceId === service.id);
+    const currentUser = window.authService?.getCurrentUser();
+    if (!currentUser) {
+      showNotification('Please sign in to add to cart', 'error');
+      setTimeout(() => {
+        window.location.href = 'login.html';
+      }, 1500);
+      return;
+    }
+    
+    const existingCartItem = cartItems.find(item => 
+      (item.serviceId === service.serviceId || item.serviceId === service.id) && 
+      item.userId === currentUser.id
+    );
     
     if (existingCartItem) {
-      await fetchData(`${CART_ENDPOINT}/${existingCartItem.id}`, {
+      await fetchData(`${FAVORITES_CART_ENDPOINT}/${existingCartItem.id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -134,10 +165,11 @@ async function addToCart(service) {
         description: service.description,
         image: service.image,
         quantity: 1,
+        userId: currentUser.id,
         addedAt: new Date().toISOString()
       };
       
-      await fetchData(CART_ENDPOINT, {
+      await fetchData(FAVORITES_CART_ENDPOINT, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -146,7 +178,7 @@ async function addToCart(service) {
       });
     }
     
-    await loadCart();
+    await loadCart(currentUser);
     updateCounts();
     showNotification('Added to cart!', 'success');
   } catch (error) {
@@ -156,14 +188,16 @@ async function addToCart(service) {
 }
 
 function renderFavorites() {
+  if (!favoritesGrid) return;
+  
   if (!favorites || favorites.length === 0) {
     favoritesGrid.style.display = 'none';
-    emptyFavorites.style.display = 'block';
+    if (emptyFavorites) emptyFavorites.style.display = 'block';
     return;
   }
   
   favoritesGrid.style.display = 'grid';
-  emptyFavorites.style.display = 'none';
+  if (emptyFavorites) emptyFavorites.style.display = 'none';
   
   favoritesGrid.innerHTML = favorites.map(favorite => {
     const inCart = cartItems.find(item => item.serviceId === favorite.serviceId);
@@ -208,8 +242,12 @@ function renderFavorites() {
 }
 
 function updateCounts() {
-  favoritesCount.textContent = favorites.length;
-  cartCount.textContent = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  if (favoritesCount) {
+    favoritesCount.textContent = favorites.length;
+  }
+  if (cartCount) {
+    cartCount.textContent = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  }
 }
 
 function attachEventListeners() {
@@ -242,11 +280,39 @@ function attachEventListeners() {
 }
 
 async function init() {
-  console.log('Initializing favorites...');
-  await loadFavorites();
+  console.log('Initializing favorites module...');
   
-  clearAllFavoritesBtn.addEventListener('click', clearAllFavorites);
-  console.log('Favorites initialized');
+  if (!window.authService) {
+    console.warn('Auth service not available, retrying in 500ms...');
+    setTimeout(init, 500);
+    return;
+  }
+  
+  window.authService.onAuthChange(async (user) => {
+    console.log('Auth changed, user:', user?.nickname || 'none');
+    await loadFavorites(user);
+  });
+  
+  if (window.authService.initialized) {
+    await loadFavorites(window.authService.getCurrentUser());
+  } else {
+    const checkAuth = setInterval(() => {
+      if (window.authService.initialized) {
+        clearInterval(checkAuth);
+        loadFavorites(window.authService.getCurrentUser());
+      }
+    }, 100);
+  }
+  
+  if (clearAllFavoritesBtn) {
+    clearAllFavoritesBtn.addEventListener('click', clearAllFavorites);
+  }
+  
+  console.log('Favorites module initialized');
 }
 
-document.addEventListener('DOMContentLoaded', init);
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
