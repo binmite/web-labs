@@ -148,6 +148,30 @@
       "image": "../assets/solution1.png",
       "userId": "590e",
       "addedAt": "2025-12-14T09:59:50.428Z"
+    },
+    {
+      "id": "5ed2",
+      "serviceId": "2",
+      "name": "UI/UX Audit",
+      "category": "design",
+      "price": 199,
+      "rating": 4.5,
+      "description": "Comprehensive usability and interface review.",
+      "image": "../assets/solution2.png",
+      "userId": "590e",
+      "addedAt": "2025-12-14T16:39:43.833Z"
+    },
+    {
+      "id": "c8ae",
+      "serviceId": "3",
+      "name": "Frontend Development",
+      "category": "development",
+      "price": 899,
+      "rating": 4.9,
+      "description": "React, Vue, or Angular implementation.",
+      "image": "../assets/solution3.png",
+      "userId": "590e",
+      "addedAt": "2025-12-14T16:39:45.103Z"
     }
   ],
   "cart": [
@@ -163,6 +187,32 @@
       "quantity": 1,
       "userId": "590e",
       "addedAt": "2025-12-14T09:59:51.294Z"
+    },
+    {
+      "id": "af21",
+      "serviceId": "2",
+      "name": "UI/UX Audit",
+      "category": "design",
+      "price": 199,
+      "rating": 4.5,
+      "description": "Comprehensive usability and interface review.",
+      "image": "../assets/solution2.png",
+      "quantity": 1,
+      "userId": "590e",
+      "addedAt": "2025-12-14T16:39:40.788Z"
+    },
+    {
+      "id": "eb09",
+      "serviceId": "3",
+      "name": "Frontend Development",
+      "category": "development",
+      "price": 899,
+      "rating": 4.9,
+      "description": "React, Vue, or Angular implementation.",
+      "image": "../assets/solution3.png",
+      "quantity": 1,
+      "userId": "590e",
+      "addedAt": "2025-12-14T16:39:42.514Z"
     }
   ],
   "users": [

@@ -8,8 +8,12 @@
   <link rel="stylesheet" href="../styles/global.css" />
   <link rel="stylesheet" href="../styles/header.css" />
   <link rel="stylesheet" href="../styles/home.css" />
+  <link rel="stylesheet" href="../styles/slider.css" />
   <link rel="stylesheet" href="../styles/animations.css" />
+  <link rel="stylesheet" href="../styles/gallery.css">
+  <link rel="stylesheet" href="../styles/parallax.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="icon" href="../assets/Logo.png" type="image/x-icon">
 </head>
 <body>
   <header class="header">
@@ -17,7 +21,14 @@
       <a href="./home.html" class="logo">
         <img src="../assets/Logo.png" alt="ServiceHub Logo">
       </a>
-      <nav class="nav">
+      
+      <button class="burger-menu-toggle" id="burgerToggle" aria-label="Toggle menu">
+        <span class="burger-line"></span>
+        <span class="burger-line"></span>
+        <span class="burger-line"></span>
+      </button>
+      
+      <nav class="nav" id="mainNav">
         <a href="./home.html" class="nav-link">Home</a>
         <a href="./catalog.html" class="nav-link">Catalog</a>
         <a href="./favorites.html" class="nav-link">
@@ -34,10 +45,12 @@
         <div class="auth-buttons" id="authButtons">
         </div>
       </nav>
+      
+      <div class="burger-overlay" id="burgerOverlay"></div>
     </div>
   </header>
 
-  <section class="hero">
+  <section class="hero" id="home">
     <div class="container hero-content">
       <h1>Landing template for startups</h1>
       <p>Our landing page template works on all devices, so you only have to set it up once, and get beautiful results forever.</p>
@@ -45,16 +58,28 @@
         <button class="btn btn-primary">Start free trial</button>
         <button class="btn btn-secondary">Learn more</button>
       </div>
-      <div class="hero-image">
-        <img src="../assets/hero.png" alt="Team working on laptops" />
-        <div class="play-button">
-          <i class="fas fa-play"></i>
+      <div class="hero-video-container">
+        <div class="video-wrapper" id="videoWrapper">
+          <video class="hero-video" id="heroVideo" controls>
+            <source src="../assets/demo-video.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+          <button class="video-close-btn" id="videoCloseBtn">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        
+        <div class="hero-image" id="heroImage">
+          <img src="../assets/hero.png" alt="Team working on laptops" />
+          <div class="play-button" id="playButton">
+            <i class="fas fa-play"></i>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="features">
+  <section class="features" id="features">
     <div class="container">
       <h2>The majority our customers do not understand their workflows.</h2>
       <p class="subtitle">Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
@@ -93,7 +118,7 @@
     </div>
   </section>
 
-  <section class="solutions">
+  <section class="solutions" id="solutions">
     <div class="container flex-col">
       <span class="tag">Reach goals that matter</span>
       <h2>One product, unlimited solutions</h2>
@@ -149,7 +174,7 @@
     </div>
   </section>
 
-  <section class="testimonials">
+  <section class="testimonials" id="testimonials">
     <div class="container">
       <h2>Don't take our word for it</h2>
       <p class="subtitle">Vitae aliquet nec ullamcorper sit amet risus nullam eget felis semper quis lectus nulla at volutpat diam ut venenatis tellus—in ornare.</p>
@@ -169,11 +194,300 @@
           <blockquote>— Open PRO lets me quickly get the insights I care about so that I can focus on my productive work. I've had Open PRO for about 24 hours now and I honestly don't know how I functioned without it before.</blockquote>
           <div class="author">Akex Sackett <span>/ Reform Layouts</span></div>
         </div>
+        <div class="testimonial-card">
+          <div class="avatar"><img src="../assets/avatar1.png" alt="Anastasia Dan" /></div>
+          <blockquote>— Open PRO lets me quickly get the insights I care about so that I can focus on my productive work. I've had Open PRO for about 24 hours now and I honestly don't know how I functioned without it before.</blockquote>
+          <div class="author">Anastasia Dan <span>/ UX Board</span></div>
+        </div>
+        <div class="testimonial-card">
+          <div class="avatar"><img src="../assets/avatar2.png" alt="Roman Level" /></div>
+          <blockquote>— Open PRO lets me quickly get the insights I care about so that I can focus on my productive work. I've had Open PRO for about 24 hours now and I honestly don't know how I functioned without it before.</blockquote>
+          <div class="author">Roman Level <span>/ AppName</span></div>
+        </div>
+        <div class="testimonial-card">
+          <div class="avatar"><img src="../assets/avatar3.png" alt="Akex Sackett" /></div>
+          <blockquote>— Open PRO lets me quickly get the insights I care about so that I can focus on my productive work. I've had Open PRO for about 24 hours now and I honestly don't know how I functioned without it before.</blockquote>
+          <div class="author">Akex Sackett <span>/ Reform Layouts</span></div>
+        </div>
       </div>
     </div>
   </section>
 
-  <section class="newsletter">
+  <section class="stats" id="stats">
+    <div class="container">
+      <h2>Our Impact in Numbers</h2>
+      <p class="subtitle">See how we're making a difference for our customers around the world.</p>
+      
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-users"></i>
+          </div>
+          <div class="stat-content">
+            <div class="counter" data-target="10000" data-speed="2000" data-prefix="">0</div>
+            <h4>Happy Customers</h4>
+            <p>Satisfied users worldwide</p>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-shopping-cart"></i>
+          </div>
+          <div class="stat-content">
+            <div class="counter" id="cartCounterLive" data-target="0" data-speed="1000" data-prefix=""></div>
+            <h4>Products in Cart</h4>
+            <p>Currently in your shopping cart</p>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="far fa-heart"></i>
+          </div>
+          <div class="stat-content">
+            <div class="counter" id="favoritesCounterLive" data-target="0" data-speed="1000" data-prefix=""></div>
+            <h4>Favorites</h4>
+            <p>Products saved to favorites</p>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-star"></i>
+          </div>
+          <div class="stat-content">
+            <div class="counter" data-target="99" data-speed="1500" data-prefix="">0</div>
+            <h4>Satisfaction Rate</h4>
+            <p>Customer satisfaction score</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="interactive-gallery" id="gallery">
+    <div class="container">
+      <h2>Interactive Media Gallery</h2>
+      <p class="subtitle">Click on any interactive element to experience unique visual and audio combinations</p>
+      
+      <div class="gallery-container">
+        <div class="gallery-main">
+          <div class="main-image-wrapper">
+            <img id="galleryMainImage" src="../assets/gallery/images/image1.jpg" alt="Gallery Image" />
+            <div class="image-overlay">
+              <span id="imageCounter">1 / 10</span>
+              <span id="soundTitle">Sound Effect: Nature</span>
+            </div>
+          </div>
+          
+          <div class="player-controls">
+            <button id="playPauseBtn" class="player-btn" title="Play/Pause">
+              <i class="fas fa-play"></i>
+            </button>
+            <button id="stopBtn" class="player-btn" title="Stop">
+              <i class="fas fa-stop"></i>
+            </button>
+            <button id="nextBtn" class="player-btn" title="Next Random">
+              <i class="fas fa-random"></i>
+            </button>
+            
+            <div class="volume-control">
+              <button id="muteBtn" class="volume-btn" title="Mute">
+                <i class="fas fa-volume-up"></i>
+              </button>
+              <input type="range" id="volumeSlider" min="0" max="100" value="70" title="Volume">
+              <span id="volumeValue">70%</span>
+            </div>
+          </div>
+          
+          <div class="player-status">
+            <div class="status-indicator" id="statusIndicator">
+              <span class="status-dot"></span>
+              <span id="statusText">Ready</span>
+            </div>
+            <div class="sound-wave" id="soundWave">
+              <div class="wave-bar"></div>
+              <div class="wave-bar"></div>
+              <div class="wave-bar"></div>
+              <div class="wave-bar"></div>
+              <div class="wave-bar"></div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="interactive-elements">
+          <div class="element-grid">
+            <div class="interactive-element" data-type="icon" data-sound="1" data-image="1">
+              <div class="element-icon">
+                <i class="fas fa-magic"></i>
+              </div>
+              <div class="element-label">Magical Effect</div>
+              <div class="element-hint">Click for magic!</div>
+            </div>
+            
+            <div class="interactive-element" data-type="image" data-sound="2" data-image="2">
+              <div class="element-thumbnail">
+                <img src="../assets/gallery/images/image2.jpg" alt="Nature">
+              </div>
+              <div class="element-label">Nature Sounds</div>
+              <div class="element-hint">Click for nature!</div>
+            </div>
+            
+            <div class="interactive-element" data-type="button" data-sound="3" data-image="3">
+              <div class="element-button">
+                <i class="fas fa-bolt"></i>
+              </div>
+              <div class="element-label">Energy Boost</div>
+              <div class="element-hint">Click for energy!</div>
+            </div>
+            
+            <div class="interactive-element" data-type="animated" data-sound="4" data-image="4">
+              <div class="element-animated">
+                <i class="fas fa-star"></i>
+                <div class="sparkle"></div>
+              </div>
+              <div class="element-label">Star Power</div>
+              <div class="element-hint">Click for stars!</div>
+            </div>
+            
+            <div class="interactive-element" data-type="card" data-sound="5" data-image="5">
+              <div class="element-card">
+                <div class="card-preview">
+                  <i class="fas fa-water"></i>
+                </div>
+              </div>
+              <div class="element-label">Water Flow</div>
+              <div class="element-hint">Click for water!</div>
+            </div>
+            
+            <div class="interactive-element" data-type="simple" data-sound="6" data-image="6">
+              <div class="element-simple">
+                <i class="fas fa-fire"></i>
+              </div>
+              <div class="element-label">Fire Element</div>
+              <div class="element-hint">Click for fire!</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="media-info">
+          <h3>Current Selection</h3>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label">Image:</span>
+              <span id="currentImageName" class="info-value">Nature Landscape</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Sound:</span>
+              <span id="currentSoundName" class="info-value">Forest Ambiance</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Duration:</span>
+              <span id="currentDuration" class="info-value">0:00</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Volume:</span>
+              <span id="currentVolume" class="info-value">70%</span>
+            </div>
+          </div>
+          
+          <div class="auto-play-control">
+            <button id="autoPlayBtn" class="btn btn-secondary">
+              <i class="fas fa-sync-alt"></i> Auto Play (5s)
+            </button>
+            <div class="auto-timer" id="autoTimer">Next in: 0s</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="features parallax-section" id="features">
+      <div class="parallax-container">
+          <div class="parallax-layer layer-back">
+              <div class="parallax-bg-elements">
+                  <div class="bg-element bg-circle circle-1"></div>
+                  <div class="bg-element bg-circle circle-2"></div>
+                  <div class="bg-element bg-circle circle-3"></div>
+                  <div class="bg-element square-1"></div>
+                  <div class="bg-element square-2"></div>
+                  <div class="bg-element bg-dot-1"></div>
+                  <div class="bg-element bg-dot-2"></div>
+              </div>
+          </div>
+          
+          <div class="parallax-layer layer-middle">
+              <div class="floating-elements">
+                  <div class="floating-icon" data-speed="0.3" data-direction="1">
+                      <i class="fas fa-code"></i>
+                  </div>
+                  <div class="floating-icon" data-speed="0.4" data-direction="1">
+                      <i class="fas fa-cloud"></i>
+                  </div>
+                  <div class="floating-icon" data-speed="0.35" data-direction="1">
+                      <i class="fas fa-server"></i>
+                  </div>
+                  <div class="floating-icon reverse-move" data-speed="0.5" data-direction="-1">
+                      <i class="fas fa-arrows-alt-h"></i>
+                  </div>
+              </div>
+          </div>
+          
+          <div class="parallax-layer layer-front">
+              <div class="container">
+                  <h2 class="parallax-title" data-speed="0.8">Experience Depth with Parallax</h2>
+                  <p class="subtitle" data-speed="0.7">Scroll down to see three layers moving at different speeds, creating an illusion of depth</p>
+                  
+                  <div class="features-grid">
+                      <div class="feature-card parallax-card" data-speed="0.9">
+                          <div class="feature-icon"><i class="fas fa-star"></i></div>
+                          <h3>Background Layer</h3>
+                          <p>Moves slowest (speed: 0.15). Creates deep atmospheric feel with geometric shapes.</p>
+                      </div>
+                      
+                      <div class="feature-card parallax-card" data-speed="0.85">
+                          <div class="feature-icon"><i class="fas fa-layer-group"></i></div>
+                          <h3>Middle Layer</h3>
+                          <p>Moderate speed (0.4). Interactive floating elements with opposite movement.</p>
+                      </div>
+                      
+                      <div class="feature-card parallax-card" data-speed="0.95">
+                          <div class="feature-icon"><i class="fas fa-forward"></i></div>
+                          <h3>Foreground Layer</h3>
+                          <p>Fastest movement (0.7). Content cards with individual parallax effects.</p>
+                      </div>
+                      
+                      <div class="feature-card parallax-card" data-speed="0.88">
+                          <div class="feature-icon"><i class="fas fa-arrows-alt-h"></i></div>
+                          <h3>Reverse Motion</h3>
+                          <p>One element moves opposite direction (-0.6) to enhance depth perception.</p>
+                      </div>
+                      
+                      <div class="feature-card parallax-card" data-speed="0.92">
+                          <div class="feature-icon"><i class="fas fa-tachometer-alt"></i></div>
+                          <h3>Smooth Transitions</h3>
+                          <p>Easing algorithm ensures buttery smooth movement without jarring jumps.</p>
+                      </div>
+                      
+                      <div class="feature-card parallax-card" data-speed="0.87">
+                          <div class="feature-icon"><i class="fas fa-mobile-alt"></i></div>
+                          <h3>Responsive Design</h3>
+                          <p>Optimized for all devices. Automatically adjusts on mobile screens.</p>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </section>
+
+  <section class="maps" id="contact">
+            <div class="contact-map">
+                <div id="map"></div>
+            </div>
+  </section>
+
+  <section class="newsletter" id="newsletter">
     <div class="container">
       <div class="newsletter-content">
         <div class="newsletter-content-text">
@@ -188,6 +502,7 @@
     </div>
   </section>
 
+
   <footer class="footer">
     <div class="container">
       <div class="footer-grid">
@@ -200,48 +515,58 @@
         <div class="footer-col">
           <h4>Products</h4>
           <ul>
-            <li><a href="#">Web Studio</a></li>
-            <li><a href="#">DynamicBox Flex</a></li>
-            <li><a href="#">Programming Forms</a></li>
+            <li><a href="#home" class="footer-link" data-scroll="home">Home</a></li>
+            <li><a href="#features" class="footer-link" data-scroll="features">Features</a></li>
+            <li><a href="#solutions" class="footer-link" data-scroll="solutions">Solutions</a></li>
+            <li><a href="#testimonials" class="footer-link" data-scroll="testimonials">Testimonials</a></li>
           </ul>
         </div>
         <div class="footer-col">
           <h4>Resources</h4>
           <ul>
-            <li><a href="#">Nostrud exercitation</a></li>
-            <li><a href="#">Visual mockups</a></li>
-            <li><a href="#">Nostrud exercitation</a></li>
-            <li><a href="#">Visual mockups</a></li>
+            <li><a href="#contact" class="footer-link" data-scroll="contact">Contact Us</a></li>
+            <li><a href="#newsletter" class="footer-link" data-scroll="newsletter">Newsletter</a></li>
+            <li><a href="./catalog.html">Catalog</a></li>
+            <li><a href="./feedback.html">Feedback</a></li>
           </ul>
         </div>
         <div class="footer-col">
           <h4>Company</h4>
           <ul>
-            <li><a href="#">Consectetur adipiscing</a></li>
-            <li><a href="#">Labore et dolore</a></li>
-            <li><a href="#">Sed do eiusmod</a></li>
-            <li><a href="#">Tempor incididunt</a></li>
-            <li><a href="#">Labore et dolore</a></li>
+            <li><a href="#home">About Us</a></li>
+            <li><a href="#contact">Our Location</a></li>
+            <li><a href="#features">Our Features</a></li>
+            <li><a href="#testimonials">Customer Reviews</a></li>
+            <li><a href="#solutions">Our Solutions</a></li>
           </ul>
         </div>
       </div>
     </div>
     <div class="container footer-bottom">
-        <div class="footer-bottom-left">
-            <p class="copyright">Made by <strong>Cruip</strong>. All right reserved</p>
-        </div>
-        <div class="footer-bottom-right">
-          <ul>
-            <li><a href="#"><img src="../assets/twitter.png" alt="twitter" /></a></li>
-            <li><a href="#"><img src="../assets/git.png" alt="git" /></a></li>
-            <li><a href="#"><img src="../assets/facebook.png" alt="facebook" /></a></li>
-            <li><a href="#"><img src="../assets/inst.png" alt="inst" /></a></li>
-            <li><a href="#"><img src="../assets/in.png" alt="in" /></a></li>
-          </ul>
-        </div>
+      <div class="footer-bottom-left">
+        <p class="copyright">Made by <strong>Cruip</strong>. All right reserved</p>
+      </div>
+      <div class="footer-bottom-right">
+        <ul>
+          <li><a href="#"><img src="../assets/twitter.png" alt="twitter" /></a></li>
+          <li><a href="#"><img src="../assets/git.png" alt="git" /></a></li>
+          <li><a href="#"><img src="../assets/facebook.png" alt="facebook" /></a></li>
+          <li><a href="#"><img src="../assets/inst.png" alt="inst" /></a></li>
+          <li><a href="#"><img src="../assets/in.png" alt="in" /></a></li>
+        </ul>
+      </div>
     </div>
   </footer>
+  <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" ></script>
+  <script src="../scripts/burger-menu.js"></script>
+  <script src="../scripts/map.js"></script>
+  <script src="../scripts/video-player.js"></script>
   <script src="../scripts/globalCounters.js"></script>
   <script src="../scripts/auth.js"></script>
+  <script src="../scripts/slider.js"></script>
+  <script src="../scripts/smooth-scroll.js"></script>
+  <script src="../scripts/scroll-animations.js"></script>
+  <script src="../scripts/interactive-gallery.js"></script>
+  <script src="../scripts/parallax.js"></script>
 </body>
 </html>
