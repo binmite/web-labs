@@ -138,19 +138,33 @@
   ],
   "favorites": [
     {
-      "id": "6911",
-      "serviceId": "3",
-      "name": "Frontend Development",
-      "category": "development",
-      "price": 899,
-      "rating": 4.9,
-      "description": "React, Vue, or Angular implementation.",
-      "image": "../assets/solution3.png",
+      "id": "ed5b",
+      "serviceId": "1",
+      "name": "Web Design",
+      "category": "design",
+      "price": 299,
+      "rating": 4.7,
+      "description": "Modern responsive website design for startups.",
+      "image": "../assets/solution1.png",
       "userId": "590e",
-      "addedAt": "2025-12-13T22:53:31.783Z"
+      "addedAt": "2025-12-14T09:59:50.428Z"
     }
   ],
-  "cart": [],
+  "cart": [
+    {
+      "id": "a7b0",
+      "serviceId": "1",
+      "name": "Web Design",
+      "category": "design",
+      "price": 299,
+      "rating": 4.7,
+      "description": "Modern responsive website design for startups.",
+      "image": "../assets/solution1.png",
+      "quantity": 1,
+      "userId": "590e",
+      "addedAt": "2025-12-14T09:59:51.294Z"
+    }
+  ],
   "users": [
     {
       "id": "1",
@@ -162,7 +176,7 @@
       "lastName": "User",
       "middleName": "",
       "nickname": "AdminUser99",
-      "role": "admin",
+      "role": "user",
       "agreedToTerms": true,
       "createdAt": "2024-01-01T00:00:00.000Z"
     },

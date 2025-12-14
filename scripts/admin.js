@@ -9,16 +9,24 @@ let allFeedback = [];
 let allOrders = [];
 let allUsers = [];
 
+let serviceForm;
+let saveServiceBtn;
+
 document.addEventListener('DOMContentLoaded', initAdmin);
 
 async function initAdmin() {
   console.log('Initializing admin panel...');
   
-  await checkAdminAccess();
-  const currentUser = window.authService?.getCurrentUser();
-  if (!currentUser || currentUser.role !== 'admin') return;
+  const hasAccess = await checkAdminAccess();
+  if (!hasAccess) return;
+  
+  serviceForm = document.getElementById('serviceForm');
+  saveServiceBtn = document.getElementById('saveService');
   
   await loadAllData();
+  
+  setupFormValidation();
+  
   setupEventListeners();
   
   console.log('Admin panel initialized');
@@ -26,14 +34,37 @@ async function initAdmin() {
 
 async function checkAdminAccess() {
   try {
-    const currentUser = window.authService?.getCurrentUser();
-    
-    if (!currentUser || currentUser.role !== 'admin') {
-      console.warn('Access denied: User is not admin');
-      return false;
+    if (!window.authService || !window.authService.initialized) {
+      await new Promise(resolve => setTimeout(resolve, 500));
+      if (!window.authService) {
+        console.error('Auth service not available');
+        return false;
+      }
     }
     
-    return true;
+    const currentUser = window.authService.getCurrentUser();
+    const isAdmin = currentUser && currentUser.role === 'admin';
+    
+    const adminPanel = document.getElementById('adminPanel');
+    const accessDenied = document.getElementById('adminAccessDenied');
+    
+    if (adminPanel && accessDenied) {
+      if (isAdmin) {
+        adminPanel.style.display = 'block';
+        accessDenied.style.display = 'none';
+        return true;
+      } else {
+        adminPanel.style.display = 'none';
+        accessDenied.style.display = 'block';
+        
+        const adminBtn = document.querySelector('.admin-panel-btn');
+        if (adminBtn) adminBtn.style.display = 'none';
+        
+        return false;
+      }
+    }
+    
+    return false;
   } catch (error) {
     console.error('Error checking admin access:', error);
     return false;
@@ -50,8 +81,10 @@ async function loadAllData() {
     ]);
     
     updateStats();
-    
     renderServices();
+    renderFeedback();
+    renderOrders();
+    renderUsers();
     
   } catch (error) {
     console.error('Error loading admin data:', error);
@@ -66,6 +99,92 @@ function updateStats() {
   document.getElementById('totalUsers').textContent = allUsers.length;
 }
 
+function setupFormValidation() {
+  if (!serviceForm) return;
+  
+  const inputs = serviceForm.querySelectorAll('input, textarea, select');
+  inputs.forEach(input => {
+    input.addEventListener('input', validateForm);
+    input.addEventListener('change', validateForm);
+  });
+}
+
+function validateForm() {
+  if (!saveServiceBtn || !serviceForm) return;
+  
+  let isValid = true;
+  const errors = {};
+  
+  const nameInput = document.getElementById('serviceName');
+  if (!nameInput.value.trim()) {
+    isValid = false;
+    errors.name = 'Service name is required';
+  } else if (nameInput.value.trim().length < 3) {
+    isValid = false;
+    errors.name = 'Service name must be at least 3 characters';
+  }
+  
+  const categoryInput = document.getElementById('serviceCategory');
+  if (!categoryInput.value) {
+    isValid = false;
+    errors.category = 'Category is required';
+  }
+  
+  const priceInput = document.getElementById('servicePrice');
+  const price = parseFloat(priceInput.value);
+  if (!priceInput.value || isNaN(price) || price < 0) {
+    isValid = false;
+    errors.price = 'Valid price is required (min: 0)';
+  }
+  
+  const ratingInput = document.getElementById('serviceRating');
+  const rating = parseFloat(ratingInput.value);
+  if (!ratingInput.value || isNaN(rating) || rating < 0 || rating > 5) {
+    isValid = false;
+    errors.rating = 'Rating must be between 0 and 5';
+  }
+  
+  const descInput = document.getElementById('serviceDescription');
+  if (!descInput.value.trim()) {
+    isValid = false;
+    errors.description = 'Description is required';
+  } else if (descInput.value.trim().length < 10) {
+    isValid = false;
+    errors.description = 'Description must be at least 10 characters';
+  }
+  
+  const imageInput = document.getElementById('serviceImage');
+  const urlPattern = /^(https?:\/\/|\/|\.\/|\.\.\/).*\.(jpg|jpeg|png|gif|svg|webp)$/i;
+  if (!imageInput.value.trim()) {
+    isValid = false;
+    errors.image = 'Image URL is required';
+  } else if (!urlPattern.test(imageInput.value.trim())) {
+    isValid = false;
+    errors.image = 'Please enter a valid image URL';
+  }
+  
+  showFormErrors(errors);
+  
+  saveServiceBtn.disabled = !isValid;
+  
+  return isValid;
+}
+
+function showFormErrors(errors) {
+  document.querySelectorAll('.error-message').forEach(el => {
+    el.textContent = '';
+    el.style.display = 'none';
+  });
+  
+  Object.entries(errors).forEach(([field, message]) => {
+    const errorEl = document.getElementById(`${field}Error`);
+    if (errorEl) {
+      errorEl.textContent = message;
+      errorEl.style.display = 'block';
+    }
+  });
+}
+
 function setupEventListeners() {
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -75,41 +194,30 @@ function setupEventListeners() {
   });
   
   const addServiceBtn = document.getElementById('addServiceBtn');
-  const searchServices = document.getElementById('searchServices');
-  const serviceModal = document.getElementById('serviceModal');
-  const cancelServiceBtn = document.getElementById('cancelService');
-  const saveServiceBtn = document.getElementById('saveService');
-  const closeModalBtns = document.querySelectorAll('.close-modal');
-  
   if (addServiceBtn) {
     addServiceBtn.addEventListener('click', () => {
       openServiceModal();
     });
   }
   
+  const searchServices = document.getElementById('searchServices');
   if (searchServices) {
     searchServices.addEventListener('input', () => {
       renderServices();
     });
   }
   
-  if (cancelServiceBtn) {
-    cancelServiceBtn.addEventListener('click', () => {
-      serviceModal.classList.remove('show');
-    });
-  }
-  
-  if (saveServiceBtn) {
-    saveServiceBtn.addEventListener('click', handleSaveService);
-  }
-  
-  closeModalBtns.forEach(btn => {
+  document.querySelectorAll('.close-modal, #cancelService').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.modal').forEach(modal => {
         modal.classList.remove('show');
       });
     });
   });
+  
+  if (saveServiceBtn) {
+    saveServiceBtn.addEventListener('click', handleSaveService);
+  }
   
   window.addEventListener('click', (e) => {
     if (e.target.classList.contains('modal')) {
@@ -118,6 +226,7 @@ function setupEventListeners() {
   });
   
   const filterFeedbackService = document.getElementById('filterFeedbackService');
+  const filterFeedbackUser = document.getElementById('filterFeedbackUser');
   const filterFeedbackRating = document.getElementById('filterFeedbackRating');
   
   if (filterFeedbackService) {
@@ -125,23 +234,16 @@ function setupEventListeners() {
     populateServiceFilter(filterFeedbackService);
   }
   
+  if (filterFeedbackUser) {
+    filterFeedbackUser.addEventListener('change', renderFeedback);
+    populateUserFilter(filterFeedbackUser);
+  }
+  
   if (filterFeedbackRating) {
     filterFeedbackRating.addEventListener('change', renderFeedback);
   }
   
-  const filterOrderStatus = document.getElementById('filterOrderStatus');
-  const filterOrderDate = document.getElementById('filterOrderDate');
-  
-  if (filterOrderStatus) {
-    filterOrderStatus.addEventListener('change', renderOrders);
-  }
-  
-  if (filterOrderDate) {
-    filterOrderDate.addEventListener('change', renderOrders);
-  }
-  
   const filterUserRole = document.getElementById('filterUserRole');
-  
   if (filterUserRole) {
     filterUserRole.addEventListener('change', renderUsers);
   }
@@ -150,7 +252,10 @@ function setupEventListeners() {
   if (descriptionInput) {
     descriptionInput.addEventListener('input', () => {
       const counter = document.getElementById('descriptionCounter');
-      counter.textContent = descriptionInput.value.length;
+      if (counter) {
+        counter.textContent = descriptionInput.value.length;
+        validateForm();
+      }
     });
   }
 }
@@ -163,21 +268,6 @@ function switchTab(tabName) {
   document.querySelectorAll('.tab-content').forEach(content => {
     content.classList.toggle('active', content.id === `${tabName}Tab`);
   });
-  
-  switch (tabName) {
-    case 'services':
-      renderServices();
-      break;
-    case 'feedback':
-      renderFeedback();
-      break;
-    case 'orders':
-      renderOrders();
-      break;
-    case 'users':
-      renderUsers();
-      break;
-  }
 }
 
 function renderServices() {
@@ -200,21 +290,24 @@ function renderServices() {
       <div class="no-results">
         <i class="fas fa-search fa-3x"></i>
         <h3>No services found</h3>
-        <p>Try adjusting your search criteria</p>
+        <p>${searchTerm ? 'Try adjusting your search criteria' : 'No services available'}</p>
       </div>
     `;
     return;
   }
   
   servicesList.innerHTML = filteredServices.map(service => `
-    <div class="admin-card">
+    <div class="admin-card" data-service-id="${service.id}">
       <div class="card-header">
         <h3 class="card-title">${service.name}</h3>
         <div class="card-actions">
-          <button class="action-btn edit" data-service-id="${service.id}">
+          <button class="action-btn view-feedback" data-service-id="${service.id}" title="View Feedback">
+            <i class="fas fa-comments"></i>
+          </button>
+          <button class="action-btn edit" data-service-id="${service.id}" title="Edit">
             <i class="fas fa-edit"></i>
           </button>
-          <button class="action-btn delete" data-service-id="${service.id}">
+          <button class="action-btn delete" data-service-id="${service.id}" title="Delete">
             <i class="fas fa-trash"></i>
           </button>
         </div>
@@ -222,24 +315,27 @@ function renderServices() {
       <div class="card-content">
         <p>${service.description}</p>
         <div class="service-meta">
-          <span><strong>Category:</strong> ${service.category}</span>
-          <span><strong>Price:</strong> $${service.price}</span>
-          <span><strong>Rating:</strong> ${service.rating} ★</span>
+          <span class="badge">${service.category}</span>
+          <span><i class="fas fa-dollar-sign"></i> $${service.price}</span>
+          <span><i class="fas fa-star"></i> ${service.rating}</span>
         </div>
       </div>
-      <div class="card-meta">
-        <span>ID: ${service.id}</span>
-        <span>Added: ${formatDate(service.createdAt)}</span>
+      <div class="card-footer">
+        <small>ID: ${service.id}</small>
+        <button class="btn btn-secondary btn-sm view-feedback-btn" data-service-id="${service.id}">
+          View Feedback (${getServiceFeedbackCount(service.id)})
+        </button>
       </div>
     </div>
   `).join('');
   
-  attachServiceEventListeners();
+  attachServicesEventListeners();
 }
 
-function attachServiceEventListeners() {
+function attachServicesEventListeners() {
   document.querySelectorAll('.action-btn.edit').forEach(btn => {
     btn.addEventListener('click', (e) => {
+      e.stopPropagation();
       const serviceId = btn.dataset.serviceId;
       openServiceModal(serviceId);
     });
@@ -247,10 +343,23 @@ function attachServiceEventListeners() {
   
   document.querySelectorAll('.action-btn.delete').forEach(btn => {
     btn.addEventListener('click', async (e) => {
+      e.stopPropagation();
       const serviceId = btn.dataset.serviceId;
       await deleteService(serviceId);
     });
   });
+  
+  document.querySelectorAll('.action-btn.view-feedback, .view-feedback-btn').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const serviceId = btn.dataset.serviceId;
+      await showServiceFeedback(serviceId);
+    });
+  });
+}
+
+function getServiceFeedbackCount(serviceId) {
+  return allFeedback.filter(f => f.serviceId == serviceId).length;
 }
 
 function openServiceModal(serviceId = null) {
@@ -270,18 +379,19 @@ function openServiceModal(serviceId = null) {
     document.getElementById('serviceRating').value = service.rating;
     document.getElementById('serviceDescription').value = service.description;
     document.getElementById('serviceImage').value = service.image;
-    
   } else {
     modalTitle.innerHTML = '<i class="fas fa-plus"></i> Add New Service';
     form.reset();
     document.getElementById('serviceId').value = '';
   }
   
-  const descriptionInput = document.getElementById('serviceDescription');
+  const descInput = document.getElementById('serviceDescription');
   const counter = document.getElementById('descriptionCounter');
-  if (descriptionInput && counter) {
-    counter.textContent = descriptionInput.value.length;
+  if (descInput && counter) {
+    counter.textContent = descInput.value.length;
   }
+  
+  validateForm();
   
   modal.classList.add('show');
 }
@@ -289,31 +399,22 @@ function openServiceModal(serviceId = null) {
 async function handleSaveService(e) {
   e.preventDefault();
   
-  const form = document.getElementById('serviceForm');
+  if (!validateForm()) {
+    showNotification('Please fix validation errors', 'error');
+    return;
+  }
+  
   const serviceId = document.getElementById('serviceId').value;
   const isEdit = !!serviceId;
   
-  const name = document.getElementById('serviceName').value.trim();
-  const category = document.getElementById('serviceCategory').value;
-  const price = parseFloat(document.getElementById('servicePrice').value);
-  const rating = parseFloat(document.getElementById('serviceRating').value);
-  const description = document.getElementById('serviceDescription').value.trim();
-  const image = document.getElementById('serviceImage').value.trim();
-  
-  if (!name || !category || isNaN(price) || isNaN(rating) || !description || !image) {
-    showNotification('Please fill in all fields correctly', 'error');
-    return;
-  }
-  
-  if (price < 0) {
-    showNotification('Price cannot be negative', 'error');
-    return;
-  }
-  
-  if (rating < 0 || rating > 5) {
-    showNotification('Rating must be between 0 and 5', 'error');
-    return;
-  }
+  const serviceData = {
+    name: document.getElementById('serviceName').value.trim(),
+    category: document.getElementById('serviceCategory').value,
+    price: parseFloat(document.getElementById('servicePrice').value),
+    rating: parseFloat(document.getElementById('serviceRating').value),
+    description: document.getElementById('serviceDescription').value.trim(),
+    image: document.getElementById('serviceImage').value.trim()
+  };
   
   const saveBtn = document.getElementById('saveService');
   const originalText = saveBtn.innerHTML;
@@ -321,30 +422,17 @@ async function handleSaveService(e) {
   saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
   
   try {
-    const serviceData = {
-      name,
-      category,
-      price,
-      rating,
-      description,
-      image
-    };
-    
     let result;
     if (isEdit) {
       result = await fetchData(`${ADMIN_SERVICES_ENDPOINT}/${serviceId}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(serviceData)
       });
     } else {
       result = await fetchData(ADMIN_SERVICES_ENDPOINT, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(serviceData)
       });
     }
@@ -353,9 +441,7 @@ async function handleSaveService(e) {
       showNotification(`Service ${isEdit ? 'updated' : 'added'} successfully!`, 'success');
       
       document.getElementById('serviceModal').classList.remove('show');
-      
       await loadAllData();
-      renderServices();
     }
     
   } catch (error) {
@@ -372,12 +458,18 @@ async function deleteService(serviceId) {
     return;
   }
   
+  const serviceFeedback = allFeedback.filter(f => f.serviceId == serviceId);
+  if (serviceFeedback.length > 0) {
+    if (!confirm(`This service has ${serviceFeedback.length} feedback entries. Deleting it will also delete all associated feedback. Continue?`)) {
+      return;
+    }
+  }
+  
   try {
-    const hasFeedback = allFeedback.some(f => f.serviceId == serviceId);
-    if (hasFeedback) {
-      if (!confirm('This service has customer feedback. Deleting it will also delete associated feedback. Continue?')) {
-        return;
-      }
+    for (const feedback of serviceFeedback) {
+      await fetchData(`${ADMIN_FEEDBACK_ENDPOINT}/${feedback.id}`, {
+        method: 'DELETE'
+      });
     }
     
     await fetchData(`${ADMIN_SERVICES_ENDPOINT}/${serviceId}`, {
@@ -387,7 +479,6 @@ async function deleteService(serviceId) {
     showNotification('Service deleted successfully', 'success');
     
     await loadAllData();
-    renderServices();
     
   } catch (error) {
     console.error('Error deleting service:', error);
@@ -395,9 +486,72 @@ async function deleteService(serviceId) {
   }
 }
 
+async function showServiceFeedback(serviceId) {
+  const service = allServices.find(s => s.id == serviceId);
+  if (!service) return;
+  
+  const serviceFeedback = allFeedback.filter(f => f.serviceId == serviceId);
+  
+  const modal = document.getElementById('viewFeedbackModal');
+  const details = document.getElementById('feedbackDetails');
+  
+  if (serviceFeedback.length === 0) {
+    details.innerHTML = `
+      <div class="no-feedback">
+        <i class="fas fa-comment-slash fa-3x"></i>
+        <h3>No Feedback Yet</h3>
+        <p>There are no reviews for this service yet.</p>
+      </div>
+    `;
+  } else {
+    details.innerHTML = `
+      <div class="feedback-header">
+        <h3>Feedback for: ${service.name}</h3>
+        <p>Total reviews: ${serviceFeedback.length}</p>
+      </div>
+      <div class="feedback-list">
+        ${serviceFeedback.map(feedback => {
+          const user = allUsers.find(u => u.id === feedback.userId);
+          return `
+            <div class="feedback-item" data-feedback-id="${feedback.id}">
+              <div class="feedback-header">
+                <div class="user-info">
+                  <strong>${feedback.isAnonymous ? 'Anonymous' : user?.nickname || 'Unknown User'}</strong>
+                  <span class="rating">${'★'.repeat(feedback.rating)}</span>
+                </div>
+                <button class="btn btn-danger btn-sm delete-feedback-btn" data-feedback-id="${feedback.id}">
+                  <i class="fas fa-trash"></i> Delete
+                </button>
+              </div>
+              <p class="feedback-text">${feedback.text}</p>
+              <div class="feedback-meta">
+                <small>${formatDate(feedback.createdAt)}</small>
+                ${feedback.reported ? '<span class="badge badge-warning">Reported</span>' : ''}
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+    
+    details.querySelectorAll('.delete-feedback-btn').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const feedbackId = btn.dataset.feedbackId;
+        await deleteFeedback(feedbackId);
+        modal.classList.remove('show');
+        setTimeout(() => showServiceFeedback(serviceId), 300);
+      });
+    });
+  }
+  
+  modal.classList.add('show');
+}
+
 function renderFeedback() {
   const feedbackList = document.getElementById('feedbackListAdmin');
   const serviceFilter = document.getElementById('filterFeedbackService')?.value;
+  const userFilter = document.getElementById('filterFeedbackUser')?.value;
   const ratingFilter = document.getElementById('filterFeedbackRating')?.value;
   
   if (!feedbackList) return;
@@ -406,6 +560,10 @@ function renderFeedback() {
   
   if (serviceFilter && serviceFilter !== 'all') {
     filteredFeedback = filteredFeedback.filter(f => f.serviceId == serviceFilter);
+  }
+  
+  if (userFilter && userFilter !== 'all') {
+    filteredFeedback = filteredFeedback.filter(f => f.userId == userFilter);
   }
   
   if (ratingFilter && ratingFilter !== 'all') {
@@ -424,39 +582,38 @@ function renderFeedback() {
   }
   
   feedbackList.innerHTML = filteredFeedback.map(feedback => {
-    const service = allServices.find(s => s.id === feedback.serviceId);
+    const service = allServices.find(s => s.id == feedback.serviceId);
     const user = allUsers.find(u => u.id === feedback.userId);
     
     return `
-      <div class="admin-card">
+      <div class="admin-card" data-feedback-id="${feedback.id}">
         <div class="card-header">
-          <h3 class="card-title">${feedback.title}</h3>
+          <h3 class="card-title">
+            ${service ? `${service.name} - Feedback` : 'Unknown Service'}
+          </h3>
           <div class="card-actions">
-            <button class="action-btn delete" data-feedback-id="${feedback.id}">
+            <span class="rating">${'★'.repeat(feedback.rating)}</span>
+            <button class="action-btn delete" data-feedback-id="${feedback.id}" title="Delete">
               <i class="fas fa-trash"></i>
             </button>
           </div>
         </div>
         <div class="card-content">
           <div class="feedback-meta">
-            <span><strong>Service:</strong> ${service?.name || 'Unknown'}</span>
             <span><strong>User:</strong> ${feedback.isAnonymous ? 'Anonymous' : user?.nickname || 'Unknown'}</span>
-            <span><strong>Rating:</strong> ${'★'.repeat(feedback.rating)}</span>
+            <span><strong>Service:</strong> ${service?.name || 'Unknown'}</span>
           </div>
           <p class="feedback-text">${feedback.text}</p>
-          <div class="feedback-stats">
-            <span><i class="fas fa-thumbs-up"></i> ${feedback.helpfulCount || 0} helpful</span>
-          </div>
         </div>
-        <div class="card-meta">
-          <span>${formatDate(feedback.createdAt)}</span>
-          <span>${feedback.reported ? '<i class="fas fa-flag text-red"></i> Reported' : ''}</span>
+        <div class="card-footer">
+          <small>${formatDate(feedback.createdAt)}</small>
+          ${feedback.reported ? '<span class="badge badge-warning">Reported</span>' : ''}
         </div>
       </div>
     `;
   }).join('');
   
-  document.querySelectorAll('.action-btn.delete[data-feedback-id]').forEach(btn => {
+  feedbackList.querySelectorAll('.action-btn.delete[data-feedback-id]').forEach(btn => {
     btn.addEventListener('click', async () => {
       const feedbackId = btn.dataset.feedbackId;
       await deleteFeedback(feedbackId);
@@ -464,54 +621,57 @@ function renderFeedback() {
   });
 }
 
+async function deleteFeedback(feedbackId) {
+  if (!confirm('Are you sure you want to delete this feedback?')) return;
+  
+  try {
+    await fetchData(`${ADMIN_FEEDBACK_ENDPOINT}/${feedbackId}`, {
+      method: 'DELETE'
+    });
+    
+    showNotification('Feedback deleted successfully', 'success');
+    
+    await loadAllData();
+    
+  } catch (error) {
+    console.error('Error deleting feedback:', error);
+    showNotification('Failed to delete feedback', 'error');
+  }
+}
+
 function renderOrders() {
   const ordersList = document.getElementById('ordersList');
-  const statusFilter = document.getElementById('filterOrderStatus')?.value;
-  const dateFilter = document.getElementById('filterOrderDate')?.value;
-  
   if (!ordersList) return;
   
-  let filteredOrders = allOrders;
-  
-  if (statusFilter && statusFilter !== 'all') {
-    filteredOrders = filteredOrders.filter(order => order.status === statusFilter);
-  }
-  
-  if (dateFilter) {
-    filteredOrders = filteredOrders.filter(order => 
-      order.orderDate.startsWith(dateFilter)
-    );
-  }
-  
-  if (filteredOrders.length === 0) {
+  if (allOrders.length === 0) {
     ordersList.innerHTML = `
       <div class="no-results">
         <i class="fas fa-receipt fa-3x"></i>
         <h3>No orders found</h3>
-        <p>Try adjusting your filters</p>
+        <p>There are no orders yet</p>
       </div>
     `;
     return;
   }
   
-  ordersList.innerHTML = filteredOrders.map(order => {
+  ordersList.innerHTML = allOrders.map(order => {
     const user = allUsers.find(u => u.id === order.userId);
     
     return `
       <div class="admin-card">
         <div class="card-header">
           <h3 class="card-title">Order #${order.id}</h3>
-          <div class="card-actions">
-            <span class="order-status ${order.status}">${order.status}</span>
-          </div>
+          <span class="order-status ${order.status}">${order.status}</span>
         </div>
         <div class="card-content">
-          <div class="order-meta">
-            <span><strong>Customer:</strong> ${user?.nickname || order.userName}</span>
-            <span><strong>Email:</strong> ${order.userEmail}</span>
-            <span><strong>Items:</strong> ${order.items.length}</span>
+          <div class="order-info">
+            <p><strong>Customer:</strong> ${user?.nickname || order.userName}</p>
+            <p><strong>Email:</strong> ${order.userEmail}</p>
+            <p><strong>Phone:</strong> ${order.userPhone || 'Not provided'}</p>
+            <p><strong>Date:</strong> ${formatDate(order.orderDate)}</p>
           </div>
           <div class="order-items">
+            <h4>Items (${order.items.length}):</h4>
             ${order.items.map(item => `
               <div class="order-item">
                 <span>${item.name}</span>
@@ -520,8 +680,7 @@ function renderOrders() {
             `).join('')}
           </div>
           <div class="order-total">
-            <span><strong>Total:</strong> $${order.total}</span>
-            <span><strong>Date:</strong> ${formatDate(order.orderDate)}</span>
+            <strong>Total: $${order.total}</strong>
           </div>
         </div>
       </div>
@@ -551,23 +710,22 @@ function renderUsers() {
       <div class="no-results">
         <i class="fas fa-users fa-3x"></i>
         <h3>No users found</h3>
-        <p>Try adjusting your filters</p>
+        <p>${roleFilter !== 'all' ? 'Try changing the role filter' : 'No users available'}</p>
       </div>
     `;
     return;
   }
   
   usersList.innerHTML = filteredUsers.map(user => {
-    const userOrders = allOrders.filter(order => order.userId === user.id);
+    const userFeedback = allFeedback.filter(f => f.userId === user.id);
+    const userOrders = allOrders.filter(o => o.userId === user.id);
     const totalSpent = userOrders.reduce((sum, order) => sum + order.total, 0);
     
     return `
       <div class="admin-card">
         <div class="card-header">
           <h3 class="card-title">${user.nickname}</h3>
-          <div class="card-actions">
-            <span class="user-role ${user.role}">${user.role}</span>
-          </div>
+          <span class="user-role ${user.role}">${user.role}</span>
         </div>
         <div class="card-content">
           <div class="user-info">
@@ -577,17 +735,18 @@ function renderUsers() {
             <p><strong>Joined:</strong> ${formatDate(user.createdAt)}</p>
           </div>
           <div class="user-stats">
-            <span><i class="fas fa-shopping-cart"></i> ${userOrders.length} orders</span>
-            <span><i class="fas fa-dollar-sign"></i> $${totalSpent.toFixed(2)} spent</span>
+            <span class="stat"><i class="fas fa-comments"></i> ${userFeedback.length} reviews</span>
+            <span class="stat"><i class="fas fa-shopping-cart"></i> ${userOrders.length} orders</span>
+            <span class="stat"><i class="fas fa-dollar-sign"></i> $${totalSpent.toFixed(2)} spent</span>
           </div>
         </div>
-        <div class="card-actions">
-          <button class="btn btn-secondary btn-sm" data-user-id="${user.id}" onclick="changeUserRole(${user.id})">
-            Change Role
+        <div class="card-footer">
+          <button class="btn btn-secondary btn-sm" onclick="changeUserRole('${user.id}')">
+            <i class="fas fa-user-cog"></i> Change Role
           </button>
           ${user.role !== 'admin' ? `
-            <button class="btn btn-danger btn-sm" data-user-id="${user.id}" onclick="deleteUser(${user.id})">
-              Delete
+            <button class="btn btn-danger btn-sm" onclick="deleteUser('${user.id}')">
+              <i class="fas fa-trash"></i> Delete
             </button>
           ` : ''}
         </div>
@@ -596,42 +755,8 @@ function renderUsers() {
   }).join('');
 }
 
-function populateServiceFilter(selectElement) {
-  if (!selectElement) return;
-  
-  while (selectElement.options.length > 1) {
-    selectElement.remove(1);
-  }
-  
-  allServices.forEach(service => {
-    const option = document.createElement('option');
-    option.value = service.id;
-    option.textContent = service.name;
-    selectElement.appendChild(option);
-  });
-}
-
-async function deleteFeedback(feedbackId) {
-  if (!confirm('Are you sure you want to delete this feedback?')) return;
-  
-  try {
-    await fetchData(`${ADMIN_FEEDBACK_ENDPOINT}/${feedbackId}`, {
-      method: 'DELETE'
-    });
-    
-    showNotification('Feedback deleted successfully', 'success');
-    
-    await loadAllData();
-    renderFeedback();
-    
-  } catch (error) {
-    console.error('Error deleting feedback:', error);
-    showNotification('Failed to delete feedback', 'error');
-  }
-}
-
 async function changeUserRole(userId) {
-  const user = allUsers.find(u => u.id == userId);
+  const user = allUsers.find(u => u.id === userId);
   if (!user) return;
   
   const newRole = user.role === 'admin' ? 'user' : 'admin';
@@ -646,16 +771,13 @@ async function changeUserRole(userId) {
     
     await fetchData(`${ADMIN_USERS_ENDPOINT}/${userId}`, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updatedUser)
     });
     
     showNotification(`User role changed to ${newRole}`, 'success');
     
     await loadAllData();
-    renderUsers();
     
   } catch (error) {
     console.error('Error changing user role:', error);
@@ -664,7 +786,7 @@ async function changeUserRole(userId) {
 }
 
 async function deleteUser(userId) {
-  const user = allUsers.find(u => u.id == userId);
+  const user = allUsers.find(u => u.id === userId);
   if (!user) return;
   
   if (user.role === 'admin') {
@@ -684,6 +806,19 @@ async function deleteUser(userId) {
       }
     }
     
+    const userFeedback = allFeedback.filter(f => f.userId == userId);
+    for (const feedback of userFeedback) {
+      await fetchData(`${ADMIN_FEEDBACK_ENDPOINT}/${feedback.id}`, {
+        method: 'DELETE'
+      });
+    }
+    
+    for (const order of userOrders) {
+      await fetchData(`${ADMIN_ORDERS_ENDPOINT}/${order.id}`, {
+        method: 'DELETE'
+      });
+    }
+    
     await fetchData(`${ADMIN_USERS_ENDPOINT}/${userId}`, {
       method: 'DELETE'
     });
@@ -691,12 +826,41 @@ async function deleteUser(userId) {
     showNotification('User deleted successfully', 'success');
     
     await loadAllData();
-    renderUsers();
     
   } catch (error) {
     console.error('Error deleting user:', error);
     showNotification('Failed to delete user', 'error');
   }
+}
+
+function populateServiceFilter(selectElement) {
+  if (!selectElement) return;
+  
+  while (selectElement.options.length > 1) {
+    selectElement.remove(1);
+  }
+  
+  allServices.forEach(service => {
+    const option = document.createElement('option');
+    option.value = service.id;
+    option.textContent = `${service.name} (${service.category})`;
+    selectElement.appendChild(option);
+  });
+}
+
+function populateUserFilter(selectElement) {
+  if (!selectElement) return;
+  
+  while (selectElement.options.length > 1) {
+    selectElement.remove(1);
+  }
+  
+  allUsers.forEach(user => {
+    const option = document.createElement('option');
+    option.value = user.id;
+    option.textContent = user.nickname;
+    selectElement.appendChild(option);
+  });
 }
 
 function formatDate(dateString) {
@@ -707,7 +871,9 @@ function formatDate(dateString) {
     return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
-      day: 'numeric'
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
     });
   } catch (error) {
     return 'Invalid date';
@@ -717,7 +883,9 @@ function formatDate(dateString) {
 async function fetchData(url, options = {}) {
   try {
     const response = await fetch(url, options);
-    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
     return await response.json();
   } catch (error) {
     console.error('Error fetching data:', error);

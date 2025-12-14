@@ -50,7 +50,8 @@
       <section class="admin-section">
         <div class="admin-header">
           <h1><i class="fas fa-cogs"></i> Admin Dashboard</h1>
-          <p class="subtitle">Manage services, feedback, and orders</p>
+          <p class="subtitle">Manage services, feedback, orders, and users</p>
+          
           <div class="admin-stats">
             <div class="stat-card">
               <div class="stat-icon total-services">
@@ -127,10 +128,6 @@
           </div>
 
           <div class="services-list" id="servicesList">
-            <div class="loading-spinner">
-              <i class="fas fa-spinner fa-spin"></i>
-              <p>Loading services...</p>
-            </div>
           </div>
         </div>
 
@@ -138,53 +135,41 @@
           <div class="tab-header">
             <h2><i class="fas fa-comments"></i> Feedback Management</h2>
             <div class="feedback-filters">
-              <select id="filterFeedbackService" class="filter-select">
-                <option value="all">All Services</option>
-              </select>
-              <select id="filterFeedbackRating" class="filter-select">
-                <option value="all">All Ratings</option>
-                <option value="5">5 Stars</option>
-                <option value="4">4 Stars</option>
-                <option value="3">3 Stars</option>
-                <option value="2">2 Stars</option>
-                <option value="1">1 Star</option>
-              </select>
+              <div class="filter-group">
+                <label for="filterFeedbackService">Filter by Service:</label>
+                <select id="filterFeedbackService" class="filter-select">
+                  <option value="all">All Services</option>
+                </select>
+              </div>
+              <div class="filter-group">
+                <label for="filterFeedbackUser">Filter by User:</label>
+                <select id="filterFeedbackUser" class="filter-select">
+                  <option value="all">All Users</option>
+                </select>
+              </div>
+              <div class="filter-group">
+                <label for="filterFeedbackRating">Filter by Rating:</label>
+                <select id="filterFeedbackRating" class="filter-select">
+                  <option value="all">All Ratings</option>
+                  <option value="5">5 Stars</option>
+                  <option value="4">4 Stars</option>
+                  <option value="3">3 Stars</option>
+                  <option value="2">2 Stars</option>
+                  <option value="1">1 Star</option>
+                </select>
+              </div>
             </div>
           </div>
 
           <div class="feedback-list-admin" id="feedbackListAdmin">
-            <div class="loading-spinner">
-              <i class="fas fa-spinner fa-spin"></i>
-              <p>Loading feedback...</p>
-            </div>
           </div>
         </div>
 
         <div class="tab-content" id="ordersTab">
           <div class="tab-header">
             <h2><i class="fas fa-shopping-cart"></i> Orders Management</h2>
-            <div class="orders-filters">
-              <select id="filterOrderStatus" class="filter-select">
-                <option value="all">All Statuses</option>
-                <option value="pending">Pending</option>
-                <option value="processing">Processing</option>
-                <option value="completed">Completed</option>
-                <option value="cancelled">Cancelled</option>
-              </select>
-              <input 
-                type="date" 
-                id="filterOrderDate" 
-                class="filter-select"
-                placeholder="Filter by date"
-              >
-            </div>
           </div>
-
           <div class="orders-list" id="ordersList">
-            <div class="loading-spinner">
-              <i class="fas fa-spinner fa-spin"></i>
-              <p>Loading orders...</p>
-            </div>
           </div>
         </div>
 
@@ -201,10 +186,6 @@
           </div>
 
           <div class="users-list" id="usersList">
-            <div class="loading-spinner">
-              <i class="fas fa-spinner fa-spin"></i>
-              <p>Loading users...</p>
-            </div>
           </div>
         </div>
       </section>
@@ -305,6 +286,7 @@
                   name="serviceDescription" 
                   rows="4" 
                   placeholder="Describe the service..."
+                  maxlength="500"
                   required
                 ></textarea>
                 <div class="error-message" id="serviceDescriptionError"></div>
@@ -332,7 +314,7 @@
               </div>
 
               <div class="form-actions">
-                <button type="submit" id="saveService" class="btn btn-primary">
+                <button type="submit" id="saveService" class="btn btn-primary" disabled>
                   <i class="fas fa-save"></i> Save Service
                 </button>
                 <button type="button" class="btn btn-secondary" id="cancelService">
@@ -340,6 +322,18 @@
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      </div>
+
+      <div id="viewFeedbackModal" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2><i class="fas fa-comments"></i> Feedback Details</h2>
+            <button class="close-modal">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div id="feedbackDetails"></div>
           </div>
         </div>
       </div>
