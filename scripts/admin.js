@@ -11,11 +11,19 @@ let allUsers = [];
 
 let serviceForm;
 let saveServiceBtn;
+let currentLang = 'en';
 
 document.addEventListener('DOMContentLoaded', initAdmin);
 
+document.addEventListener('langChanged', (event) => {
+  currentLang = event.detail.lang;
+  translateAdminUI();
+});
+
 async function initAdmin() {
   console.log('Initializing admin panel...');
+  
+  currentLang = localStorage.getItem('lang') || 'en';
   
   const hasAccess = await checkAdminAccess();
   if (!hasAccess) return;
@@ -29,7 +37,70 @@ async function initAdmin() {
   
   setupEventListeners();
   
+  translateAdminUI();
+  
   console.log('Admin panel initialized');
+}
+
+function translateAdminUI() {
+  const translations = window.i18Obj?.[currentLang];
+  if (!translations) return;
+  
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (translations[key]) {
+      if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT') {
+        el.placeholder = translations[key];
+      } else {
+        el.textContent = translations[key];
+      }
+    }
+  });
+  
+  const elements = {
+    '#addServiceBtn': 'admin-add-service',
+    '#saveService': 'admin-save-service',
+    '#cancelService': 'admin-cancel',
+    '#searchServices': 'admin-search-services',
+    '.modal-title': 'admin-modal-add-service',
+    '.close-modal': 'admin-close',
+    '#filterFeedbackService': 'admin-filter-service',
+    '#filterFeedbackUser': 'admin-filter-user',
+    '#filterFeedbackRating': 'admin-filter-rating',
+    '#filterUserRole': 'admin-role-admin'
+  };
+  
+  Object.entries(elements).forEach(([selector, key]) => {
+    const element = document.querySelector(selector);
+    if (element && translations[key]) {
+      if (element.tagName === 'INPUT' || element.tagName === 'BUTTON') {
+        element.value = translations[key];
+      } else if (element.tagName === 'SELECT') {
+        const firstOption = element.querySelector('option[value="all"]');
+        if (firstOption) firstOption.textContent = translations[key];
+      } else {
+        element.textContent = translations[key];
+      }
+    }
+  });
+  
+  const categorySelect = document.getElementById('serviceCategory');
+  if (categorySelect) {
+    const options = categorySelect.querySelectorAll('option');
+    options.forEach(option => {
+      if (option.value && option.value !== '') {
+        const key = `admin-category-${option.value.toLowerCase().replace(/\s+/g, '-')}`;
+        if (translations[key]) {
+          option.textContent = translations[key];
+        }
+      }
+    });
+  }
+  
+  renderServices();
+  renderFeedback();
+  renderOrders();
+  renderUsers();
 }
 
 async function checkAdminAccess() {
@@ -57,6 +128,17 @@ async function checkAdminAccess() {
         adminPanel.style.display = 'none';
         accessDenied.style.display = 'block';
         
+        const accessDeniedTitle = document.querySelector('#adminAccessDenied h2');
+        const accessDeniedText = document.querySelector('#adminAccessDenied p');
+        const backButton = document.querySelector('#adminAccessDenied .btn');
+        
+        if (window.i18Obj?.[currentLang]) {
+          const t = window.i18Obj[currentLang];
+          if (accessDeniedTitle) accessDeniedTitle.textContent = t['admin-access-denied-title'];
+          if (accessDeniedText) accessDeniedText.textContent = t['admin-access-denied-text'];
+          if (backButton) backButton.textContent = t['admin-back-to-home'];
+        }
+        
         const adminBtn = document.querySelector('.admin-panel-btn');
         if (adminBtn) adminBtn.style.display = 'none';
         
@@ -73,6 +155,8 @@ async function checkAdminAccess() {
 
 async function loadAllData() {
   try {
+    showLoading(true);
+    
     [allServices, allFeedback, allOrders, allUsers] = await Promise.all([
       fetchData(ADMIN_SERVICES_ENDPOINT) || [],
       fetchData(ADMIN_FEEDBACK_ENDPOINT) || [],
@@ -88,7 +172,23 @@ async function loadAllData() {
     
   } catch (error) {
     console.error('Error loading admin data:', error);
-    showNotification('Failed to load data', 'error');
+    showNotification(window.i18Obj?.[currentLang]?.['admin-data-load-failed'] || 'Failed to load data', 'error');
+  } finally {
+    showLoading(false);
+  }
+}
+
+function showLoading(show) {
+  const loadingElements = document.querySelectorAll('.admin-loading');
+  loadingElements.forEach(el => {
+    el.style.display = show ? 'block' : 'none';
+  });
+  
+  if (!show) {
+    document.querySelectorAll('.fa-spinner').forEach(spinner => {
+      spinner.parentElement.disabled = false;
+      spinner.remove();
+    });
   }
 }
 
@@ -114,53 +214,54 @@ function validateForm() {
   
   let isValid = true;
   const errors = {};
+  const t = window.i18Obj?.[currentLang] || {};
   
   const nameInput = document.getElementById('serviceName');
   if (!nameInput.value.trim()) {
     isValid = false;
-    errors.name = 'Service name is required';
+    errors.name = t['admin-validation-required'] || 'This field is required';
   } else if (nameInput.value.trim().length < 3) {
     isValid = false;
-    errors.name = 'Service name must be at least 3 characters';
+    errors.name = t['admin-validation-name'] || 'Service name must be at least 3 characters';
   }
   
   const categoryInput = document.getElementById('serviceCategory');
   if (!categoryInput.value) {
     isValid = false;
-    errors.category = 'Category is required';
+    errors.category = t['admin-validation-required'] || 'This field is required';
   }
   
   const priceInput = document.getElementById('servicePrice');
   const price = parseFloat(priceInput.value);
   if (!priceInput.value || isNaN(price) || price < 0) {
     isValid = false;
-    errors.price = 'Valid price is required (min: 0)';
+    errors.price = t['admin-validation-price'] || 'Valid price is required (min: 0)';
   }
   
   const ratingInput = document.getElementById('serviceRating');
   const rating = parseFloat(ratingInput.value);
   if (!ratingInput.value || isNaN(rating) || rating < 0 || rating > 5) {
     isValid = false;
-    errors.rating = 'Rating must be between 0 and 5';
+    errors.rating = t['admin-validation-rating'] || 'Rating must be between 0 and 5';
   }
   
   const descInput = document.getElementById('serviceDescription');
   if (!descInput.value.trim()) {
     isValid = false;
-    errors.description = 'Description is required';
+    errors.description = t['admin-validation-required'] || 'This field is required';
   } else if (descInput.value.trim().length < 10) {
     isValid = false;
-    errors.description = 'Description must be at least 10 characters';
+    errors.description = t['admin-validation-description-min'] || 'Description must be at least 10 characters';
   }
   
   const imageInput = document.getElementById('serviceImage');
   const urlPattern = /^(https?:\/\/|\/|\.\/|\.\.\/).*\.(jpg|jpeg|png|gif|svg|webp)$/i;
   if (!imageInput.value.trim()) {
     isValid = false;
-    errors.image = 'Image URL is required';
+    errors.image = t['admin-validation-required'] || 'This field is required';
   } else if (!urlPattern.test(imageInput.value.trim())) {
     isValid = false;
-    errors.image = 'Please enter a valid image URL';
+    errors.image = t['admin-validation-image-url'] || 'Please enter a valid image URL';
   }
   
   showFormErrors(errors);
@@ -258,6 +359,15 @@ function setupEventListeners() {
       }
     });
   }
+  
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const lang = btn.dataset.lang;
+      if (window.getTranslate) {
+        window.getTranslate(lang);
+      }
+    });
+  });
 }
 
 function switchTab(tabName) {
@@ -273,6 +383,7 @@ function switchTab(tabName) {
 function renderServices() {
   const servicesList = document.getElementById('servicesList');
   const searchTerm = document.getElementById('searchServices')?.value.toLowerCase() || '';
+  const t = window.i18Obj?.[currentLang] || {};
   
   if (!servicesList) return;
   
@@ -289,45 +400,52 @@ function renderServices() {
     servicesList.innerHTML = `
       <div class="no-results">
         <i class="fas fa-search fa-3x"></i>
-        <h3>No services found</h3>
-        <p>${searchTerm ? 'Try adjusting your search criteria' : 'No services available'}</p>
+        <h3>${t['admin-no-results'] || 'No services found'}</h3>
+        <p>${searchTerm ? (t['admin-try-adjusting-criteria'] || 'Try adjusting your search criteria') : (t['admin-no-data'] || 'No services available')}</p>
       </div>
     `;
     return;
   }
   
-  servicesList.innerHTML = filteredServices.map(service => `
-    <div class="admin-card" data-service-id="${service.id}">
-      <div class="card-header">
-        <h3 class="card-title">${service.name}</h3>
-        <div class="card-actions">
-          <button class="action-btn view-feedback" data-service-id="${service.id}" title="View Feedback">
-            <i class="fas fa-comments"></i>
-          </button>
-          <button class="action-btn edit" data-service-id="${service.id}" title="Edit">
-            <i class="fas fa-edit"></i>
-          </button>
-          <button class="action-btn delete" data-service-id="${service.id}" title="Delete">
-            <i class="fas fa-trash"></i>
+  servicesList.innerHTML = filteredServices.map(service => {
+    const serviceName = service.name || t['admin-service-name'] || 'Service';
+    const serviceDesc = service.description || '';
+    const categoryKey = `admin-category-${service.category?.toLowerCase().replace(/\s+/g, '-')}`;
+    const categoryName = t[categoryKey] || service.category || t['admin-select-category'] || 'Category';
+    
+    return `
+      <div class="admin-card" data-service-id="${service.id}">
+        <div class="card-header">
+          <h3 class="card-title">${serviceName}</h3>
+          <div class="card-actions">
+            <button class="action-btn view-feedback" data-service-id="${service.id}" title="${t['admin-view-feedback'] || 'View Feedback'}">
+              <i class="fas fa-comments"></i>
+            </button>
+            <button class="action-btn edit" data-service-id="${service.id}" title="${t['admin-edit'] || 'Edit'}">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="action-btn delete" data-service-id="${service.id}" title="${t['admin-delete'] || 'Delete'}">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+        <div class="card-content">
+          <p>${serviceDesc}</p>
+          <div class="service-meta">
+            <span class="badge">${categoryName}</span>
+            <span><i class="fas fa-dollar-sign"></i> $${service.price || 0}</span>
+            <span><i class="fas fa-star"></i> ${service.rating || 0}</span>
+          </div>
+        </div>
+        <div class="card-footer">
+          <small>${t['admin-id'] || 'ID'}: ${service.id}</small>
+          <button class="btn btn-secondary btn-sm view-feedback-btn" data-service-id="${service.id}">
+            ${t['admin-view-feedback'] || 'View Feedback'} (${getServiceFeedbackCount(service.id)})
           </button>
         </div>
       </div>
-      <div class="card-content">
-        <p>${service.description}</p>
-        <div class="service-meta">
-          <span class="badge">${service.category}</span>
-          <span><i class="fas fa-dollar-sign"></i> $${service.price}</span>
-          <span><i class="fas fa-star"></i> ${service.rating}</span>
-        </div>
-      </div>
-      <div class="card-footer">
-        <small>ID: ${service.id}</small>
-        <button class="btn btn-secondary btn-sm view-feedback-btn" data-service-id="${service.id}">
-          View Feedback (${getServiceFeedbackCount(service.id)})
-        </button>
-      </div>
-    </div>
-  `).join('');
+    `;
+  }).join('');
   
   attachServicesEventListeners();
 }
@@ -366,12 +484,13 @@ function openServiceModal(serviceId = null) {
   const modal = document.getElementById('serviceModal');
   const modalTitle = document.getElementById('modalTitle');
   const form = document.getElementById('serviceForm');
+  const t = window.i18Obj?.[currentLang] || {};
   
   if (serviceId) {
     const service = allServices.find(s => s.id == serviceId);
     if (!service) return;
     
-    modalTitle.innerHTML = '<i class="fas fa-edit"></i> Edit Service';
+    modalTitle.innerHTML = `<i class="fas fa-edit"></i> ${t['admin-modal-edit-service'] || 'Edit Service'}`;
     document.getElementById('serviceId').value = service.id;
     document.getElementById('serviceName').value = service.name;
     document.getElementById('serviceCategory').value = service.category;
@@ -380,7 +499,7 @@ function openServiceModal(serviceId = null) {
     document.getElementById('serviceDescription').value = service.description;
     document.getElementById('serviceImage').value = service.image;
   } else {
-    modalTitle.innerHTML = '<i class="fas fa-plus"></i> Add New Service';
+    modalTitle.innerHTML = `<i class="fas fa-plus"></i> ${t['admin-modal-add-service'] || 'Add New Service'}`;
     form.reset();
     document.getElementById('serviceId').value = '';
   }
@@ -398,9 +517,10 @@ function openServiceModal(serviceId = null) {
 
 async function handleSaveService(e) {
   e.preventDefault();
+  const t = window.i18Obj?.[currentLang] || {};
   
   if (!validateForm()) {
-    showNotification('Please fix validation errors', 'error');
+    showNotification(t['admin-form-invalid'] || 'Please fix validation errors', 'error');
     return;
   }
   
@@ -419,7 +539,7 @@ async function handleSaveService(e) {
   const saveBtn = document.getElementById('saveService');
   const originalText = saveBtn.innerHTML;
   saveBtn.disabled = true;
-  saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+  saveBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${t['admin-saving'] || 'Saving...'}`;
   
   try {
     let result;
@@ -438,7 +558,7 @@ async function handleSaveService(e) {
     }
     
     if (result) {
-      showNotification(`Service ${isEdit ? 'updated' : 'added'} successfully!`, 'success');
+      showNotification(t['admin-service-saved'] || `Service ${isEdit ? 'updated' : 'added'} successfully!`, 'success');
       
       document.getElementById('serviceModal').classList.remove('show');
       await loadAllData();
@@ -446,7 +566,7 @@ async function handleSaveService(e) {
     
   } catch (error) {
     console.error('Error saving service:', error);
-    showNotification(`Failed to ${isEdit ? 'update' : 'add'} service`, 'error');
+    showNotification(t['admin-save-error'] || `Failed to ${isEdit ? 'update' : 'add'} service`, 'error');
   } finally {
     saveBtn.disabled = false;
     saveBtn.innerHTML = originalText;
@@ -454,13 +574,22 @@ async function handleSaveService(e) {
 }
 
 async function deleteService(serviceId) {
-  if (!confirm('Are you sure you want to delete this service? This action cannot be undone.')) {
+  const t = window.i18Obj?.[currentLang] || {};
+  const service = allServices.find(s => s.id == serviceId);
+  
+  if (!service) return;
+  
+  const confirmMessage = t['admin-confirm-delete'] || 'Are you sure you want to delete this service? This action cannot be undone.';
+  if (!confirm(confirmMessage)) {
     return;
   }
   
   const serviceFeedback = allFeedback.filter(f => f.serviceId == serviceId);
   if (serviceFeedback.length > 0) {
-    if (!confirm(`This service has ${serviceFeedback.length} feedback entries. Deleting it will also delete all associated feedback. Continue?`)) {
+    const feedbackConfirmMessage = t['admin-delete-service-confirm']?.replace('{count}', serviceFeedback.length) 
+      || `This service has ${serviceFeedback.length} feedback entries. Deleting it will also delete all associated feedback. Continue?`;
+    
+    if (!confirm(feedbackConfirmMessage)) {
       return;
     }
   }
@@ -476,17 +605,18 @@ async function deleteService(serviceId) {
       method: 'DELETE'
     });
     
-    showNotification('Service deleted successfully', 'success');
+    showNotification(t['admin-service-deleted'] || 'Service deleted successfully', 'success');
     
     await loadAllData();
     
   } catch (error) {
     console.error('Error deleting service:', error);
-    showNotification('Failed to delete service', 'error');
+    showNotification(t['admin-delete-error'] || 'Failed to delete service', 'error');
   }
 }
 
 async function showServiceFeedback(serviceId) {
+  const t = window.i18Obj?.[currentLang] || {};
   const service = allServices.find(s => s.id == serviceId);
   if (!service) return;
   
@@ -499,15 +629,15 @@ async function showServiceFeedback(serviceId) {
     details.innerHTML = `
       <div class="no-feedback">
         <i class="fas fa-comment-slash fa-3x"></i>
-        <h3>No Feedback Yet</h3>
-        <p>There are no reviews for this service yet.</p>
+        <h3>${t['admin-no-feedback-yet'] || 'No Feedback Yet'}</h3>
+        <p>${t['admin-no-results'] || 'There are no reviews for this service yet.'}</p>
       </div>
     `;
   } else {
     details.innerHTML = `
       <div class="feedback-header">
-        <h3>Feedback for: ${service.name}</h3>
-        <p>Total reviews: ${serviceFeedback.length}</p>
+        <h3>${t['admin-feedback-header'] || 'Feedback for:'} ${service.name}</h3>
+        <p>${t['admin-total-reviews-for-service'] || 'Total reviews:'} ${serviceFeedback.length}</p>
       </div>
       <div class="feedback-list">
         ${serviceFeedback.map(feedback => {
@@ -516,17 +646,17 @@ async function showServiceFeedback(serviceId) {
             <div class="feedback-item" data-feedback-id="${feedback.id}">
               <div class="feedback-header">
                 <div class="user-info">
-                  <strong>${feedback.isAnonymous ? 'Anonymous' : user?.nickname || 'Unknown User'}</strong>
+                  <strong>${feedback.isAnonymous ? t['feedback-review-anonymous'] : user?.nickname || t['admin-user-info']}</strong>
                   <span class="rating">${'★'.repeat(feedback.rating)}</span>
                 </div>
                 <button class="btn btn-danger btn-sm delete-feedback-btn" data-feedback-id="${feedback.id}">
-                  <i class="fas fa-trash"></i> Delete
+                  <i class="fas fa-trash"></i> ${t['admin-delete'] || 'Delete'}
                 </button>
               </div>
               <p class="feedback-text">${feedback.text}</p>
               <div class="feedback-meta">
                 <small>${formatDate(feedback.createdAt)}</small>
-                ${feedback.reported ? '<span class="badge badge-warning">Reported</span>' : ''}
+                ${feedback.reported ? `<span class="badge badge-warning">${t['admin-reported'] || 'Reported'}</span>` : ''}
               </div>
             </div>
           `;
@@ -553,6 +683,7 @@ function renderFeedback() {
   const serviceFilter = document.getElementById('filterFeedbackService')?.value;
   const userFilter = document.getElementById('filterFeedbackUser')?.value;
   const ratingFilter = document.getElementById('filterFeedbackRating')?.value;
+  const t = window.i18Obj?.[currentLang] || {};
   
   if (!feedbackList) return;
   
@@ -574,8 +705,8 @@ function renderFeedback() {
     feedbackList.innerHTML = `
       <div class="no-results">
         <i class="fas fa-comment-slash fa-3x"></i>
-        <h3>No feedback found</h3>
-        <p>Try adjusting your filters</p>
+        <h3>${t['admin-no-results'] || 'No feedback found'}</h3>
+        <p>${t['admin-try-adjusting-criteria'] || 'Try adjusting your filters'}</p>
       </div>
     `;
     return;
@@ -589,25 +720,25 @@ function renderFeedback() {
       <div class="admin-card" data-feedback-id="${feedback.id}">
         <div class="card-header">
           <h3 class="card-title">
-            ${service ? `${service.name} - Feedback` : 'Unknown Service'}
+            ${service ? `${service.name} - ${t['admin-feedback'] || 'Feedback'}` : t['admin-feedback'] || 'Unknown Service'}
           </h3>
           <div class="card-actions">
             <span class="rating">${'★'.repeat(feedback.rating)}</span>
-            <button class="action-btn delete" data-feedback-id="${feedback.id}" title="Delete">
+            <button class="action-btn delete" data-feedback-id="${feedback.id}" title="${t['admin-delete'] || 'Delete'}">
               <i class="fas fa-trash"></i>
             </button>
           </div>
         </div>
         <div class="card-content">
           <div class="feedback-meta">
-            <span><strong>User:</strong> ${feedback.isAnonymous ? 'Anonymous' : user?.nickname || 'Unknown'}</span>
-            <span><strong>Service:</strong> ${service?.name || 'Unknown'}</span>
+            <span><strong>${t['admin-user'] || 'User'}:</strong> ${feedback.isAnonymous ? t['feedback-review-anonymous'] : user?.nickname || t['admin-user-info']}</span>
+            <span><strong>${t['admin-service'] || 'Service'}:</strong> ${service?.name || t['admin-service']}</span>
           </div>
           <p class="feedback-text">${feedback.text}</p>
         </div>
         <div class="card-footer">
           <small>${formatDate(feedback.createdAt)}</small>
-          ${feedback.reported ? '<span class="badge badge-warning">Reported</span>' : ''}
+          ${feedback.reported ? `<span class="badge badge-warning">${t['admin-reported'] || 'Reported'}</span>` : ''}
         </div>
       </div>
     `;
@@ -622,33 +753,37 @@ function renderFeedback() {
 }
 
 async function deleteFeedback(feedbackId) {
-  if (!confirm('Are you sure you want to delete this feedback?')) return;
+  const t = window.i18Obj?.[currentLang] || {};
+  const confirmMessage = t['admin-confirm-delete'] || 'Are you sure you want to delete this feedback?';
+  if (!confirm(confirmMessage)) return;
   
   try {
     await fetchData(`${ADMIN_FEEDBACK_ENDPOINT}/${feedbackId}`, {
       method: 'DELETE'
     });
     
-    showNotification('Feedback deleted successfully', 'success');
+    showNotification(t['admin-feedback-deleted'] || 'Feedback deleted successfully', 'success');
     
     await loadAllData();
     
   } catch (error) {
     console.error('Error deleting feedback:', error);
-    showNotification('Failed to delete feedback', 'error');
+    showNotification(t['admin-delete-error'] || 'Failed to delete feedback', 'error');
   }
 }
 
 function renderOrders() {
   const ordersList = document.getElementById('ordersList');
+  const t = window.i18Obj?.[currentLang] || {};
+  
   if (!ordersList) return;
   
   if (allOrders.length === 0) {
     ordersList.innerHTML = `
       <div class="no-results">
         <i class="fas fa-receipt fa-3x"></i>
-        <h3>No orders found</h3>
-        <p>There are no orders yet</p>
+        <h3>${t['admin-no-results'] || 'No orders found'}</h3>
+        <p>${t['admin-no-data'] || 'There are no orders yet'}</p>
       </div>
     `;
     return;
@@ -660,18 +795,18 @@ function renderOrders() {
     return `
       <div class="admin-card">
         <div class="card-header">
-          <h3 class="card-title">Order #${order.id}</h3>
+          <h3 class="card-title">${t['admin-order'] || 'Order'} #${order.id}</h3>
           <span class="order-status ${order.status}">${order.status}</span>
         </div>
         <div class="card-content">
           <div class="order-info">
-            <p><strong>Customer:</strong> ${user?.nickname || order.userName}</p>
-            <p><strong>Email:</strong> ${order.userEmail}</p>
-            <p><strong>Phone:</strong> ${order.userPhone || 'Not provided'}</p>
-            <p><strong>Date:</strong> ${formatDate(order.orderDate)}</p>
+            <p><strong>${t['admin-customer'] || 'Customer'}:</strong> ${user?.nickname || order.userName}</p>
+            <p><strong>${t['admin-user-email'] || 'Email'}:</strong> ${order.userEmail}</p>
+            <p><strong>${t['admin-phone'] || 'Phone'}:</strong> ${order.userPhone || t['admin-no-data'] || 'Not provided'}</p>
+            <p><strong>${t['admin-order-date'] || 'Date'}:</strong> ${formatDate(order.orderDate)}</p>
           </div>
           <div class="order-items">
-            <h4>Items (${order.items.length}):</h4>
+            <h4>${t['admin-order-items'] || 'Items'} (${order.items.length}):</h4>
             ${order.items.map(item => `
               <div class="order-item">
                 <span>${item.name}</span>
@@ -680,7 +815,7 @@ function renderOrders() {
             `).join('')}
           </div>
           <div class="order-total">
-            <strong>Total: $${order.total}</strong>
+            <strong>${t['admin-order-total'] || 'Total'}: $${order.total}</strong>
           </div>
         </div>
       </div>
@@ -691,6 +826,7 @@ function renderOrders() {
 function renderUsers() {
   const usersList = document.getElementById('usersList');
   const roleFilter = document.getElementById('filterUserRole')?.value;
+  const t = window.i18Obj?.[currentLang] || {};
   
   if (!usersList) return;
   
@@ -709,8 +845,8 @@ function renderUsers() {
     usersList.innerHTML = `
       <div class="no-results">
         <i class="fas fa-users fa-3x"></i>
-        <h3>No users found</h3>
-        <p>${roleFilter !== 'all' ? 'Try changing the role filter' : 'No users available'}</p>
+        <h3>${t['admin-no-results'] || 'No users found'}</h3>
+        <p>${roleFilter !== 'all' ? t['admin-try-adjusting-criteria'] : t['admin-no-data']}</p>
       </div>
     `;
     return;
@@ -729,24 +865,24 @@ function renderUsers() {
         </div>
         <div class="card-content">
           <div class="user-info">
-            <p><strong>Name:</strong> ${user.firstName} ${user.lastName}</p>
-            <p><strong>Email:</strong> ${user.email}</p>
-            <p><strong>Phone:</strong> ${user.phone}</p>
-            <p><strong>Joined:</strong> ${formatDate(user.createdAt)}</p>
+            <p><strong>${t['user-name'] || 'Name'}:</strong> ${user.firstName} ${user.lastName}</p>
+            <p><strong>${t['admin-user-email'] || 'Email'}:</strong> ${user.email}</p>
+            <p><strong>${t['admin-phone'] || 'Phone'}:</strong> ${user.phone}</p>
+            <p><strong>${t['user-joined'] || 'Joined'}:</strong> ${formatDate(user.createdAt)}</p>
           </div>
           <div class="user-stats">
-            <span class="stat"><i class="fas fa-comments"></i> ${userFeedback.length} reviews</span>
-            <span class="stat"><i class="fas fa-shopping-cart"></i> ${userOrders.length} orders</span>
-            <span class="stat"><i class="fas fa-dollar-sign"></i> $${totalSpent.toFixed(2)} spent</span>
+            <span class="stat"><i class="fas fa-comments"></i> ${userFeedback.length} ${t['admin-reviews'] || 'reviews'}</span>
+            <span class="stat"><i class="fas fa-shopping-cart"></i> ${userOrders.length} ${t['admin-orders'] || 'orders'}</span>
+            <span class="stat"><i class="fas fa-dollar-sign"></i> $${totalSpent.toFixed(2)} ${t['admin-spent'] || 'spent'}</span>
           </div>
         </div>
         <div class="card-footer">
           <button class="btn btn-secondary btn-sm" onclick="changeUserRole('${user.id}')">
-            <i class="fas fa-user-cog"></i> Change Role
+            <i class="fas fa-user-cog"></i> ${t['admin-change-role'] || 'Change Role'}
           </button>
           ${user.role !== 'admin' ? `
             <button class="btn btn-danger btn-sm" onclick="deleteUser('${user.id}')">
-              <i class="fas fa-trash"></i> Delete
+              <i class="fas fa-trash"></i> ${t['admin-delete'] || 'Delete'}
             </button>
           ` : ''}
         </div>
@@ -756,12 +892,17 @@ function renderUsers() {
 }
 
 async function changeUserRole(userId) {
+  const t = window.i18Obj?.[currentLang] || {};
   const user = allUsers.find(u => u.id === userId);
   if (!user) return;
   
   const newRole = user.role === 'admin' ? 'user' : 'admin';
   
-  if (!confirm(`Change ${user.nickname}'s role to ${newRole}?`)) return;
+  const confirmMessage = t['admin-confirm'] 
+    ? `${t['admin-confirm']} ${user.nickname}'s role to ${newRole}?`
+    : `Change ${user.nickname}'s role to ${newRole}?`;
+  
+  if (!confirm(confirmMessage)) return;
   
   try {
     const updatedUser = {
@@ -775,33 +916,41 @@ async function changeUserRole(userId) {
       body: JSON.stringify(updatedUser)
     });
     
-    showNotification(`User role changed to ${newRole}`, 'success');
+    showNotification(t['admin-user-role-changed'] || `User role changed to ${newRole}`, 'success');
     
     await loadAllData();
     
   } catch (error) {
     console.error('Error changing user role:', error);
-    showNotification('Failed to change user role', 'error');
+    showNotification(t['admin-operation-failed'] || 'Failed to change user role', 'error');
   }
 }
 
 async function deleteUser(userId) {
+  const t = window.i18Obj?.[currentLang] || {};
   const user = allUsers.find(u => u.id === userId);
   if (!user) return;
   
   if (user.role === 'admin') {
-    showNotification('Cannot delete administrator users', 'error');
+    showNotification(t['admin-cannot-delete-admin'] || 'Cannot delete administrator users', 'error');
     return;
   }
   
-  if (!confirm(`Are you sure you want to delete user ${user.nickname}? This action cannot be undone.`)) {
+  const confirmMessage = t['admin-confirm-delete'] 
+    ? `${t['admin-confirm-delete']} ${user.nickname}?`
+    : `Are you sure you want to delete user ${user.nickname}? This action cannot be undone.`;
+  
+  if (!confirm(confirmMessage)) {
     return;
   }
   
   try {
     const userOrders = allOrders.filter(order => order.userId == userId);
     if (userOrders.length > 0) {
-      if (!confirm('This user has order history. Deleting them will also delete their orders. Continue?')) {
+      const orderConfirm = t['admin-delete-user-confirm'] 
+        || 'This user has order history. Deleting them will also delete their orders. Continue?';
+      
+      if (!confirm(orderConfirm)) {
         return;
       }
     }
@@ -823,13 +972,13 @@ async function deleteUser(userId) {
       method: 'DELETE'
     });
     
-    showNotification('User deleted successfully', 'success');
+    showNotification(t['admin-user-deleted'] || 'User deleted successfully', 'success');
     
     await loadAllData();
     
   } catch (error) {
     console.error('Error deleting user:', error);
-    showNotification('Failed to delete user', 'error');
+    showNotification(t['admin-delete-error'] || 'Failed to delete user', 'error');
   }
 }
 
@@ -840,10 +989,14 @@ function populateServiceFilter(selectElement) {
     selectElement.remove(1);
   }
   
+  const t = window.i18Obj?.[currentLang] || {};
+  
   allServices.forEach(service => {
     const option = document.createElement('option');
     option.value = service.id;
-    option.textContent = `${service.name} (${service.category})`;
+    const categoryKey = `admin-category-${service.category?.toLowerCase().replace(/\s+/g, '-')}`;
+    const categoryName = t[categoryKey] || service.category;
+    option.textContent = `${service.name} (${categoryName})`;
     selectElement.appendChild(option);
   });
 }
@@ -864,19 +1017,21 @@ function populateUserFilter(selectElement) {
 }
 
 function formatDate(dateString) {
-  if (!dateString) return 'Unknown';
+  if (!dateString) return window.i18Obj?.[currentLang]?.['admin-no-data'] || 'Unknown';
   
   try {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
+    const options = { 
+      year: 'numeric', 
+      month: 'short', 
       day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+      hour: '2-digit', 
+      minute: '2-digit' 
+    };
+    
+    return date.toLocaleDateString(currentLang === 'ru' ? 'ru-RU' : 'en-US', options);
   } catch (error) {
-    return 'Invalid date';
+    return window.i18Obj?.[currentLang]?.['admin-no-data'] || 'Invalid date';
   }
 }
 
@@ -894,6 +1049,7 @@ async function fetchData(url, options = {}) {
 }
 
 function showNotification(message, type = 'info') {
+  const t = window.i18Obj?.[currentLang] || {};
   const notification = document.createElement('div');
   notification.className = `notification ${type}`;
   notification.style.cssText = `

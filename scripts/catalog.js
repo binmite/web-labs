@@ -16,6 +16,7 @@ let currentSearch = '';
 let minPrice = null;
 let maxPrice = null;
 let minRating = 0;
+let currentLang = 'en';
 
 const servicesGrid = document.getElementById('servicesGrid');
 const searchInput = document.getElementById('searchInput');
@@ -41,6 +42,109 @@ const noResults = document.getElementById('noResults');
 const favoritesCount = document.getElementById('favoritesCount');
 const cartCount = document.getElementById('cartCount');
 
+document.addEventListener('langChanged', (event) => {
+  currentLang = event.detail.lang;
+  updateCatalogTranslations();
+  renderCategoryFilters();
+  renderServices();
+  updatePagination();
+});
+
+function getTranslation(key, defaultValue = '') {
+  const translations = window.i18Obj?.[currentLang];
+  return translations?.[key] || defaultValue;
+}
+
+function updateCatalogTranslations() {
+  const translations = window.i18Obj?.[currentLang];
+  if (!translations) return;
+  
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (translations[key]) {
+      if (el.tagName === 'INPUT' || el.tagName === 'SELECT' || el.tagName === 'BUTTON') {
+        if (el.tagName === 'INPUT' || el.tagName === 'SELECT') {
+          if (el.hasAttribute('placeholder')) {
+            el.placeholder = translations[key];
+          }
+        } else {
+          el.textContent = translations[key];
+        }
+      } else {
+        el.textContent = translations[key];
+      }
+    }
+  });
+  
+  const elements = {
+    '#searchInput': 'catalog-search-placeholder',
+    '#clearSearch': 'catalog-clear-search',
+    '.sort-label': 'catalog-sort-label',
+    '.filter-label': 'catalog-filter-category',
+    '.advanced-filters-btn': 'catalog-advanced-filters',
+    '.price-range-label': 'catalog-price-range',
+    '.min-price-label': 'catalog-min-price',
+    '.max-price-label': 'catalog-max-price',
+    '.min-rating-label': 'catalog-min-rating',
+    '#applyAdvancedFilters': 'catalog-apply-filters',
+    '#resetFilters': 'catalog-reset-filters',
+    '#resetAllFilters': 'catalog-reset-all',
+    '.no-results-title': 'catalog-no-results-title',
+    '.no-results-text': 'catalog-no-results-text',
+    '.showing-text': 'catalog-showing',
+    '.of-text': 'catalog-of',
+    '.services-text': 'catalog-services',
+    '.page-text': 'catalog-page',
+    '#prevPage': 'catalog-previous',
+    '#nextPage': 'catalog-next'
+  };
+  
+  Object.entries(elements).forEach(([selector, key]) => {
+    const element = document.querySelector(selector);
+    if (element && translations[key]) {
+      if (element.tagName === 'INPUT' || element.tagName === 'BUTTON') {
+        element.value = translations[key];
+      } else if (element.tagName === 'SELECT' && element.options.length > 0) {
+        Array.from(element.options).forEach(option => {
+          const optionKey = `catalog-sort-${option.value}`;
+          if (translations[optionKey]) {
+            option.textContent = translations[optionKey];
+          }
+        });
+      } else {
+        element.textContent = translations[key];
+      }
+    }
+  });
+  
+  if (sortSelect && translations) {
+    Array.from(sortSelect.options).forEach(option => {
+      const optionKey = `catalog-sort-${option.value}`;
+      if (translations[optionKey]) {
+        option.textContent = translations[optionKey];
+      }
+    });
+  }
+  
+  if (minRatingSelect && translations) {
+    Array.from(minRatingSelect.options).forEach(option => {
+      const optionKey = `catalog-rating-${option.value.replace('.', '')}`;
+      if (translations[optionKey]) {
+        option.textContent = translations[optionKey];
+      }
+    });
+  }
+  
+  if (itemsPerPageSelect && translations) {
+    Array.from(itemsPerPageSelect.options).forEach(option => {
+      const optionKey = `catalog-items-${option.value}`;
+      if (translations[optionKey]) {
+        option.textContent = translations[optionKey];
+      }
+    });
+  }
+}
+
 async function fetchData(url, options = {}) {
   try {
     const response = await fetch(url, options);
@@ -50,7 +154,7 @@ async function fetchData(url, options = {}) {
     return await response.json();
   } catch (error) {
     console.error('Error fetching data:', error);
-    showNotification('Failed to load data. Please try again.', 'error');
+    showNotification(getTranslation('catalog-load-error', 'Failed to load data. Please try again.'), 'error');
     return null;
   }
 }
@@ -70,9 +174,14 @@ function showNotification(message, type = 'info') {
     z-index: 1000;
     animation: slideInRight 0.3s ease;
   `;
+  
+  let icon = 'info-circle';
+  if (type === 'success') icon = 'check-circle';
+  if (type === 'error') icon = 'exclamation-circle';
+  
   notification.innerHTML = `
     <div style="display: flex; align-items: center; gap: 0.75rem;">
-      <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+      <i class="fas fa-${icon}"></i>
       <span>${message}</span>
     </div>
   `;
@@ -90,7 +199,7 @@ async function fetchServices() {
     servicesGrid.innerHTML = `
       <div class="loading-spinner">
         <i class="fas fa-spinner fa-spin"></i>
-        <p>Loading services...</p>
+        <p>${getTranslation('catalog-loading', 'Loading services...')}</p>
       </div>
     `;
 
@@ -175,7 +284,6 @@ async function fetchFavorites() {
     
     const allFavorites = await fetchData(CATALOG_FAVORITES_ENDPOINT) || [];
     favorites = allFavorites.filter(fav => fav.userId === currentUser.id);
-    console.log('Loaded favorites:', favorites);
     updateFavoriteButtons();
   } catch (error) {
     console.error('Error fetching favorites:', error);
@@ -194,7 +302,6 @@ async function fetchCart() {
     
     const allCartItems = await fetchData(CATALOG_CART_ENDPOINT) || [];
     cartItems = allCartItems.filter(item => item.userId === currentUser.id);
-    console.log('Loaded cart items:', cartItems);
     updateCartButtons();
   } catch (error) {
     console.error('Error fetching cart:', error);
@@ -218,7 +325,7 @@ async function toggleFavorite(service) {
   try {
     const currentUser = window.authService?.getCurrentUser();
     if (!currentUser) {
-      showNotification('Please sign in to add to favorites', 'error');
+      showNotification(getTranslation('catalog-login-required', 'Please sign in to add to favorites'), 'error');
       setTimeout(() => {
         window.location.href = 'login.html';
       }, 1500);
@@ -233,7 +340,7 @@ async function toggleFavorite(service) {
       await fetchData(`${CATALOG_FAVORITES_ENDPOINT}/${existingFavorite.id}`, {
         method: 'DELETE'
       });
-      showNotification('Removed from favorites', 'info');
+      showNotification(getTranslation('catalog-favorite-removed', 'Removed from favorites'), 'info');
     } else {
       const favoriteItem = {
         serviceId: service.id.toString(), 
@@ -254,14 +361,14 @@ async function toggleFavorite(service) {
         },
         body: JSON.stringify(favoriteItem)
       });
-      showNotification('Added to favorites!', 'success');
+      showNotification(getTranslation('catalog-favorite-added', 'Added to favorites!'), 'success');
     }
     
     await fetchFavorites();
     updateCounts();
   } catch (error) {
     console.error('Error toggling favorite:', error);
-    showNotification('Failed to update favorites', 'error');
+    showNotification(getTranslation('catalog-favorite-error', 'Failed to update favorites'), 'error');
   }
 }
 
@@ -269,7 +376,7 @@ async function addToCart(service) {
   try {
     const currentUser = window.authService?.getCurrentUser();
     if (!currentUser) {
-      showNotification('Please sign in to add to cart', 'error');
+      showNotification(getTranslation('catalog-login-required-cart', 'Please sign in to add to cart'), 'error');
       setTimeout(() => {
         window.location.href = 'login.html';
       }, 1500);
@@ -315,10 +422,10 @@ async function addToCart(service) {
     
     await fetchCart();
     updateCounts();
-    showNotification('Added to cart!', 'success');
+    showNotification(getTranslation('catalog-cart-added', 'Added to cart!'), 'success');
   } catch (error) {
     console.error('Error adding to cart:', error);
-    showNotification('Failed to add to cart', 'error');
+    showNotification(getTranslation('catalog-cart-error', 'Failed to add to cart'), 'error');
   }
 }
 
@@ -343,23 +450,28 @@ function renderServices() {
       cartItems.find(item => item.serviceId === service.id && item.userId === currentUser.id) : 
       null;
     
+    const categoryKey = `category-${service.category?.toLowerCase().replace(/\s+/g, '-')}`;
+    const categoryName = getTranslation(categoryKey, service.category);
+    
     return `
       <div class="service-card" data-service-id="${service.id}">
         <div class="service-image" style="background-image: url('${service.image}')">
           <div class="service-actions">
             <button class="favorite-btn ${isFavorite ? 'active' : ''}" 
                     data-service-id="${service.id}"
-                    aria-label="${isFavorite ? 'Remove from favorites' : 'Add to favorites'}">
+                    aria-label="${isFavorite ? 
+                      getTranslation('catalog-remove-from-favorites', 'Remove from favorites') : 
+                      getTranslation('catalog-add-to-favorites', 'Add to favorites')}">
               <i class="${isFavorite ? 'fas' : 'far'} fa-heart"></i>
             </button>
           </div>
         </div>
         <div class="service-content">
-          <div class="service-category">${service.category}</div>
+          <div class="service-category">${categoryName}</div>
           <h3 class="service-title">${service.name}</h3>
           <p class="service-description">${service.description}</p>
           <div class="service-meta">
-            <div class="service-price">$${service.price}</div>
+            <div class="service-price">${getTranslation('catalog-price', 'Price')}: $${service.price}</div>
             <div class="service-rating">
               ${'★'.repeat(Math.floor(service.rating))}
               ${service.rating % 1 >= 0.5 ? '½' : ''}
@@ -370,10 +482,12 @@ function renderServices() {
             <button class="btn-cart ${inCart ? 'in-cart' : ''}" 
                     data-service-id="${service.id}">
               <i class="fas fa-shopping-cart"></i>
-              ${inCart ? `In Cart (${inCart.quantity})` : 'Add to Cart'}
+              ${inCart ? 
+                `${getTranslation('catalog-in-cart', 'In Cart')} (${inCart.quantity})` : 
+                getTranslation('catalog-add-to-cart', 'Add to Cart')}
             </button>
             <button class="btn-details" data-service-id="${service.id}">
-              <i class="fas fa-info-circle"></i> Details
+              <i class="fas fa-info-circle"></i> ${getTranslation('catalog-view-details', 'Details')}
             </button>
           </div>
         </div>
@@ -388,8 +502,10 @@ function renderCategoryFilters() {
   if (!categoryFilters) return;
   
   categoryFilters.innerHTML = categories.map(category => {
-    const displayName = category === 'all' ? 'All Categories' : 
-                       category.charAt(0).toUpperCase() + category.slice(1);
+    const displayName = category === 'all' ? 
+      getTranslation('category-all', 'All Categories') : 
+      getTranslation(`category-${category.toLowerCase().replace(/\s+/g, '-')}`, 
+        category.charAt(0).toUpperCase() + category.slice(1));
     return `
       <button class="category-btn ${category === currentCategory ? 'active' : ''}" 
               data-category="${category}">
@@ -441,10 +557,10 @@ function updateCartButtons() {
     
     if (cartItem) {
       btn.classList.add('in-cart');
-      btn.innerHTML = `<i class="fas fa-shopping-cart"></i> In Cart (${cartItem.quantity})`;
+      btn.innerHTML = `<i class="fas fa-shopping-cart"></i> ${getTranslation('catalog-in-cart', 'In Cart')} (${cartItem.quantity})`;
     } else {
       btn.classList.remove('in-cart');
-      btn.innerHTML = `<i class="fas fa-shopping-cart"></i> Add to Cart`;
+      btn.innerHTML = `<i class="fas fa-shopping-cart"></i> ${getTranslation('catalog-add-to-cart', 'Add to Cart')}`;
     }
   });
 }
@@ -500,13 +616,27 @@ function attachServiceEventListeners() {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
       const serviceId = btn.dataset.serviceId;
-      showNotification(`Details for service #${serviceId}`, 'info');
+      showNotification(`${getTranslation('catalog-service-details', 'Details for service')} #${serviceId}`, 'info');
     });
   });
 }
 
 async function init() {
   console.log('Initializing catalog...');
+  
+  currentLang = localStorage.getItem('lang') || 'en';
+  
+  updateCatalogTranslations();
+  
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const lang = btn.dataset.lang;
+      if (window.getTranslate) {
+        window.getTranslate(lang);
+      }
+    });
+  });
   
   if (!window.authService) {
     console.warn('Auth service not available, retrying in 500ms...');
@@ -518,7 +648,6 @@ async function init() {
   await fetchServices();
   
   const onAuthChange = async (user) => {
-    console.log('Auth changed in catalog, user:', user?.nickname || 'none');
     await Promise.all([
       fetchFavorites(),
       fetchCart()
@@ -620,6 +749,7 @@ async function init() {
       minRating = minRatingSelect?.value ? parseFloat(minRatingSelect.value) : 0;
       currentPage = 1;
       fetchServices();
+      showNotification(getTranslation('catalog-filter-applied', 'Filters applied'), 'success');
     });
   }
   
@@ -633,6 +763,7 @@ async function init() {
       minRating = 0;
       currentPage = 1;
       fetchServices();
+      showNotification(getTranslation('catalog-filter-reset', 'Filters reset'), 'info');
     });
   }
   
@@ -660,6 +791,7 @@ async function init() {
       });
       
       fetchServices();
+      showNotification(getTranslation('catalog-filter-reset', 'Filters reset'), 'success');
     });
   }
   

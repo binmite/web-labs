@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Register - ServiceHub</title>
+  <title data-i18n="register-title">Register - ServiceHub</title>
   <link rel="stylesheet" href="../styles/global.css">
   <link rel="stylesheet" href="../styles/header.css">
   <link rel="stylesheet" href="../styles/footer.css">
@@ -17,19 +17,38 @@
         <img src="../assets/Logo.png" alt="ServiceHub Logo">
       </a>
       <nav class="nav">
-        <a href="./home.html" class="nav-link">Home</a>
-        <a href="./catalog.html" class="nav-link">Catalog</a>
+        <a href="./home.html" class="nav-link" data-i18n="home">Home</a>
+        <a href="./catalog.html" class="nav-link" data-i18n="catalog">Catalog</a>
         <a href="./favorites.html" class="nav-link">
-          <i class="far fa-heart"></i> Favorites
+          <i class="far fa-heart"></i> <span data-i18n="favorites">Favorites</span>
           <span id="favoritesCount" class="badge">0</span>
         </a>
         <a href="./cart.html" class="nav-link">
-          <i class="fas fa-shopping-cart"></i> Cart
+          <i class="fas fa-shopping-cart"></i> <span data-i18n="cart">Cart</span>
           <span id="cartCount" class="badge">0</span>
         </a>
         <a href="./feedback.html" class="nav-link">
-          <i class="far fa-comment"></i> Feedback
+          <i class="far fa-comment"></i> <span data-i18n="feedback">Feedback</span>
         </a>
+        
+        <div class="language-switcher" id="languageSwitcher">
+          <button class="lang-btn" data-lang="en" title="English">
+            <span>EN</span>
+          </button>
+          <button class="lang-btn" data-lang="ru" title="Русский">
+            <span>RU</span>
+          </button>
+        </div>
+        
+        <div class="theme-switcher" id="themeSwitcher">
+          <button class="theme-btn light-btn" data-theme="light" title="Light theme">
+            <i class="fas fa-sun"></i>
+          </button>
+          <button class="theme-btn dark-btn" data-theme="dark" title="Dark theme">
+            <i class="fas fa-moon"></i>
+          </button>
+        </div>
+        
         <div class="auth-buttons" id="authButtons">
         </div>
       </nav>
@@ -40,14 +59,14 @@
     <section class="auth-section">
       <div class="auth-container">
         <div class="auth-header">
-          <h1><i class="fas fa-user-plus"></i> Create Account</h1>
-          <p class="subtitle">Join our community and explore amazing services</p>
+          <h1><i class="fas fa-user-plus"></i> <span data-i18n="register-welcome">Create Account</span></h1>
+          <p class="subtitle" data-i18n="register-subtitle">Join our community and explore amazing services</p>
         </div>
 
         <form id="registerForm" class="auth-form">
           <div class="form-group">
             <label for="phone">
-              <i class="fas fa-phone"></i> Phone Number (Belarus only)
+              <i class="fas fa-phone"></i> <span data-i18n="register-phone-label">Phone Number (Belarus only)</span>
               <span class="required">*</span>
             </label>
             <div class="input-with-prefix">
@@ -56,6 +75,7 @@
                 type="tel" 
                 id="phone" 
                 name="phone" 
+                data-i18n-placeholder="register-phone-placeholder"
                 placeholder="29 123 45 67" 
                 pattern="^[0-9]{2}\s?[0-9]{3}\s?[0-9]{2}\s?[0-9]{2}$"
                 required
@@ -63,18 +83,19 @@
               >
             </div>
             <div class="error-message" id="phoneError"></div>
-            <div class="hint">Format: 29 123 45 67 or 291234567</div>
+            <div class="hint" data-i18n="register-phone-hint">Format: 29 123 45 67 or 291234567</div>
           </div>
 
           <div class="form-group">
             <label for="email">
-              <i class="fas fa-envelope"></i> Email Address
+              <i class="fas fa-envelope"></i> <span data-i18n="register-email-label">Email Address</span>
               <span class="required">*</span>
             </label>
             <input 
               type="email" 
               id="email" 
               name="email" 
+              data-i18n-placeholder="register-email-placeholder"
               placeholder="your.email@example.com" 
               required
             >
@@ -83,7 +104,7 @@
 
           <div class="form-group">
             <label for="birthDate">
-              <i class="fas fa-birthday-cake"></i> Date of Birth
+              <i class="fas fa-birthday-cake"></i> <span data-i18n="register-birthdate-label">Date of Birth</span>
               <span class="required">*</span>
             </label>
             <input 
@@ -94,19 +115,20 @@
               required
             >
             <div class="error-message" id="birthDateError"></div>
-            <div class="hint">You must be at least 16 years old</div>
+            <div class="hint" data-i18n="register-birthdate-hint">You must be at least 16 years old</div>
           </div>
 
           <div class="form-row">
             <div class="form-group">
               <label for="firstName">
-                <i class="fas fa-user"></i> First Name
+                <i class="fas fa-user"></i> <span data-i18n="register-firstname-label">First Name</span>
                 <span class="required">*</span>
               </label>
               <input 
                 type="text" 
                 id="firstName" 
                 name="firstName" 
+                data-i18n-placeholder="register-firstname-placeholder"
                 placeholder="John" 
                 required
                 pattern="^[A-Za-zА-Яа-яЁё\s\-']{2,}$"
@@ -116,13 +138,14 @@
 
             <div class="form-group">
               <label for="lastName">
-                <i class="fas fa-user"></i> Last Name
+                <i class="fas fa-user"></i> <span data-i18n="register-lastname-label">Last Name</span>
                 <span class="required">*</span>
               </label>
               <input 
                 type="text" 
                 id="lastName" 
                 name="lastName" 
+                data-i18n-placeholder="register-lastname-placeholder"
                 placeholder="Doe" 
                 required
                 pattern="^[A-Za-zА-Яа-яЁё\s\-']{2,}$"
@@ -133,12 +156,13 @@
 
           <div class="form-group">
             <label for="middleName">
-              <i class="fas fa-user"></i> Middle Name (Optional)
+              <i class="fas fa-user"></i> <span data-i18n="register-middlename-label">Middle Name (Optional)</span>
             </label>
             <input 
               type="text" 
               id="middleName" 
               name="middleName" 
+              data-i18n-placeholder="register-middlename-placeholder"
               placeholder="Michael"
               pattern="^[A-Za-zА-Яа-яЁё\s\-']*$"
             >
@@ -146,7 +170,7 @@
           </div>
 
           <div class="form-group">
-            <label for="passwordMethod">Password Method</label>
+            <label for="passwordMethod" data-i18n="register-password-method-label">Password Method</label>
             <div class="radio-group">
               <label class="radio-label">
                 <input 
@@ -157,7 +181,7 @@
                   id="autoPassword"
                 >
                 <span class="radio-custom"></span>
-                Generate password automatically
+                <span data-i18n="register-password-auto">Generate password automatically</span>
               </label>
               <label class="radio-label">
                 <input 
@@ -167,7 +191,7 @@
                   id="manualPassword"
                 >
                 <span class="radio-custom"></span>
-                Set my own password
+                <span data-i18n="register-password-manual">Set my own password</span>
               </label>
             </div>
           </div>
@@ -175,7 +199,7 @@
           <div id="manualPasswordFields" style="display: none;">
             <div class="form-group">
               <label for="password">
-                <i class="fas fa-lock"></i> Password
+                <i class="fas fa-lock"></i> <span data-i18n="register-password-label">Password</span>
                 <span class="required">*</span>
               </label>
               <div class="password-input">
@@ -183,6 +207,7 @@
                   type="password" 
                   id="password" 
                   name="password" 
+                  data-i18n-placeholder="register-password-placeholder"
                   placeholder="Enter your password"
                   minlength="8"
                   maxlength="20"
@@ -194,17 +219,17 @@
               </div>
               <div class="error-message" id="passwordError"></div>
               <div class="hint">
-                <i class="fas fa-info-circle"></i> Must contain: 8-20 chars, uppercase, lowercase, number, special character
+                <i class="fas fa-info-circle"></i> <span data-i18n="register-password-hint">Must contain: 8-20 chars, uppercase, lowercase, number, special character</span>
               </div>
               <div class="password-strength" id="passwordStrength">
                 <div class="strength-bar"></div>
-                <div class="strength-text">Strength: <span>Weak</span></div>
+                <div class="strength-text" data-i18n="register-password-strength">Strength: <span>Weak</span></div>
               </div>
             </div>
 
             <div class="form-group">
               <label for="confirmPassword">
-                <i class="fas fa-lock"></i> Confirm Password
+                <i class="fas fa-lock"></i> <span data-i18n="register-confirm-password-label">Confirm Password</span>
                 <span class="required">*</span>
               </label>
               <div class="password-input">
@@ -212,6 +237,7 @@
                   type="password" 
                   id="confirmPassword" 
                   name="confirmPassword" 
+                  data-i18n-placeholder="register-confirm-password-placeholder"
                   placeholder="Repeat your password"
                 >
                 <button type="button" class="toggle-password" id="toggleConfirmPassword">
@@ -224,23 +250,23 @@
 
           <div id="autoPasswordField">
             <div class="form-group">
-              <label>Generated Password</label>
+              <label data-i18n="register-generated-password-label">Generated Password</label>
               <div class="generated-password">
-                <code id="generatedPassword">Loading...</code>
-                <button type="button" id="copyPassword" class="btn-icon">
+                <code id="generatedPassword" data-i18n="register-loading">Loading...</code>
+                <button type="button" id="copyPassword" class="btn-icon" title="Copy password">
                   <i class="fas fa-copy"></i>
                 </button>
-                <button type="button" id="regeneratePassword" class="btn-icon">
+                <button type="button" id="regeneratePassword" class="btn-icon" title="Regenerate password">
                   <i class="fas fa-redo"></i>
                 </button>
               </div>
-              <div class="hint">Your password will be generated automatically. Save it securely!</div>
+              <div class="hint" data-i18n="register-generated-password-hint">Your password will be generated automatically. Save it securely!</div>
             </div>
           </div>
 
           <div class="form-group">
             <label for="nickname">
-              <i class="fas fa-at"></i> Username
+              <i class="fas fa-at"></i> <span data-i18n="register-username-label">Username</span>
               <span class="required">*</span>
             </label>
             <div class="nickname-group">
@@ -249,6 +275,7 @@
                   type="text" 
                   id="nickname" 
                   name="nickname" 
+                  data-i18n-placeholder="register-username-placeholder"
                   placeholder="e.g., JohnDoe123" 
                   readonly
                 >
@@ -257,15 +284,15 @@
                 </div>
               </div>
               <button type="button" id="generateNickname" class="btn-secondary">
-                <i class="fas fa-random"></i> Generate
+                <i class="fas fa-random"></i> <span data-i18n="register-generate-button">Generate</span>
               </button>
             </div>
             <div class="error-message" id="nicknameError"></div>
             <div class="hint">
               <i class="fas fa-info-circle"></i> 
-              <span id="nicknameHint">Username will be generated automatically. You have 5 regeneration attempts.</span>
+              <span id="nicknameHint" data-i18n="register-username-hint">Username will be generated automatically. You have 5 regeneration attempts.</span>
             </div>
-            <div class="attempts-counter" id="attemptsCounter">
+            <div class="attempts-counter" id="attemptsCounter" data-i18n="register-attempts-counter">
               Regeneration attempts left: <span>5</span>
             </div>
           </div>
@@ -275,10 +302,10 @@
               <input type="checkbox" id="terms" name="terms" required>
               <span class="checkbox-custom"></span>
               <span>
-                I agree to the 
-                <a href="#" class="terms-link" id="showTerms">Terms of Service</a> 
-                and 
-                <a href="#" class="terms-link" id="showPrivacy">Privacy Policy</a>
+                <span data-i18n="register-terms-text">I agree to the</span> 
+                <a href="#" class="terms-link" id="showTerms" data-i18n="register-terms-link">Terms of Service</a> 
+                <span data-i18n="register-terms-and">and</span>
+                <a href="#" class="terms-link" id="showPrivacy" data-i18n="register-privacy-link">Privacy Policy</a>
                 <span class="required">*</span>
               </span>
             </label>
@@ -287,10 +314,10 @@
 
           <div class="form-actions">
             <button type="submit" id="registerBtn" class="btn btn-primary" disabled>
-              <i class="fas fa-user-plus"></i> Create Account
+              <i class="fas fa-user-plus"></i> <span data-i18n="register-button">Create Account</span>
             </button>
             <a href="./login.html" class="btn-link">
-              <i class="fas fa-sign-in-alt"></i> Already have an account? Sign in
+              <i class="fas fa-sign-in-alt"></i> <span data-i18n="register-login-link">Already have an account? Sign in</span>
             </a>
           </div>
         </form>
@@ -300,29 +327,29 @@
     <div id="termsModal" class="modal">
       <div class="modal-content">
         <div class="modal-header">
-          <h2><i class="fas fa-file-contract"></i> Terms of Service</h2>
+          <h2><i class="fas fa-file-contract"></i> <span data-i18n="terms-title">Terms of Service</span></h2>
           <button class="close-modal">&times;</button>
         </div>
         <div class="modal-body">
           <div class="terms-content">
-            <h3>1. Acceptance of Terms</h3>
-            <p>By accessing and using ServiceHub, you accept and agree to be bound by the terms and provision of this agreement.</p>
+            <h3 data-i18n="terms-section-1-title">1. Acceptance of Terms</h3>
+            <p data-i18n="terms-section-1-text">By accessing and using ServiceHub, you accept and agree to be bound by the terms and provision of this agreement.</p>
             
-            <h3>2. User Responsibilities</h3>
-            <p>Users are responsible for maintaining the confidentiality of their account and password.</p>
+            <h3 data-i18n="terms-section-2-title">2. User Responsibilities</h3>
+            <p data-i18n="terms-section-2-text">Users are responsible for maintaining the confidentiality of their account and password.</p>
             
-            <h3>3. Service Modifications</h3>
-            <p>ServiceHub reserves the right to modify or discontinue any service at any time.</p>
+            <h3 data-i18n="terms-section-3-title">3. Service Modifications</h3>
+            <p data-i18n="terms-section-3-text">ServiceHub reserves the right to modify or discontinue any service at any time.</p>
             
-            <h3>4. Limitation of Liability</h3>
-            <p>ServiceHub shall not be liable for any indirect, incidental, or consequential damages.</p>
+            <h3 data-i18n="terms-section-4-title">4. Limitation of Liability</h3>
+            <p data-i18n="terms-section-4-text">ServiceHub shall not be liable for any indirect, incidental, or consequential damages.</p>
             
-            <p class="terms-date">Last updated: December 2024</p>
+            <p class="terms-date" data-i18n="terms-last-updated">Last updated: December 2024</p>
           </div>
         </div>
         <div class="modal-footer">
           <button class="btn btn-primary" id="acceptTerms">
-            <i class="fas fa-check"></i> I Accept
+            <i class="fas fa-check"></i> <span data-i18n="terms-accept-button">I Accept</span>
           </button>
         </div>
       </div>
@@ -336,40 +363,40 @@
           <div class="logo">
             <img src="../assets/Logo.png" alt="Logo" />
           </div>
-          <p>Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.</p>
+          <p data-i18n="footer-text">Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.</p>
         </div>
         <div class="footer-col">
-          <h4>Products</h4>
+          <h4 data-i18n="products-title">Products</h4>
           <ul>
-            <li><a href="#">Web Studio</a></li>
-            <li><a href="#">DynamicBox Flex</a></li>
-            <li><a href="#">Programming Forms</a></li>
+            <li><a href="#" data-i18n="product-1">Web Studio</a></li>
+            <li><a href="#" data-i18n="product-2">DynamicBox Flex</a></li>
+            <li><a href="#" data-i18n="product-3">Programming Forms</a></li>
           </ul>
         </div>
         <div class="footer-col">
-          <h4>Resources</h4>
+          <h4 data-i18n="resources-title">Resources</h4>
           <ul>
-            <li><a href="#">Nostrud exercitation</a></li>
-            <li><a href="#">Visual mockups</a></li>
-            <li><a href="#">Nostrud exercitation</a></li>
-            <li><a href="#">Visual mockups</a></li>
+            <li><a href="#" data-i18n="resource-1">Nostrud exercitation</a></li>
+            <li><a href="#" data-i18n="resource-2">Visual mockups</a></li>
+            <li><a href="#" data-i18n="resource-3">Nostrud exercitation</a></li>
+            <li><a href="#" data-i18n="resource-4">Visual mockups</a></li>
           </ul>
         </div>
         <div class="footer-col">
-          <h4>Company</h4>
+          <h4 data-i18n="company-title">Company</h4>
           <ul>
-            <li><a href="#">Consectetur adipiscing</a></li>
-            <li><a href="#">Labore et dolore</a></li>
-            <li><a href="#">Sed do eiusmod</a></li>
-            <li><a href="#">Tempor incididunt</a></li>
-            <li><a href="#">Labore et dolore</a></li>
+            <li><a href="#" data-i18n="company-1">Consectetur adipiscing</a></li>
+            <li><a href="#" data-i18n="company-2">Labore et dolore</a></li>
+            <li><a href="#" data-i18n="company-3">Sed do eiusmod</a></li>
+            <li><a href="#" data-i18n="company-4">Tempor incididunt</a></li>
+            <li><a href="#" data-i18n="company-5">Labore et dolore</a></li>
           </ul>
         </div>
       </div>
     </div>
     <div class="container footer-bottom">
         <div class="footer-bottom-left">
-            <p class="copyright">Made by <strong>Cruip</strong>. All right reserved</p>
+            <p class="copyright" data-i18n="copyright">Made by <strong>Cruip</strong>. All right reserved</p>
         </div>
         <div class="footer-bottom-right">
           <ul>
@@ -383,7 +410,53 @@
     </div>
   </footer>
 
+  <script src="../scripts/globalCounters.js"></script>
   <script src="../scripts/auth.js"></script>
+  <script src="../scripts/translate.js"></script>
+  <script src="../scripts/theme.js"></script>
+  <script src="../scripts/language-switcher.js"></script>
+  <script src="../scripts/user-settings.js"></script>
   <script src="../scripts/register.js"></script>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        if (window.themeManager) {
+          window.themeManager.loadSettings();
+        }
+        
+        await window.authService.init();
+        
+        const savedLang = localStorage.getItem('lang') || 'en';
+        if (window.getTranslate) {
+          window.getTranslate(savedLang);
+        }
+        
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const lang = this.dataset.lang;
+            if (window.getTranslate) {
+              window.getTranslate(lang);
+            }
+            if (window.languageSwitcher) {
+              window.languageSwitcher.switchLanguage(lang);
+            }
+          });
+        });
+        
+        document.querySelectorAll('.theme-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const theme = this.dataset.theme;
+            if (window.themeManager) {
+              window.themeManager.applyTheme(theme);
+            }
+          });
+        });
+        
+      } catch (error) {
+        console.error('Error during initialization:', error);
+      }
+    });
+  </script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Shopping Cart</title>
+  <title data-i18n="cart-title">Shopping Cart - ServiceHub</title>
   <link rel="stylesheet" href="../styles/global.css">
   <link rel="stylesheet" href="../styles/header.css">
   <link rel="stylesheet" href="../styles/footer.css">
@@ -17,19 +17,38 @@
         <img src="../assets/Logo.png" alt="ServiceHub Logo">
       </a>
       <nav class="nav">
-        <a href="./home.html" class="nav-link">Home</a>
-        <a href="./catalog.html" class="nav-link">Catalog</a>
+        <a href="./home.html" class="nav-link" data-i18n="home">Home</a>
+        <a href="./catalog.html" class="nav-link" data-i18n="catalog">Catalog</a>
         <a href="./favorites.html" class="nav-link">
-          <i class="far fa-heart"></i> Favorites
+          <i class="far fa-heart"></i> <span data-i18n="favorites">Favorites</span>
           <span id="favoritesCount" class="badge">0</span>
         </a>
         <a href="./cart.html" class="nav-link">
-          <i class="fas fa-shopping-cart"></i> Cart
+          <i class="fas fa-shopping-cart"></i> <span data-i18n="cart">Cart</span>
           <span id="cartCount" class="badge">0</span>
         </a>
         <a href="./feedback.html" class="nav-link">
-          <i class="far fa-comment"></i> Feedback
+          <i class="far fa-comment"></i> <span data-i18n="feedback">Feedback</span>
         </a>
+        
+        <div class="language-switcher" id="languageSwitcher">
+          <button class="lang-btn" data-lang="en" title="English">
+            <span>EN</span>
+          </button>
+          <button class="lang-btn" data-lang="ru" title="Русский">
+            <span>RU</span>
+          </button>
+        </div>
+        
+        <div class="theme-switcher" id="themeSwitcher">
+          <button class="theme-btn light-btn" data-theme="light" title="Light theme">
+            <i class="fas fa-sun"></i>
+          </button>
+          <button class="theme-btn dark-btn" data-theme="dark" title="Dark theme">
+            <i class="fas fa-moon"></i>
+          </button>
+        </div>
+        
         <div class="auth-buttons" id="authButtons">
         </div>
       </nav>
@@ -39,59 +58,59 @@
   <main class="container">
     <section class="cart-section">
       <div class="cart-header">
-        <h1><i class="fas fa-shopping-cart"></i> Shopping Cart</h1>
-        <p class="subtitle">Review and manage your selected services</p>
+        <h1><i class="fas fa-shopping-cart"></i> <span data-i18n="cart-header">Shopping Cart</span></h1>
+        <p class="subtitle" data-i18n="cart-subtitle">Review and manage your selected services</p>
       </div>
 
       <div class="cart-content">
         <div class="cart-items-container">
           <div class="cart-actions">
             <button id="clearCart" class="btn btn-danger">
-              <i class="fas fa-trash-alt"></i> Clear Cart
+              <i class="fas fa-trash-alt"></i> <span data-i18n="cart-clear-all">Clear Cart</span>
             </button>
             <a href="catalog.html" class="btn btn-secondary">
-              <i class="fas fa-plus"></i> Add More Services
+              <i class="fas fa-plus"></i> <span data-i18n="cart-add-more">Add More Services</span>
             </a>
           </div>
 
           <div class="cart-items" id="cartItems">
             <div class="loading-spinner">
               <i class="fas fa-spinner fa-spin"></i>
-              <p>Loading cart items...</p>
+              <p data-i18n="cart-loading">Loading cart items...</p>
             </div>
           </div>
         </div>
 
         <div class="cart-summary">
-          <h3><i class="fas fa-receipt"></i> Order Summary</h3>
+          <h3><i class="fas fa-receipt"></i> <span data-i18n="cart-order-summary">Order Summary</span></h3>
           <div class="summary-details">
             <div class="summary-row">
-              <span>Subtotal</span>
+              <span data-i18n="cart-subtotal">Subtotal</span>
               <span id="subtotal">$0.00</span>
             </div>
             <div class="summary-row">
-              <span>Tax (10%)</span>
+              <span data-i18n="cart-tax">Tax (10%)</span>
               <span id="tax">$0.00</span>
             </div>
             <div class="summary-row total">
-              <span>Total</span>
+              <span data-i18n="cart-total">Total</span>
               <span id="total">$0.00</span>
             </div>
           </div>
           <button id="checkoutBtn" class="btn btn-primary checkout-btn" disabled>
-            <i class="fas fa-credit-card"></i> Proceed to Checkout
+            <i class="fas fa-credit-card"></i> <span data-i18n="cart-checkout">Proceed to Checkout</span>
           </button>
           <p class="secure-checkout">
-            <i class="fas fa-lock"></i> Secure checkout
+            <i class="fas fa-lock"></i> <span data-i18n="cart-secure">Secure checkout</span>
           </p>
         </div>
       </div>
 
       <div id="emptyCart" class="empty-cart" style="display: none;">
         <i class="fas fa-shopping-cart fa-4x"></i>
-        <h2>Your cart is empty</h2>
-        <p>Add some amazing services to get started!</p>
-        <a href="catalog.html" class="btn btn-primary">
+        <h2 data-i18n="cart-empty-title">Your cart is empty</h2>
+        <p data-i18n="cart-empty-text">Add some amazing services to get started!</p>
+        <a href="catalog.html" class="btn btn-primary" data-i18n="cart-browse-services">
            Browse Services
         </a>
       </div>
@@ -105,40 +124,40 @@
           <div class="logo">
             <img src="../assets/Logo.png" alt="Logo" />
           </div>
-          <p>Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.</p>
+          <p data-i18n="footer-text">Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.</p>
         </div>
         <div class="footer-col">
-          <h4>Products</h4>
+          <h4 data-i18n="products-title">Products</h4>
           <ul>
-            <li><a href="#">Web Studio</a></li>
-            <li><a href="#">DynamicBox Flex</a></li>
-            <li><a href="#">Programming Forms</a></li>
+            <li><a href="#" data-i18n="product-1">Web Studio</a></li>
+            <li><a href="#" data-i18n="product-2">DynamicBox Flex</a></li>
+            <li><a href="#" data-i18n="product-3">Programming Forms</a></li>
           </ul>
         </div>
         <div class="footer-col">
-          <h4>Resources</h4>
+          <h4 data-i18n="resources-title">Resources</h4>
           <ul>
-            <li><a href="#">Nostrud exercitation</a></li>
-            <li><a href="#">Visual mockups</a></li>
-            <li><a href="#">Nostrud exercitation</a></li>
-            <li><a href="#">Visual mockups</a></li>
+            <li><a href="#" data-i18n="resource-1">Nostrud exercitation</a></li>
+            <li><a href="#" data-i18n="resource-2">Visual mockups</a></li>
+            <li><a href="#" data-i18n="resource-3">Nostrud exercitation</a></li>
+            <li><a href="#" data-i18n="resource-4">Visual mockups</a></li>
           </ul>
         </div>
         <div class="footer-col">
-          <h4>Company</h4>
+          <h4 data-i18n="company-title">Company</h4>
           <ul>
-            <li><a href="#">Consectetur adipiscing</a></li>
-            <li><a href="#">Labore et dolore</a></li>
-            <li><a href="#">Sed do eiusmod</a></li>
-            <li><a href="#">Tempor incididunt</a></li>
-            <li><a href="#">Labore et dolore</a></li>
+            <li><a href="#" data-i18n="company-1">Consectetur adipiscing</a></li>
+            <li><a href="#" data-i18n="company-2">Labore et dolore</a></li>
+            <li><a href="#" data-i18n="company-3">Sed do eiusmod</a></li>
+            <li><a href="#" data-i18n="company-4">Tempor incididunt</a></li>
+            <li><a href="#" data-i18n="company-5">Labore et dolore</a></li>
           </ul>
         </div>
       </div>
     </div>
     <div class="container footer-bottom">
         <div class="footer-bottom-left">
-            <p class="copyright">Made by <strong>Cruip</strong>. All right reserved</p>
+            <p class="copyright" data-i18n="copyright">Made by <strong>Cruip</strong>. All right reserved</p>
         </div>
         <div class="footer-bottom-right">
           <ul>
@@ -155,34 +174,79 @@
   <div id="checkoutModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
-        <h2><i class="fas fa-check-circle"></i> Order Confirmed!</h2>
+        <h2><i class="fas fa-check-circle"></i> <span data-i18n="cart-modal-title">Order Confirmed!</span></h2>
         <button class="close-modal">&times;</button>
       </div>
       <div class="modal-body">
         <div class="success-icon">
           <i class="fas fa-check-circle"></i>
         </div>
-        <h3>Thank you for your purchase!</h3>
-        <p>Your order has been successfully processed. A confirmation email has been sent to your email address.</p>
+        <h3 data-i18n="cart-modal-thanks">Thank you for your purchase!</h3>
+        <p data-i18n="cart-modal-message">Your order has been successfully processed. A confirmation email has been sent to your email address.</p>
         <div class="order-details">
-          <p><strong>Order ID:</strong> <span id="orderId">ORD-2024-001</span></p>
-          <p><strong>Total Amount:</strong> <span id="orderTotal">$0.00</span></p>
-          <p><strong>Estimated Delivery:</strong> Within 5-7 business days</p>
+          <p><strong data-i18n="cart-modal-order-id">Order ID:</strong> <span id="orderId">ORD-2024-001</span></p>
+          <p><strong data-i18n="cart-modal-total">Total Amount:</strong> <span id="orderTotal">$0.00</span></p>
+          <p><strong data-i18n="cart-modal-delivery">Estimated Delivery:</strong> <span data-i18n="cart-modal-delivery-time">Within 5-7 business days</span></p>
         </div>
       </div>
       <div class="modal-footer">
         <button id="continueShopping" class="btn btn-primary">
-          <i class="fas fa-shopping-cart"></i> Continue Shopping
+          <i class="fas fa-shopping-cart"></i> <span data-i18n="cart-modal-continue">Continue Shopping</span>
         </button>
         <button id="viewOrder" class="btn btn-secondary">
-          <i class="fas fa-file-alt"></i> View Order Details
+          <i class="fas fa-file-alt"></i> <span data-i18n="cart-modal-view">View Order Details</span>
         </button>
       </div>
     </div>
   </div>
 
-  <script src="../scripts/cart.js"></script>
   <script src="../scripts/globalCounters.js"></script>
   <script src="../scripts/auth.js"></script>
+  <script src="../scripts/translate.js"></script>
+  <script src="../scripts/theme.js"></script>
+  <script src="../scripts/language-switcher.js"></script>
+  <script src="../scripts/user-settings.js"></script>
+  <script src="../scripts/cart.js"></script>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        if (window.themeManager) {
+          window.themeManager.loadSettings();
+        }
+        
+        await window.authService.init();
+        
+        const savedLang = localStorage.getItem('lang') || 'en';
+        if (window.getTranslate) {
+          window.getTranslate(savedLang);
+        }
+        
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const lang = this.dataset.lang;
+            if (window.getTranslate) {
+              window.getTranslate(lang);
+            }
+            if (window.languageSwitcher) {
+              window.languageSwitcher.switchLanguage(lang);
+            }
+          });
+        });
+        
+        document.querySelectorAll('.theme-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const theme = this.dataset.theme;
+            if (window.themeManager) {
+              window.themeManager.applyTheme(theme);
+            }
+          });
+        });
+        
+      } catch (error) {
+        console.error('Error during initialization:', error);
+      }
+    });
+  </script>
 </body>
 </html>

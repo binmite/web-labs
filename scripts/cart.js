@@ -3,6 +3,7 @@ const CART_CART_ENDPOINT = `${CART_API_BASE}/cart`;
 const CART_ORDERS_ENDPOINT = `${CART_API_BASE}/orders`;
 
 let cartItems = [];
+let currentLang = 'en';
 
 const cartItemsContainer = document.getElementById('cartItems');
 const emptyCart = document.getElementById('emptyCart');
@@ -18,6 +19,78 @@ const orderTotalEl = document.getElementById('orderTotal');
 const continueShoppingBtn = document.getElementById('continueShopping');
 const viewOrderBtn = document.getElementById('viewOrder');
 const closeModalBtn = document.querySelector('.close-modal');
+
+document.addEventListener('langChanged', (event) => {
+  currentLang = event.detail.lang;
+  updateCartTranslations();
+  renderCart();
+});
+
+function getTranslation(key, defaultValue = '') {
+  const translations = window.i18Obj?.[currentLang];
+  return translations?.[key] || defaultValue;
+}
+
+function updateCartTranslations() {
+  const translations = window.i18Obj?.[currentLang];
+  if (!translations) return;
+  
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (translations[key]) {
+      if (el.tagName === 'INPUT' || el.tagName === 'BUTTON') {
+        el.value = translations[key];
+      } else {
+        el.textContent = translations[key];
+      }
+    }
+  });
+  
+  const elements = {
+    '#clearCart': 'cart-clear-all',
+    '#checkoutBtn': 'cart-checkout',
+    '#continueShopping': 'cart-modal-continue',
+    '#viewOrder': 'cart-modal-view',
+    '.close-modal': 'admin-close',
+    '.cart-subtitle': 'cart-subtitle',
+    '.cart-add-more': 'cart-add-more',
+    '.order-summary-title': 'cart-order-summary',
+    '.subtotal-label': 'cart-subtotal',
+    '.tax-label': 'cart-tax',
+    '.total-label': 'cart-total',
+    '.secure-checkout': 'cart-secure',
+    '.empty-cart-title': 'cart-empty-title',
+    '.empty-cart-text': 'cart-empty-text',
+    '.empty-cart-btn': 'cart-browse-services'
+  };
+  
+  Object.entries(elements).forEach(([selector, key]) => {
+    const element = document.querySelector(selector);
+    if (element && translations[key]) {
+      if (element.tagName === 'INPUT' || element.tagName === 'BUTTON') {
+        element.value = translations[key];
+      } else {
+        element.textContent = translations[key];
+      }
+    }
+  });
+  
+  const modalTitle = document.querySelector('#checkoutModal .modal-title');
+  const thanksText = document.querySelector('#checkoutModal .thanks-text');
+  const messageText = document.querySelector('#checkoutModal .message-text');
+  const orderIdLabel = document.querySelector('#checkoutModal .order-id-label');
+  const totalAmountLabel = document.querySelector('#checkoutModal .total-amount-label');
+  const deliveryLabel = document.querySelector('#checkoutModal .delivery-label');
+  const deliveryTime = document.querySelector('#checkoutModal .delivery-time');
+  
+  if (modalTitle) modalTitle.textContent = translations['cart-modal-title'] || 'Order Confirmed!';
+  if (thanksText) thanksText.textContent = translations['cart-modal-thanks'] || 'Thank you for your purchase!';
+  if (messageText) messageText.textContent = translations['cart-modal-message'] || 'Your order has been successfully processed.';
+  if (orderIdLabel) orderIdLabel.textContent = translations['cart-modal-order-id'] || 'Order ID:';
+  if (totalAmountLabel) totalAmountLabel.textContent = translations['cart-modal-total'] || 'Total Amount:';
+  if (deliveryLabel) deliveryLabel.textContent = translations['cart-modal-delivery'] || 'Estimated Delivery:';
+  if (deliveryTime) deliveryTime.textContent = translations['cart-modal-delivery-time'] || 'Within 5-7 business days';
+}
 
 async function fetchData(url, options = {}) {
   try {
@@ -45,9 +118,14 @@ function showNotification(message, type = 'info') {
     z-index: 1000;
     animation: slideInRight 0.3s ease;
   `;
+  
+  let icon = 'info-circle';
+  if (type === 'success') icon = 'check-circle';
+  if (type === 'error') icon = 'exclamation-circle';
+  
   notification.innerHTML = `
     <div style="display: flex; align-items: center; gap: 0.75rem;">
-      <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+      <i class="fas fa-${icon}"></i>
       <span>${message}</span>
     </div>
   `;
@@ -89,12 +167,12 @@ async function updateQuantity(cartItemId, change, newQuantity = null) {
   
   const cartItem = cartItems.find(item => item.id == cartItemId);
   if (!cartItem) {
-    showNotification('Cart item not found', 'error');
+    showNotification(getTranslation('cart-item-not-found', 'Cart item not found'), 'error');
     return;
   }
   
   let quantity = newQuantity !== null ? newQuantity : cartItem.quantity + change;
-  quantity = Math.max(1, quantity); 
+  quantity = Math.max(1, quantity);
   
   try {
     await fetchData(`${CART_CART_ENDPOINT}/${cartItem.id}`, {
@@ -106,22 +184,23 @@ async function updateQuantity(cartItemId, change, newQuantity = null) {
     });
     
     await loadCart(window.authService?.getCurrentUser());
-    showNotification('Quantity updated', 'success');
+    showNotification(getTranslation('cart-update-success', 'Quantity updated'), 'success');
   } catch (error) {
     console.error('Error updating quantity:', error);
-    showNotification('Failed to update quantity', 'error');
+    showNotification(getTranslation('cart-error', 'Failed to update quantity'), 'error');
   }
 }
 
 async function removeFromCart(cartItemId) {
   console.log('Removing cart item:', cartItemId);
   
-  if (!confirm('Remove this item from cart?')) return;
+  const confirmMessage = getTranslation('cart-confirm-remove', 'Remove this item from cart?');
+  if (!confirm(confirmMessage)) return;
   
   try {
     const cartItem = cartItems.find(item => item.id == cartItemId);
     if (!cartItem) {
-      showNotification('Cart item not found', 'error');
+      showNotification(getTranslation('cart-item-not-found', 'Cart item not found'), 'error');
       return;
     }
     
@@ -130,20 +209,21 @@ async function removeFromCart(cartItemId) {
     });
     
     await loadCart(window.authService?.getCurrentUser());
-    showNotification('Item removed from cart', 'success');
+    showNotification(getTranslation('cart-remove-success', 'Item removed from cart'), 'success');
   } catch (error) {
     console.error('Error removing item:', error);
-    showNotification('Failed to remove item', 'error');
+    showNotification(getTranslation('cart-error', 'Failed to remove item'), 'error');
   }
 }
 
 async function clearCart() {
   if (cartItems.length === 0) {
-    showNotification('Cart is already empty', 'info');
+    showNotification(getTranslation('cart-empty', 'Cart is already empty'), 'info');
     return;
   }
   
-  if (!confirm('Are you sure you want to clear your entire cart?')) return;
+  const confirmMessage = getTranslation('cart-confirm-clear', 'Are you sure you want to clear your entire cart?');
+  if (!confirm(confirmMessage)) return;
   
   try {
     for (const item of cartItems) {
@@ -156,17 +236,17 @@ async function clearCart() {
     renderCart();
     updateCartSummary();
     updateCounts();
-    showNotification('Cart cleared successfully', 'success');
+    showNotification(getTranslation('cart-clear-success', 'Cart cleared successfully'), 'success');
   } catch (error) {
     console.error('Error clearing cart:', error);
-    showNotification('Failed to clear cart', 'error');
+    showNotification(getTranslation('cart-error', 'Failed to clear cart'), 'error');
   }
 }
 
 async function createOrder() {
   const currentUser = window.authService?.getCurrentUser();
   if (!currentUser) {
-    showNotification('Please log in to complete purchase', 'error');
+    showNotification(getTranslation('cart-login-required', 'Please log in to complete purchase'), 'error');
     setTimeout(() => {
       window.location.href = 'login.html';
     }, 1500);
@@ -222,19 +302,19 @@ async function checkout() {
   const currentUser = window.authService?.getCurrentUser();
   
   if (cartItems.length === 0) {
-    showNotification('Your cart is empty!', 'error');
+    showNotification(getTranslation('cart-empty-checkout', 'Your cart is empty!'), 'error');
     return;
   }
   
   if (!currentUser) {
-    showNotification('Please log in to complete purchase', 'error');
+    showNotification(getTranslation('cart-login-required', 'Please log in to complete purchase'), 'error');
     setTimeout(() => {
       window.location.href = 'login.html';
     }, 1500);
     return;
   }
   
-  showNotification('Processing your order...', 'info');
+  showNotification(getTranslation('payment-processing', 'Processing your order...'), 'info');
   
   setTimeout(async () => {
     try {
@@ -244,8 +324,9 @@ async function checkout() {
         const orderId = order.id || `ORD-${Date.now()}`;
         const total = calculateTotal();
         
-        if (document.getElementById('orderId')) {
-          document.getElementById('orderId').textContent = `ORD-${order.id}`;
+        const orderIdElement = document.getElementById('orderId');
+        if (orderIdElement) {
+          orderIdElement.textContent = `ORD-${order.id}`;
         }
         if (orderTotalEl) {
           orderTotalEl.textContent = `$${total.toFixed(2)}`;
@@ -254,14 +335,14 @@ async function checkout() {
         await clearCart();
         
         showCheckoutModal();
-        showNotification('Order placed successfully!', 'success');
+        showNotification(getTranslation('cart-checkout-success', 'Order placed successfully!'), 'success');
       } else {
-        showNotification('Failed to create order', 'error');
+        showNotification(getTranslation('cart-checkout-error', 'Failed to create order'), 'error');
       }
       
     } catch (error) {
       console.error('Checkout error:', error);
-      showNotification('Checkout failed. Please try again.', 'error');
+      showNotification(getTranslation('cart-checkout-error', 'Checkout failed. Please try again.'), 'error');
     }
   }, 1500);
 }
@@ -271,7 +352,7 @@ function calculateSubtotal() {
 }
 
 function calculateTax(subtotal) {
-  return subtotal * 0.10; 
+  return subtotal * 0.10;
 }
 
 function calculateTotal() {
@@ -296,26 +377,30 @@ function renderCart() {
   
   cartItemsContainer.innerHTML = cartItems.map(item => {
     const itemTotal = item.price * item.quantity;
+    const categoryKey = `category-${item.category?.toLowerCase().replace(/\s+/g, '-')}`;
+    const categoryName = getTranslation(categoryKey, item.category || 'Category');
     
     return `
       <div class="cart-item" data-cart-id="${item.id}">
         <div class="cart-item-image" style="background-image: url('${item.image}')"></div>
         <div class="cart-item-details">
           <div class="cart-item-title">${item.name}</div>
-          <div class="cart-item-category">${item.category}</div>
-          <div class="cart-item-price">$${item.price} × ${item.quantity} = $${itemTotal.toFixed(2)}</div>
+          <div class="cart-item-category">${categoryName}</div>
+          <div class="cart-item-price">
+            ${getTranslation('cart-item-price', 'Price')}: $${item.price} × ${item.quantity} = $${itemTotal.toFixed(2)}
+          </div>
         </div>
         <div class="cart-item-controls">
           <div class="quantity-controls">
-            <button class="quantity-btn decrease" data-cart-id="${item.id}">
+            <button class="quantity-btn decrease" data-cart-id="${item.id}" title="${getTranslation('cart-decrease', 'Decrease')}">
               <i class="fas fa-minus"></i>
             </button>
             <input type="number" class="quantity-input" value="${item.quantity}" min="1" data-cart-id="${item.id}">
-            <button class="quantity-btn increase" data-cart-id="${item.id}">
+            <button class="quantity-btn increase" data-cart-id="${item.id}" title="${getTranslation('cart-increase', 'Increase')}">
               <i class="fas fa-plus"></i>
             </button>
           </div>
-          <button class="remove-btn" data-cart-id="${item.id}">
+          <button class="remove-btn" data-cart-id="${item.id}" title="${getTranslation('cart-item-remove', 'Remove')}">
             <i class="fas fa-trash-alt"></i>
           </button>
         </div>
@@ -378,6 +463,20 @@ function attachCartEventListeners() {
 async function init() {
   console.log('Initializing cart module...');
   
+  currentLang = localStorage.getItem('lang') || 'en';
+  
+  updateCartTranslations();
+  
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const lang = btn.dataset.lang;
+      if (window.getTranslate) {
+        window.getTranslate(lang);
+      }
+    });
+  });
+  
   if (!window.authService) {
     console.warn('Auth service not available, retrying in 500ms...');
     setTimeout(init, 500);
@@ -419,7 +518,7 @@ async function init() {
   if (viewOrderBtn) {
     viewOrderBtn.addEventListener('click', () => {
       hideCheckoutModal();
-      showNotification('Order details would show here', 'info');
+      showNotification(getTranslation('cart-not-implemented', 'Order details would show here'), 'info');
     });
   }
   

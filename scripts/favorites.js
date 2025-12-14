@@ -4,12 +4,72 @@ const FAVORITES_CART_ENDPOINT = `${FAVORITES_API_BASE}/cart`;
 
 let favorites = [];
 let cartItems = [];
+let currentLang = 'en';
 
 const favoritesGrid = document.getElementById('favoritesGrid');
 const emptyFavorites = document.getElementById('emptyFavorites');
 const clearAllFavoritesBtn = document.getElementById('clearAllFavorites');
 const favoritesCount = document.getElementById('favoritesCount');
 const cartCount = document.getElementById('cartCount');
+
+document.addEventListener('langChanged', (event) => {
+  currentLang = event.detail.lang;
+  updateFavoritesTranslations();
+  renderFavorites();
+});
+
+function getTranslation(key, defaultValue = '') {
+  const translations = window.i18Obj?.[currentLang];
+  return translations?.[key] || defaultValue;
+}
+
+function updateFavoritesTranslations() {
+  const translations = window.i18Obj?.[currentLang];
+  if (!translations) return;
+  
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (translations[key]) {
+      if (el.tagName === 'INPUT' || el.tagName === 'BUTTON') {
+        el.value = translations[key];
+      } else {
+        el.textContent = translations[key];
+      }
+    }
+  });
+  
+  const elements = {
+    '#clearAllFavorites': 'favorites-clear-all',
+    '.favorites-subtitle': 'favorites-subtitle',
+    '.back-to-catalog': 'favorites-back-to-catalog',
+    '.empty-favorites-title': 'favorites-empty-title',
+    '.empty-favorites-text': 'favorites-empty-text',
+    '.empty-favorites-btn': 'favorites-empty-button',
+    '.service-price-label': 'favorites-service-price',
+    '.service-rating-label': 'favorites-service-rating',
+    '.service-category-label': 'favorites-service-category',
+    '.service-duration-label': 'favorites-service-duration',
+    '.remove-btn': 'favorites-remove',
+    '.add-to-cart-btn': 'favorites-add-to-cart',
+    '.view-details-btn': 'favorites-view-details'
+  };
+  
+  Object.entries(elements).forEach(([selector, key]) => {
+    const element = document.querySelector(selector);
+    if (element && translations[key]) {
+      if (element.tagName === 'INPUT' || element.tagName === 'BUTTON') {
+        element.value = translations[key];
+      } else {
+        element.textContent = translations[key];
+      }
+    }
+  });
+  
+  const removeButtons = document.querySelectorAll('.remove-favorite-btn');
+  removeButtons.forEach(btn => {
+    btn.title = getTranslation('favorites-remove', 'Remove from Favorites');
+  });
+}
 
 async function fetchData(url, options = {}) {
   try {
@@ -37,9 +97,14 @@ function showNotification(message, type = 'info') {
     z-index: 1000;
     animation: slideInRight 0.3s ease;
   `;
+  
+  let icon = 'info-circle';
+  if (type === 'success') icon = 'check-circle';
+  if (type === 'error') icon = 'exclamation-circle';
+  
   notification.innerHTML = `
     <div style="display: flex; align-items: center; gap: 0.75rem;">
-      <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+      <i class="fas fa-${icon}"></i>
       <span>${message}</span>
     </div>
   `;
@@ -66,7 +131,6 @@ async function loadFavorites(user) {
     
     const allFavorites = await fetchData(FAVORITES_FAVORITES_ENDPOINT) || [];
     favorites = allFavorites.filter(fav => fav.userId === user.id);
-    console.log('Found favorites:', favorites.length);
     
     await loadCart(user);
     renderFavorites();
@@ -88,7 +152,11 @@ async function loadCart(user) {
 
 async function removeFromFavorite(favoriteId) {
   try {
-    console.log('Removing favorite with ID:', favoriteId);
+    const favorite = favorites.find(fav => fav.id === favoriteId);
+    if (!favorite) return;
+    
+    const confirmMessage = getTranslation('favorites-confirm-remove', 'Remove this service from favorites?');
+    if (!confirm(confirmMessage)) return;
     
     await fetchData(`${FAVORITES_FAVORITES_ENDPOINT}/${favoriteId}`, {
       method: 'DELETE'
@@ -97,20 +165,30 @@ async function removeFromFavorite(favoriteId) {
     favorites = favorites.filter(fav => fav.id !== favoriteId);
     renderFavorites();
     updateCounts();
-    showNotification('Removed from favorites', 'info');
+    showNotification(
+      getTranslation('favorites-remove-success', 'Service removed from favorites'), 
+      'info'
+    );
   } catch (error) {
     console.error('Error removing favorite:', error);
-    showNotification('Failed to remove favorite', 'error');
+    showNotification(
+      getTranslation('favorites-remove-error', 'Failed to remove favorite'), 
+      'error'
+    );
   }
 }
 
 async function clearAllFavorites() {
   if (favorites.length === 0) {
-    showNotification('No favorites to clear', 'info');
+    showNotification(
+      getTranslation('favorites-empty', 'No favorites to clear'), 
+      'info'
+    );
     return;
   }
   
-  if (!confirm('Are you sure you want to remove all favorites?')) return;
+  const confirmMessage = getTranslation('favorites-confirm-clear', 'Are you sure you want to remove all favorites?');
+  if (!confirm(confirmMessage)) return;
   
   try {
     for (const favorite of favorites) {
@@ -122,10 +200,16 @@ async function clearAllFavorites() {
     favorites = [];
     renderFavorites();
     updateCounts();
-    showNotification('All favorites cleared', 'success');
+    showNotification(
+      getTranslation('favorites-clear-success', 'All favorites cleared'), 
+      'success'
+    );
   } catch (error) {
     console.error('Error clearing favorites:', error);
-    showNotification('Failed to clear favorites', 'error');
+    showNotification(
+      getTranslation('favorites-clear-error', 'Failed to clear favorites'), 
+      'error'
+    );
   }
 }
 
@@ -133,7 +217,10 @@ async function addToCart(service) {
   try {
     const currentUser = window.authService?.getCurrentUser();
     if (!currentUser) {
-      showNotification('Please sign in to add to cart', 'error');
+      showNotification(
+        getTranslation('favorites-login-required', 'Please sign in to add to cart'), 
+        'error'
+      );
       setTimeout(() => {
         window.location.href = 'login.html';
       }, 1500);
@@ -180,10 +267,16 @@ async function addToCart(service) {
     
     await loadCart(currentUser);
     updateCounts();
-    showNotification('Added to cart!', 'success');
+    showNotification(
+      getTranslation('favorites-add-cart-success', 'Added to cart!'), 
+      'success'
+    );
   } catch (error) {
     console.error('Error adding to cart:', error);
-    showNotification('Failed to add to cart', 'error');
+    showNotification(
+      getTranslation('favorites-add-cart-error', 'Failed to add to cart'), 
+      'error'
+    );
   }
 }
 
@@ -201,36 +294,45 @@ function renderFavorites() {
   
   favoritesGrid.innerHTML = favorites.map(favorite => {
     const inCart = cartItems.find(item => item.serviceId === favorite.serviceId);
+    const categoryKey = `category-${favorite.category?.toLowerCase().replace(/\s+/g, '-')}`;
+    const categoryName = getTranslation(categoryKey, favorite.category || 'Category');
     
     return `
       <div class="service-card favorite-card" data-favorite-id="${favorite.id}">
         <div class="service-image" style="background-image: url('${favorite.image}')">
           <div class="service-actions">
-            <button class="remove-favorite-btn" data-favorite-id="${favorite.id}">
+            <button class="remove-favorite-btn" 
+                    data-favorite-id="${favorite.id}"
+                    title="${getTranslation('favorites-remove', 'Remove from Favorites')}">
               <i class="fas fa-times"></i>
             </button>
           </div>
         </div>
         <div class="service-content">
-          <div class="service-category">${favorite.category}</div>
+          <div class="service-category">${categoryName}</div>
           <h3 class="service-title">${favorite.name}</h3>
           <p class="service-description">${favorite.description}</p>
           <div class="service-meta">
-            <div class="service-price">$${favorite.price}</div>
+            <div class="service-price">
+              ${getTranslation('favorites-service-price', 'Price')}: $${favorite.price}
+            </div>
             <div class="service-rating">
               ${'★'.repeat(Math.floor(favorite.rating))}
               ${favorite.rating % 1 >= 0.5 ? '½' : ''}
               <span class="rating-value">${favorite.rating.toFixed(1)}</span>
+              <span class="rating-label">${getTranslation('favorites-service-rating', 'Rating')}</span>
             </div>
           </div>
           <div class="service-buttons">
             <button class="btn-cart ${inCart ? 'in-cart' : ''}" 
                     data-service-id="${favorite.serviceId}">
               <i class="fas fa-shopping-cart"></i>
-              ${inCart ? `In Cart (${inCart.quantity})` : 'Add to Cart'}
+              ${inCart ? 
+                `${getTranslation('catalog-in-cart', 'In Cart')} (${inCart.quantity})` : 
+                getTranslation('favorites-add-to-cart', 'Add to Cart')}
             </button>
             <a href="catalog.html" class="btn-details">
-              <i class="fas fa-arrow-left"></i> Back to Catalog
+              <i class="fas fa-arrow-left"></i> ${getTranslation('favorites-back-to-catalog', 'Back to Catalog')}
             </a>
           </div>
         </div>
@@ -255,7 +357,6 @@ function attachEventListeners() {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
       const favoriteId = btn.dataset.favoriteId;
-      console.log('Remove button clicked for favoriteId:', favoriteId);
       removeFromFavorite(favoriteId);
     });
   });
@@ -272,7 +373,7 @@ function attachEventListeners() {
         const cartItem = cartItems.find(item => item.serviceId === serviceId);
         if (cartItem) {
           btn.classList.add('in-cart');
-          btn.innerHTML = `<i class="fas fa-shopping-cart"></i> In Cart (${cartItem.quantity})`;
+          btn.innerHTML = `<i class="fas fa-shopping-cart"></i> ${getTranslation('catalog-in-cart', 'In Cart')} (${cartItem.quantity})`;
         }
       }
     });
@@ -282,6 +383,20 @@ function attachEventListeners() {
 async function init() {
   console.log('Initializing favorites module...');
   
+  currentLang = localStorage.getItem('lang') || 'en';
+  
+  updateFavoritesTranslations();
+  
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const lang = btn.dataset.lang;
+      if (window.getTranslate) {
+        window.getTranslate(lang);
+      }
+    });
+  });
+  
   if (!window.authService) {
     console.warn('Auth service not available, retrying in 500ms...');
     setTimeout(init, 500);
@@ -289,7 +404,6 @@ async function init() {
   }
   
   window.authService.onAuthChange(async (user) => {
-    console.log('Auth changed, user:', user?.nickname || 'none');
     await loadFavorites(user);
   });
   

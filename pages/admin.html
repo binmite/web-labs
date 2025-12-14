@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Admin Panel - ServiceHub</title>
+  <title data-i18n="admin-title">Admin Panel - ServiceHub</title>
   <link rel="stylesheet" href="../styles/global.css">
   <link rel="stylesheet" href="../styles/header.css">
   <link rel="stylesheet" href="../styles/footer.css">
@@ -17,19 +17,38 @@
         <img src="../assets/Logo.png" alt="ServiceHub Logo">
       </a>
       <nav class="nav">
-        <a href="./home.html" class="nav-link">Home</a>
-        <a href="./catalog.html" class="nav-link">Catalog</a>
+        <a href="./home.html" class="nav-link" data-i18n="home">Home</a>
+        <a href="./catalog.html" class="nav-link" data-i18n="catalog">Catalog</a>
         <a href="./favorites.html" class="nav-link">
-          <i class="far fa-heart"></i> Favorites
+          <i class="far fa-heart"></i> <span data-i18n="favorites">Favorites</span>
           <span id="favoritesCount" class="badge">0</span>
         </a>
         <a href="./cart.html" class="nav-link">
-          <i class="fas fa-shopping-cart"></i> Cart
+          <i class="fas fa-shopping-cart"></i> <span data-i18n="cart">Cart</span>
           <span id="cartCount" class="badge">0</span>
         </a>
         <a href="./feedback.html" class="nav-link">
-          <i class="far fa-comment"></i> Feedback
+          <i class="far fa-comment"></i> <span data-i18n="feedback">Feedback</span>
         </a>
+        
+        <div class="language-switcher" id="languageSwitcher">
+          <button class="lang-btn" data-lang="en" title="English">
+            <span>EN</span>
+          </button>
+          <button class="lang-btn" data-lang="ru" title="Русский">
+            <span>RU</span>
+          </button>
+        </div>
+        
+        <div class="theme-switcher" id="themeSwitcher">
+          <button class="theme-btn light-btn" data-theme="light" title="Light theme">
+            <i class="fas fa-sun"></i>
+          </button>
+          <button class="theme-btn dark-btn" data-theme="dark" title="Dark theme">
+            <i class="fas fa-moon"></i>
+          </button>
+        </div>
+        
         <div class="auth-buttons" id="authButtons">
         </div>
       </nav>
@@ -39,18 +58,18 @@
   <main class="container">
     <div id="adminAccessDenied" class="access-denied" style="display: none;">
       <i class="fas fa-lock fa-4x"></i>
-      <h2>Access Denied</h2>
-      <p>This area is restricted to administrators only.</p>
+      <h2 data-i18n="admin-access-denied-title">Access Denied</h2>
+      <p data-i18n="admin-access-denied-text">This area is restricted to administrators only.</p>
       <a href="./home.html" class="btn btn-primary">
-        <i class="fas fa-home"></i> Back to Home
+        <i class="fas fa-home"></i> <span data-i18n="admin-back-to-home">Back to Home</span>
       </a>
     </div>
 
     <div id="adminPanel" style="display: none;">
       <section class="admin-section">
         <div class="admin-header">
-          <h1><i class="fas fa-cogs"></i> Admin Dashboard</h1>
-          <p class="subtitle">Manage services, feedback, orders, and users</p>
+          <h1><i class="fas fa-cogs"></i> <span data-i18n="admin-header">Admin Dashboard</span></h1>
+          <p class="subtitle" data-i18n="admin-subtitle">Manage services, feedback, orders, and users</p>
           
           <div class="admin-stats">
             <div class="stat-card">
@@ -59,7 +78,7 @@
               </div>
               <div class="stat-info">
                 <span class="stat-value" id="totalServices">0</span>
-                <span class="stat-label">Total Services</span>
+                <span class="stat-label" data-i18n="admin-total-services">Total Services</span>
               </div>
             </div>
             <div class="stat-card">
@@ -68,7 +87,7 @@
               </div>
               <div class="stat-info">
                 <span class="stat-value" id="totalOrders">0</span>
-                <span class="stat-label">Total Orders</span>
+                <span class="stat-label" data-i18n="admin-total-orders">Total Orders</span>
               </div>
             </div>
             <div class="stat-card">
@@ -77,7 +96,7 @@
               </div>
               <div class="stat-info">
                 <span class="stat-value" id="totalFeedback">0</span>
-                <span class="stat-label">Total Reviews</span>
+                <span class="stat-label" data-i18n="admin-total-reviews">Total Reviews</span>
               </div>
             </div>
             <div class="stat-card">
@@ -86,7 +105,7 @@
               </div>
               <div class="stat-info">
                 <span class="stat-value" id="totalUsers">0</span>
-                <span class="stat-label">Total Users</span>
+                <span class="stat-label" data-i18n="admin-total-users">Total Users</span>
               </div>
             </div>
           </div>
@@ -94,24 +113,24 @@
 
         <div class="admin-tabs">
           <button class="tab-btn active" data-tab="services">
-            <i class="fas fa-box"></i> Services
+            <i class="fas fa-box"></i> <span data-i18n="admin-tab-services">Services</span>
           </button>
           <button class="tab-btn" data-tab="feedback">
-            <i class="fas fa-comments"></i> Feedback
+            <i class="fas fa-comments"></i> <span data-i18n="admin-tab-feedback">Feedback</span>
           </button>
           <button class="tab-btn" data-tab="orders">
-            <i class="fas fa-shopping-cart"></i> Orders
+            <i class="fas fa-shopping-cart"></i> <span data-i18n="admin-tab-orders">Orders</span>
           </button>
           <button class="tab-btn" data-tab="users">
-            <i class="fas fa-users"></i> Users
+            <i class="fas fa-users"></i> <span data-i18n="admin-tab-users">Users</span>
           </button>
         </div>
 
         <div class="tab-content active" id="servicesTab">
           <div class="tab-header">
-            <h2><i class="fas fa-box"></i> Services Management</h2>
+            <h2><i class="fas fa-box"></i> <span data-i18n="admin-services-title">Services Management</span></h2>
             <button class="btn btn-primary" id="addServiceBtn">
-              <i class="fas fa-plus"></i> Add New Service
+              <i class="fas fa-plus"></i> <span data-i18n="admin-add-service">Add New Service</span>
             </button>
           </div>
 
@@ -122,6 +141,7 @@
                 type="text" 
                 id="searchServices" 
                 class="search-input" 
+                data-i18n-placeholder="admin-search-services"
                 placeholder="Search services..."
               >
             </div>
@@ -133,29 +153,29 @@
 
         <div class="tab-content" id="feedbackTab">
           <div class="tab-header">
-            <h2><i class="fas fa-comments"></i> Feedback Management</h2>
+            <h2><i class="fas fa-comments"></i> <span data-i18n="admin-feedback-title">Feedback Management</span></h2>
             <div class="feedback-filters">
               <div class="filter-group">
-                <label for="filterFeedbackService">Filter by Service:</label>
+                <label for="filterFeedbackService" data-i18n="admin-filter-service">Filter by Service:</label>
                 <select id="filterFeedbackService" class="filter-select">
-                  <option value="all">All Services</option>
+                  <option value="all" data-i18n="admin-filter-all">All Services</option>
                 </select>
               </div>
               <div class="filter-group">
-                <label for="filterFeedbackUser">Filter by User:</label>
+                <label for="filterFeedbackUser" data-i18n="admin-filter-user">Filter by User:</label>
                 <select id="filterFeedbackUser" class="filter-select">
-                  <option value="all">All Users</option>
+                  <option value="all" data-i18n="admin-filter-all">All Users</option>
                 </select>
               </div>
               <div class="filter-group">
-                <label for="filterFeedbackRating">Filter by Rating:</label>
+                <label for="filterFeedbackRating" data-i18n="admin-filter-rating">Filter by Rating:</label>
                 <select id="filterFeedbackRating" class="filter-select">
-                  <option value="all">All Ratings</option>
-                  <option value="5">5 Stars</option>
-                  <option value="4">4 Stars</option>
-                  <option value="3">3 Stars</option>
-                  <option value="2">2 Stars</option>
-                  <option value="1">1 Star</option>
+                  <option value="all" data-i18n="admin-filter-all">All Ratings</option>
+                  <option value="5">5 <span data-i18n="admin-stars">Stars</span></option>
+                  <option value="4">4 <span data-i18n="admin-stars">Stars</span></option>
+                  <option value="3">3 <span data-i18n="admin-stars">Stars</span></option>
+                  <option value="2">2 <span data-i18n="admin-stars">Stars</span></option>
+                  <option value="1">1 <span data-i18n="admin-star">Star</span></option>
                 </select>
               </div>
             </div>
@@ -167,7 +187,7 @@
 
         <div class="tab-content" id="ordersTab">
           <div class="tab-header">
-            <h2><i class="fas fa-shopping-cart"></i> Orders Management</h2>
+            <h2><i class="fas fa-shopping-cart"></i> <span data-i18n="admin-orders-title">Orders Management</span></h2>
           </div>
           <div class="orders-list" id="ordersList">
           </div>
@@ -175,17 +195,18 @@
 
         <div class="tab-content" id="usersTab">
           <div class="tab-header">
-            <h2><i class="fas fa-users"></i> Users Management</h2>
+            <h2><i class="fas fa-users"></i> <span data-i18n="admin-users-title">Users Management</span></h2>
             <div class="users-filters">
               <select id="filterUserRole" class="filter-select">
-                <option value="all">All Roles</option>
-                <option value="admin">Administrators</option>
-                <option value="user">Regular Users</option>
+                <option value="all" data-i18n="admin-filter-all">All Roles</option>
+                <option value="admin" data-i18n="admin-role-admin">Administrators</option>
+                <option value="user" data-i18n="admin-role-user">Regular Users</option>
               </select>
             </div>
           </div>
 
           <div class="users-list" id="usersList">
+
           </div>
         </div>
       </section>
@@ -194,7 +215,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h2 id="modalTitle">
-              <i class="fas fa-box"></i> Add New Service
+              <i class="fas fa-box"></i> <span data-i18n="admin-modal-add-service">Add New Service</span>
             </h2>
             <button class="close-modal">&times;</button>
           </div>
@@ -205,13 +226,14 @@
               <div class="form-row">
                 <div class="form-group">
                   <label for="serviceName">
-                    <i class="fas fa-tag"></i> Service Name
+                    <i class="fas fa-tag"></i> <span data-i18n="admin-service-name">Service Name</span>
                     <span class="required">*</span>
                   </label>
                   <input 
                     type="text" 
                     id="serviceName" 
                     name="serviceName" 
+                    data-i18n-placeholder="admin-service-name-placeholder"
                     placeholder="Web Design"
                     required
                   >
@@ -220,20 +242,20 @@
 
                 <div class="form-group">
                   <label for="serviceCategory">
-                    <i class="fas fa-folder"></i> Category
+                    <i class="fas fa-folder"></i> <span data-i18n="admin-service-category">Category</span>
                     <span class="required">*</span>
                   </label>
                   <select id="serviceCategory" name="serviceCategory" required>
-                    <option value="">Select category</option>
-                    <option value="design">Design</option>
-                    <option value="development">Development</option>
-                    <option value="marketing">Marketing</option>
-                    <option value="consulting">Consulting</option>
-                    <option value="analytics">Analytics</option>
-                    <option value="support">Support</option>
-                    <option value="security">Security</option>
-                    <option value="cloud">Cloud</option>
-                    <option value="ai">AI</option>
+                    <option value="" data-i18n="admin-select-category">Select category</option>
+                    <option value="design" data-i18n="category-design">Design</option>
+                    <option value="development" data-i18n="category-development">Development</option>
+                    <option value="marketing" data-i18n="category-marketing">Marketing</option>
+                    <option value="consulting" data-i18n="category-consulting">Consulting</option>
+                    <option value="analytics" data-i18n="category-analytics">Analytics</option>
+                    <option value="support" data-i18n="category-support">Support</option>
+                    <option value="security" data-i18n="category-security">Security</option>
+                    <option value="cloud" data-i18n="category-cloud">Cloud</option>
+                    <option value="ai" data-i18n="category-ai">AI</option>
                   </select>
                   <div class="error-message" id="serviceCategoryError"></div>
                 </div>
@@ -242,13 +264,14 @@
               <div class="form-row">
                 <div class="form-group">
                   <label for="servicePrice">
-                    <i class="fas fa-dollar-sign"></i> Price ($)
+                    <i class="fas fa-dollar-sign"></i> <span data-i18n="admin-service-price">Price ($)</span>
                     <span class="required">*</span>
                   </label>
                   <input 
                     type="number" 
                     id="servicePrice" 
                     name="servicePrice" 
+                    data-i18n-placeholder="admin-service-price-placeholder"
                     placeholder="299"
                     min="0"
                     step="1"
@@ -259,13 +282,14 @@
 
                 <div class="form-group">
                   <label for="serviceRating">
-                    <i class="fas fa-star"></i> Rating (1-5)
+                    <i class="fas fa-star"></i> <span data-i18n="admin-service-rating">Rating (1-5)</span>
                     <span class="required">*</span>
                   </label>
                   <input 
                     type="number" 
                     id="serviceRating" 
                     name="serviceRating" 
+                    data-i18n-placeholder="admin-service-rating-placeholder"
                     placeholder="4.7"
                     min="0"
                     max="5"
@@ -278,47 +302,49 @@
 
               <div class="form-group">
                 <label for="serviceDescription">
-                  <i class="fas fa-align-left"></i> Description
+                  <i class="fas fa-align-left"></i> <span data-i18n="admin-service-description">Description</span>
                   <span class="required">*</span>
                 </label>
                 <textarea 
                   id="serviceDescription" 
                   name="serviceDescription" 
                   rows="4" 
+                  data-i18n-placeholder="admin-service-description-placeholder"
                   placeholder="Describe the service..."
                   maxlength="500"
                   required
                 ></textarea>
                 <div class="error-message" id="serviceDescriptionError"></div>
                 <div class="char-counter">
-                  <span id="descriptionCounter">0</span>/500 characters
+                  <span id="descriptionCounter">0</span><span data-i18n="admin-chars-counter">/500 characters</span>
                 </div>
               </div>
 
               <div class="form-group">
                 <label for="serviceImage">
-                  <i class="fas fa-image"></i> Image URL
+                  <i class="fas fa-image"></i> <span data-i18n="admin-service-image">Image URL</span>
                   <span class="required">*</span>
                 </label>
                 <input 
                   type="url" 
                   id="serviceImage" 
                   name="serviceImage" 
+                  data-i18n-placeholder="admin-service-image-placeholder"
                   placeholder="../assets/solution1.png"
                   required
                 >
                 <div class="error-message" id="serviceImageError"></div>
                 <div class="hint">
-                  <i class="fas fa-info-circle"></i> Use relative path or full URL
+                  <i class="fas fa-info-circle"></i> <span data-i18n="admin-service-image-hint">Use relative path or full URL</span>
                 </div>
               </div>
 
               <div class="form-actions">
                 <button type="submit" id="saveService" class="btn btn-primary" disabled>
-                  <i class="fas fa-save"></i> Save Service
+                  <i class="fas fa-save"></i> <span data-i18n="admin-save-service">Save Service</span>
                 </button>
                 <button type="button" class="btn btn-secondary" id="cancelService">
-                  <i class="fas fa-times"></i> Cancel
+                  <i class="fas fa-times"></i> <span data-i18n="admin-cancel">Cancel</span>
                 </button>
               </div>
             </form>
@@ -329,7 +355,7 @@
       <div id="viewFeedbackModal" class="modal">
         <div class="modal-content">
           <div class="modal-header">
-            <h2><i class="fas fa-comments"></i> Feedback Details</h2>
+            <h2><i class="fas fa-comments"></i> <span data-i18n="admin-feedback-details">Feedback Details</span></h2>
             <button class="close-modal">&times;</button>
           </div>
           <div class="modal-body">
@@ -347,40 +373,40 @@
           <div class="logo">
             <img src="../assets/Logo.png" alt="Logo" />
           </div>
-          <p>Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.</p>
+          <p data-i18n="footer-text">Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.</p>
         </div>
         <div class="footer-col">
-          <h4>Products</h4>
+          <h4 data-i18n="products-title">Products</h4>
           <ul>
-            <li><a href="#">Web Studio</a></li>
-            <li><a href="#">DynamicBox Flex</a></li>
-            <li><a href="#">Programming Forms</a></li>
+            <li><a href="#" data-i18n="product-1">Web Studio</a></li>
+            <li><a href="#" data-i18n="product-2">DynamicBox Flex</a></li>
+            <li><a href="#" data-i18n="product-3">Programming Forms</a></li>
           </ul>
         </div>
         <div class="footer-col">
-          <h4>Resources</h4>
+          <h4 data-i18n="resources-title">Resources</h4>
           <ul>
-            <li><a href="#">Nostrud exercitation</a></li>
-            <li><a href="#">Visual mockups</a></li>
-            <li><a href="#">Nostrud exercitation</a></li>
-            <li><a href="#">Visual mockups</a></li>
+            <li><a href="#" data-i18n="resource-1">Nostrud exercitation</a></li>
+            <li><a href="#" data-i18n="resource-2">Visual mockups</a></li>
+            <li><a href="#" data-i18n="resource-3">Nostrud exercitation</a></li>
+            <li><a href="#" data-i18n="resource-4">Visual mockups</a></li>
           </ul>
         </div>
         <div class="footer-col">
-          <h4>Company</h4>
+          <h4 data-i18n="company-title">Company</h4>
           <ul>
-            <li><a href="#">Consectetur adipiscing</a></li>
-            <li><a href="#">Labore et dolore</a></li>
-            <li><a href="#">Sed do eiusmod</a></li>
-            <li><a href="#">Tempor incididunt</a></li>
-            <li><a href="#">Labore et dolore</a></li>
+            <li><a href="#" data-i18n="company-1">Consectetur adipiscing</a></li>
+            <li><a href="#" data-i18n="company-2">Labore et dolore</a></li>
+            <li><a href="#" data-i18n="company-3">Sed do eiusmod</a></li>
+            <li><a href="#" data-i18n="company-4">Tempor incididunt</a></li>
+            <li><a href="#" data-i18n="company-5">Labore et dolore</a></li>
           </ul>
         </div>
       </div>
     </div>
     <div class="container footer-bottom">
         <div class="footer-bottom-left">
-            <p class="copyright">Made by <strong>Cruip</strong>. All right reserved</p>
+            <p class="copyright" data-i18n="copyright">Made by <strong>Cruip</strong>. All right reserved</p>
         </div>
         <div class="footer-bottom-right">
           <ul>
@@ -396,8 +422,55 @@
 
   <div id="notificationContainer" class="notification-container"></div>
 
-  <script src="../scripts/auth.js"></script>
-  <script src="../scripts/admin.js"></script>
   <script src="../scripts/globalCounters.js"></script>
+  <script src="../scripts/auth.js"></script>
+  <script src="../scripts/translate.js"></script>
+  <script src="../scripts/theme.js"></script>
+  <script src="../scripts/language-switcher.js"></script>
+  <script src="../scripts/user-settings.js"></script>
+  <script src="../scripts/admin.js"></script>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        if (window.themeManager) {
+          window.themeManager.loadSettings();
+        }
+        
+        await window.authService.init();
+        
+        window.authService.checkAdminAccess();
+        
+        const savedLang = localStorage.getItem('lang') || 'en';
+        if (window.getTranslate) {
+          window.getTranslate(savedLang);
+        }
+        
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const lang = this.dataset.lang;
+            if (window.getTranslate) {
+              window.getTranslate(lang);
+            }
+            if (window.languageSwitcher) {
+              window.languageSwitcher.switchLanguage(lang);
+            }
+          });
+        });
+        
+        document.querySelectorAll('.theme-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const theme = this.dataset.theme;
+            if (window.themeManager) {
+              window.themeManager.applyTheme(theme);
+            }
+          });
+        });
+        
+      } catch (error) {
+        console.error('Error during initialization:', error);
+      }
+    });
+  </script>
 </body>
 </html>

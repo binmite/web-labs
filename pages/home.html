@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Landing template for startups</title>
+  <title data-i18n="hero-title">Landing template for startups</title>
   <link rel="stylesheet" href="../styles/footer.css" />
   <link rel="stylesheet" href="../styles/global.css" />
   <link rel="stylesheet" href="../styles/header.css" />
@@ -18,32 +18,31 @@
         <img src="../assets/Logo.png" alt="ServiceHub Logo">
       </a>
       <nav class="nav">
-        <a href="./home.html" class="nav-link">Home</a>
-        <a href="./catalog.html" class="nav-link">Catalog</a>
+        <a href="./home.html" class="nav-link" data-i18n="home">Home</a>
+        <a href="./catalog.html" class="nav-link" data-i18n="catalog">Catalog</a>
         <a href="./favorites.html" class="nav-link">
-          <i class="far fa-heart"></i> Favorites
+          <i class="far fa-heart"></i> <span data-i18n="favorites">Favorites</span>
           <span id="favoritesCount" class="badge">0</span>
         </a>
         <a href="./cart.html" class="nav-link">
-          <i class="fas fa-shopping-cart"></i> Cart
+          <i class="fas fa-shopping-cart"></i> <span data-i18n="cart">Cart</span>
           <span id="cartCount" class="badge">0</span>
         </a>
         <a href="./feedback.html" class="nav-link">
-          <i class="far fa-comment"></i> Feedback
+          <i class="far fa-comment"></i> <span data-i18n="feedback">Feedback</span>
         </a>
-        <div class="auth-buttons" id="authButtons">
-        </div>
+        <div class="auth-buttons" id="authButtons"></div>
       </nav>
     </div>
   </header>
 
   <section class="hero">
     <div class="container hero-content">
-      <h1>Landing template for startups</h1>
-      <p>Our landing page template works on all devices, so you only have to set it up once, and get beautiful results forever.</p>
+      <h1 data-i18n="hero-title">Landing template for startups</h1>
+      <p data-i18n="hero-subtitle">Our landing page template works on all devices, so you only have to set it up once, and get beautiful results forever.</p>
       <div class="hero-buttons">
-        <button class="btn btn-primary">Start free trial</button>
-        <button class="btn btn-secondary">Learn more</button>
+        <button class="btn btn-primary" data-i18n="start-trial">Start free trial</button>
+        <button class="btn btn-secondary" data-i18n="learn-more">Learn more</button>
       </div>
       <div class="hero-image">
         <img src="../assets/hero.png" alt="Team working on laptops" />
@@ -56,38 +55,38 @@
 
   <section class="features">
     <div class="container">
-      <h2>The majority our customers do not understand their workflows.</h2>
-      <p class="subtitle">Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+      <h2 data-i18n="features-title">The majority our customers do not understand their workflows.</h2>
+      <p class="subtitle" data-i18n="features-subtitle">Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
       <div class="features-grid">
         <div class="feature-card">
           <div class="feature-icon"><i class="fas fa-star"></i></div>
-          <h3>Instant Features</h3>
-          <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat.</p>
+          <h3 data-i18n="feature-1-title">Instant Features</h3>
+          <p data-i18n="feature-1-text">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat.</p>
         </div>
         <div class="feature-card">
           <div class="feature-icon"><i class="fas fa-list"></i></div>
-          <h3>Instant Features</h3>
-          <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat.</p>
+          <h3 data-i18n="feature-2-title">Advanced Analytics</h3>
+          <p data-i18n="feature-2-text">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat.</p>
         </div>
         <div class="feature-card">
           <div class="feature-icon"><i class="fas fa-globe"></i></div>
-          <h3>Instant Features</h3>
-          <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat.</p>
+          <h3 data-i18n="feature-3-title">Global Support</h3>
+          <p data-i18n="feature-3-text">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat.</p>
         </div>
         <div class="feature-card">
           <div class="feature-icon"><i class="fas fa-user"></i></div>
-          <h3>Instant Features</h3>
-          <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat.</p>
+          <h3 data-i18n="feature-4-title">User Management</h3>
+          <p data-i18n="feature-4-text">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat.</p>
         </div>
         <div class="feature-card">
           <div class="feature-icon"><i class="fas fa-thumbs-up"></i></div>
-          <h3>Instant Features</h3>
-          <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat.</p>
+          <h3 data-i18n="feature-5-title">Quality Assurance</h3>
+          <p data-i18n="feature-5-text">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat.</p>
         </div>
         <div class="feature-card">
           <div class="feature-icon"><i class="fas fa-comments"></i></div>
-          <h3>Instant Features</h3>
-          <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat.</p>
+          <h3 data-i18n="feature-6-title">Customer Support</h3>
+          <p data-i18n="feature-6-text">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat.</p>
         </div>
       </div>
     </div>
@@ -95,79 +94,79 @@
 
   <section class="solutions">
     <div class="container flex-col">
-      <span class="tag">Reach goals that matter</span>
-      <h2>One product, unlimited solutions</h2>
-      <p class="subtitle">Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit laborum — semper quis lectus nulla.</p>
+      <span class="tag" data-i18n="solutions-tag">Reach goals that matter</span>
+      <h2 data-i18n="solutions-title">One product, unlimited solutions</h2>
+      <p class="subtitle" data-i18n="solutions-subtitle">Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit laborum — semper quis lectus nulla.</p>
 
-      <div class="solution-item solution-item--reverse">
-        <div class="solution-text">
-          <span class="label">More speed. Less spend</span>
-          <h3>Keep projects on schedule</h3>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-          <ul>
-            <li><i class="fas fa-check"></i> Duis aute irure dolor in reprehenderit</li>
-            <li><i class="fas fa-check"></i> Excepteur sint occaecat</li>
-            <li><i class="fas fa-check"></i> Amet consectetur adipiscing elit</li>
-          </ul>
-        </div>
-        <div class="solution-image">
-          <img src="../assets/solution1.png" alt="Project management interface" />
-        </div>
+    <div class="solution-item solution-item--reverse">
+      <div class="solution-text">
+        <span class="label" data-i18n="solution-label">E-commerce Solutions</span>
+        <h3 data-i18n="solution-title">Boost Your Online Sales</h3>
+        <p data-i18n="solution-text">Complete e-commerce platforms with secure payment processing, inventory management, and customer analytics.</p>
+        <ul>
+          <li><i class="fas fa-check"></i> <span data-i18n="solution-item-1">Custom shopping cart implementation</span></li>
+          <li><i class="fas fa-check"></i> <span data-i18n="solution-item-2">Secure payment gateway integration</span></li>
+          <li><i class="fas fa-check"></i> <span data-i18n="solution-item-3">Advanced inventory management system</span></li>
+        </ul>
       </div>
+      <div class="solution-image">
+        <img src="../assets/solution1.png" alt="Project management interface" />
+      </div>
+    </div>
 
-      <div class="solution-item">
-        <div class="solution-image">
-          <img src="../assets/solution2.png" alt="Workflow diagram" />
-        </div>
-        <div class="solution-text">
-          <span class="label">More speed. Less spend</span>
-          <h3>Keep projects on schedule</h3>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-          <ul>
-            <li><i class="fas fa-check"></i> Duis aute irure dolor in reprehenderit</li>
-            <li><i class="fas fa-check"></i> Excepteur sint occaecat</li>
-            <li><i class="fas fa-check"></i> Amet consectetur adipiscing elit</li>
-          </ul>
-        </div>
+    <div class="solution-item">
+      <div class="solution-image">
+        <img src="../assets/solution2.png" alt="Workflow diagram" />
       </div>
+      <div class="solution-text">
+        <span class="label" data-i18n="solution-label-2">Enterprise Platforms</span>
+        <h3 data-i18n="solution-title-2">Streamline Your Operations</h3>
+        <p data-i18n="solution-text-2">Robust enterprise solutions that automate processes and improve organizational efficiency.</p>
+        <ul>
+          <li><i class="fas fa-check"></i> <span data-i18n="solution-item-2-1">Custom CRM development</span></li>
+          <li><i class="fas fa-check"></i> <span data-i18n="solution-item-2-2">Workflow automation systems</span></li>
+          <li><i class="fas fa-check"></i> <span data-i18n="solution-item-2-3">Real-time analytics dashboard</span></li>
+        </ul>
+      </div>
+    </div>
 
-      <div class="solution-item solution-item--reverse">
-        <div class="solution-text">
-          <span class="label">More speed. Less spend</span>
-          <h3>Keep projects on schedule</h3>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-          <ul>
-            <li><i class="fas fa-check"></i> Duis aute irure dolor in reprehenderit</li>
-            <li><i class="fas fa-check"></i> Excepteur sint occaecat</li>
-            <li><i class="fas fa-check"></i> Amet consectetur adipiscing elit</li>
-          </ul>
-        </div>
-        <div class="solution-image">
-          <img src="../assets/solution3.png" alt="Team collaboration view" />
-        </div>
+    <div class="solution-item solution-item--reverse">
+      <div class="solution-text">
+        <span class="label" data-i18n="solution-label-3">Startup Launch</span>
+        <h3 data-i18n="solution-title-3">Launch Your Idea Successfully</h3>
+        <p data-i18n="solution-text-3">End-to-end solutions for startups from initial concept to market launch and beyond.</p>
+        <ul>
+          <li><i class="fas fa-check"></i> <span data-i18n="solution-item-3-1">MVP development and testing</span></li>
+          <li><i class="fas fa-check"></i> <span data-i18n="solution-item-3-2">Market research and validation</span></li>
+          <li><i class="fas fa-check"></i> <span data-i18n="solution-item-3-3">Growth strategy implementation</span></li>
+        </ul>
       </div>
+      <div class="solution-image">
+        <img src="../assets/solution3.png" alt="Team collaboration view" />
+      </div>
+    </div>
     </div>
   </section>
 
   <section class="testimonials">
     <div class="container">
-      <h2>Don't take our word for it</h2>
-      <p class="subtitle">Vitae aliquet nec ullamcorper sit amet risus nullam eget felis semper quis lectus nulla at volutpat diam ut venenatis tellus—in ornare.</p>
+      <h2 data-i18n="testimonials-title">Don't take our word for it</h2>
+      <p class="subtitle" data-i18n="testimonials-subtitle">Vitae aliquet nec ullamcorper sit amet risus nullam eget felis semper quis lectus nulla at volutpat diam ut venenatis tellus—in ornare.</p>
       <div class="testimonials-grid">
         <div class="testimonial-card">
           <div class="avatar"><img src="../assets/avatar1.png" alt="Anastasia Dan" /></div>
-          <blockquote>— Open PRO lets me quickly get the insights I care about so that I can focus on my productive work. I've had Open PRO for about 24 hours now and I honestly don't know how I functioned without it before.</blockquote>
-          <div class="author">Anastasia Dan <span>/ UX Board</span></div>
+          <blockquote data-i18n="testimonial-1-quote">— Open PRO lets me quickly get the insights I care about so that I can focus on my productive work. I've had Open PRO for about 24 hours now and I honestly don't know how I functioned without it before.</blockquote>
+          <div class="author"><span data-i18n="testimonial-1-author">Anastasia Dan</span> <span data-i18n="testimonial-1-company">/ UX Board</span></div>
         </div>
         <div class="testimonial-card">
           <div class="avatar"><img src="../assets/avatar2.png" alt="Roman Level" /></div>
-          <blockquote>— Open PRO lets me quickly get the insights I care about so that I can focus on my productive work. I've had Open PRO for about 24 hours now and I honestly don't know how I functioned without it before.</blockquote>
-          <div class="author">Roman Level <span>/ AppName</span></div>
+          <blockquote data-i18n="testimonial-2-quote">— Open PRO lets me quickly get the insights I care about so that I can focus on my productive work. I've had Open PRO for about 24 hours now and I honestly don't know how I functioned without it before.</blockquote>
+          <div class="author"><span data-i18n="testimonial-2-author">Roman Level</span> <span data-i18n="testimonial-2-company">/ AppName</span></div>
         </div>
         <div class="testimonial-card">
           <div class="avatar"><img src="../assets/avatar3.png" alt="Akex Sackett" /></div>
-          <blockquote>— Open PRO lets me quickly get the insights I care about so that I can focus on my productive work. I've had Open PRO for about 24 hours now and I honestly don't know how I functioned without it before.</blockquote>
-          <div class="author">Akex Sackett <span>/ Reform Layouts</span></div>
+          <blockquote data-i18n="testimonial-3-quote">— Open PRO lets me quickly get the insights I care about so that I can focus on my productive work. I've had Open PRO for about 24 hours now and I honestly don't know how I functioned without it before.</blockquote>
+          <div class="author"><span data-i18n="testimonial-3-author">Akex Sackett</span> <span data-i18n="testimonial-3-company">/ Reform Layouts</span></div>
         </div>
       </div>
     </div>
@@ -177,12 +176,12 @@
     <div class="container">
       <div class="newsletter-content">
         <div class="newsletter-content-text">
-            <h2>Stay in the loop</h2>
-            <p>Join our newsletter to get top news before anyone else.</p>
+            <h2 data-i18n="newsletter-title">Stay in the loop</h2>
+            <p data-i18n="newsletter-subtitle">Join our newsletter to get top news before anyone else.</p>
         </div>
         <form class="newsletter-form">
-          <input type="email" placeholder="Your best email..." required />
-          <button type="submit" class="btn btn-white">Subscribe</button>
+          <input type="email" placeholder="Your best email..." data-i18n-placeholder="newsletter-placeholder" required />
+          <button type="submit" class="btn btn-white" data-i18n="newsletter-button">Subscribe</button>
         </form>
       </div>
     </div>
@@ -195,40 +194,40 @@
           <div class="logo">
             <img src="../assets/Logo.png" alt="Logo" />
           </div>
-          <p>Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.</p>
+          <p data-i18n="footer-text">Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.</p>
         </div>
         <div class="footer-col">
-          <h4>Products</h4>
+          <h4 data-i18n="products-title">Products</h4>
           <ul>
-            <li><a href="#">Web Studio</a></li>
-            <li><a href="#">DynamicBox Flex</a></li>
-            <li><a href="#">Programming Forms</a></li>
+            <li><a href="#" data-i18n="product-1">Web Studio</a></li>
+            <li><a href="#" data-i18n="product-2">DynamicBox Flex</a></li>
+            <li><a href="#" data-i18n="product-3">Programming Forms</a></li>
           </ul>
         </div>
         <div class="footer-col">
-          <h4>Resources</h4>
+          <h4 data-i18n="resources-title">Resources</h4>
           <ul>
-            <li><a href="#">Nostrud exercitation</a></li>
-            <li><a href="#">Visual mockups</a></li>
-            <li><a href="#">Nostrud exercitation</a></li>
-            <li><a href="#">Visual mockups</a></li>
+            <li><a href="#" data-i18n="resource-1">Nostrud exercitation</a></li>
+            <li><a href="#" data-i18n="resource-2">Visual mockups</a></li>
+            <li><a href="#" data-i18n="resource-3">Nostrud exercitation</a></li>
+            <li><a href="#" data-i18n="resource-4">Visual mockups</a></li>
           </ul>
         </div>
         <div class="footer-col">
-          <h4>Company</h4>
+          <h4 data-i18n="company-title">Company</h4>
           <ul>
-            <li><a href="#">Consectetur adipiscing</a></li>
-            <li><a href="#">Labore et dolore</a></li>
-            <li><a href="#">Sed do eiusmod</a></li>
-            <li><a href="#">Tempor incididunt</a></li>
-            <li><a href="#">Labore et dolore</a></li>
+            <li><a href="#" data-i18n="company-1">Consectetur adipiscing</a></li>
+            <li><a href="#" data-i18n="company-2">Labore et dolore</a></li>
+            <li><a href="#" data-i18n="company-3">Sed do eiusmod</a></li>
+            <li><a href="#" data-i18n="company-4">Tempor incididunt</a></li>
+            <li><a href="#" data-i18n="company-5">Labore et dolore</a></li>
           </ul>
         </div>
       </div>
     </div>
     <div class="container footer-bottom">
         <div class="footer-bottom-left">
-            <p class="copyright">Made by <strong>Cruip</strong>. All right reserved</p>
+            <p class="copyright" data-i18n="copyright">Made by <strong>Cruip</strong>. All right reserved</p>
         </div>
         <div class="footer-bottom-right">
           <ul>
@@ -241,7 +240,34 @@
         </div>
     </div>
   </footer>
+  
   <script src="../scripts/globalCounters.js"></script>
   <script src="../scripts/auth.js"></script>
+  <script src="../scripts/translate.js"></script>
+  <script src="../scripts/theme.js"></script>
+  <script src="../scripts/language-switcher.js"></script>
+  <script src="../scripts/user-settings.js"></script>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (window.themeManager) {
+        window.themeManager.loadSettings();
+      }
+      
+      await window.authService.init();
+      window.authService.checkAdminAccess();
+      
+      if (window.languageSwitcher) {
+        const savedLang = localStorage.getItem('lang') || 'en';
+        window.languageSwitcher.switchLanguage(savedLang);
+      }
+    });
+    
+    window.addEventListener('beforeunload', () => {
+      if (window.themeManager) {
+        window.themeManager.saveSettings();
+      }
+    });
+  </script>
 </body>
 </html>

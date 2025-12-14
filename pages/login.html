@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Login - ServiceHub</title>
+  <title data-i18n="login-title">Login - ServiceHub</title>
   <link rel="stylesheet" href="../styles/global.css">
   <link rel="stylesheet" href="../styles/header.css">
   <link rel="stylesheet" href="../styles/footer.css">
@@ -17,18 +17,18 @@
         <img src="../assets/Logo.png" alt="ServiceHub Logo">
       </a>
       <nav class="nav">
-        <a href="./home.html" class="nav-link">Home</a>
-        <a href="./catalog.html" class="nav-link">Catalog</a>
+        <a href="./home.html" class="nav-link" data-i18n="home">Home</a>
+        <a href="./catalog.html" class="nav-link" data-i18n="catalog">Catalog</a>
         <a href="./favorites.html" class="nav-link">
-          <i class="far fa-heart"></i> Favorites
+          <i class="far fa-heart"></i> <span data-i18n="favorites">Favorites</span>
           <span id="favoritesCount" class="badge">0</span>
         </a>
         <a href="./cart.html" class="nav-link">
-          <i class="fas fa-shopping-cart"></i> Cart
+          <i class="fas fa-shopping-cart"></i> <span data-i18n="cart">Cart</span>
           <span id="cartCount" class="badge">0</span>
         </a>
         <a href="./feedback.html" class="nav-link">
-          <i class="far fa-comment"></i> Feedback
+          <i class="far fa-comment"></i> <span data-i18n="feedback">Feedback</span>
         </a>
         <div class="auth-buttons" id="authButtons">
         </div>
@@ -40,20 +40,21 @@
     <section class="auth-section">
       <div class="auth-container">
         <div class="auth-header">
-          <h1><i class="fas fa-sign-in-alt"></i> Welcome Back</h1>
-          <p class="subtitle">Sign in to your account to continue</p>
+          <h1><i class="fas fa-sign-in-alt"></i> <span data-i18n="login-welcome">Welcome Back</span></h1>
+          <p class="subtitle" data-i18n="login-subtitle">Sign in to your account to continue</p>
         </div>
 
         <form id="loginForm" class="auth-form">
           <div class="form-group">
             <label for="loginEmail">
-              <i class="fas fa-envelope"></i> Email or Username
+              <i class="fas fa-envelope"></i> <span data-i18n="login-email-label">Email or Username</span>
               <span class="required">*</span>
             </label>
             <input 
               type="text" 
               id="loginEmail" 
               name="loginEmail" 
+              data-i18n-placeholder="login-email-placeholder"
               placeholder="email@example.com or username" 
               required
             >
@@ -62,7 +63,7 @@
 
           <div class="form-group">
             <label for="loginPassword">
-              <i class="fas fa-lock"></i> Password
+              <i class="fas fa-lock"></i> <span data-i18n="login-password-label">Password</span>
               <span class="required">*</span>
             </label>
             <div class="password-input">
@@ -70,6 +71,7 @@
                 type="password" 
                 id="loginPassword" 
                 name="loginPassword" 
+                data-i18n-placeholder="login-password-placeholder"
                 placeholder="Enter your password"
                 required
               >
@@ -84,33 +86,33 @@
             <label class="checkbox-label">
               <input type="checkbox" id="rememberMe" name="rememberMe">
               <span class="checkbox-custom"></span>
-              Remember me
+              <span data-i18n="login-remember">Remember me</span>
             </label>
             <a href="#" class="forgot-password" id="forgotPassword">
-              <i class="fas fa-key"></i> Forgot password?
+              <i class="fas fa-key"></i> <span data-i18n="login-forgot">Forgot password?</span>
             </a>
           </div>
 
           <div class="form-actions">
             <button type="submit" id="loginBtn" class="btn btn-primary">
-              <i class="fas fa-sign-in-alt"></i> Sign In
+              <i class="fas fa-sign-in-alt"></i> <span data-i18n="login-button">Sign In</span>
             </button>
             <a href="./register.html" class="btn-link">
-              <i class="fas fa-user-plus"></i> Don't have an account? Sign up
+              <i class="fas fa-user-plus"></i> <span data-i18n="login-no-account">Don't have an account? Sign up</span>
             </a>
           </div>
 
           <div class="social-login">
-            <p class="divider">Or sign in with</p>
+            <p class="divider" data-i18n="login-social-divider">Or sign in with</p>
             <div class="social-buttons">
               <button type="button" class="btn-social google">
-                <i class="fab fa-google"></i> Google
+                <i class="fab fa-google"></i> <span data-i18n="login-google">Google</span>
               </button>
               <button type="button" class="btn-social github">
-                <i class="fab fa-github"></i> GitHub
+                <i class="fab fa-github"></i> <span data-i18n="login-github">GitHub</span>
               </button>
               <button type="button" class="btn-social facebook">
-                <i class="fab fa-facebook-f"></i> Facebook
+                <i class="fab fa-facebook-f"></i> <span data-i18n="login-facebook">Facebook</span>
               </button>
             </div>
           </div>
@@ -121,22 +123,22 @@
     <div id="forgotPasswordModal" class="modal">
       <div class="modal-content">
         <div class="modal-header">
-          <h2><i class="fas fa-key"></i> Reset Password</h2>
+          <h2><i class="fas fa-key"></i> <span data-i18n="forgot-title">Reset Password</span></h2>
           <button class="close-modal">&times;</button>
         </div>
         <div class="modal-body">
           <div class="forgot-password-form">
-            <p>Enter your email address and we'll send you instructions to reset your password.</p>
+            <p data-i18n="forgot-description">Enter your email address and we'll send you instructions to reset your password.</p>
             <div class="form-group">
-              <label for="resetEmail">Email Address</label>
-              <input type="email" id="resetEmail" placeholder="your.email@example.com">
+              <label for="resetEmail" data-i18n="forgot-email-label">Email Address</label>
+              <input type="email" id="resetEmail" data-i18n-placeholder="forgot-email-placeholder" placeholder="your.email@example.com">
               <div class="error-message" id="resetEmailError"></div>
             </div>
           </div>
         </div>
         <div class="modal-footer">
           <button class="btn btn-primary" id="sendResetEmail">
-            <i class="fas fa-paper-plane"></i> Send Reset Link
+            <i class="fas fa-paper-plane"></i> <span data-i18n="forgot-button">Send Reset Link</span>
           </button>
         </div>
       </div>
@@ -150,40 +152,40 @@
           <div class="logo">
             <img src="../assets/Logo.png" alt="Logo" />
           </div>
-          <p>Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.</p>
+          <p data-i18n="footer-text">Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.</p>
         </div>
         <div class="footer-col">
-          <h4>Products</h4>
+          <h4 data-i18n="products-title">Products</h4>
           <ul>
-            <li><a href="#">Web Studio</a></li>
-            <li><a href="#">DynamicBox Flex</a></li>
-            <li><a href="#">Programming Forms</a></li>
+            <li><a href="#" data-i18n="product-1">Web Studio</a></li>
+            <li><a href="#" data-i18n="product-2">DynamicBox Flex</a></li>
+            <li><a href="#" data-i18n="product-3">Programming Forms</a></li>
           </ul>
         </div>
         <div class="footer-col">
-          <h4>Resources</h4>
+          <h4 data-i18n="resources-title">Resources</h4>
           <ul>
-            <li><a href="#">Nostrud exercitation</a></li>
-            <li><a href="#">Visual mockups</a></li>
-            <li><a href="#">Nostrud exercitation</a></li>
-            <li><a href="#">Visual mockups</a></li>
+            <li><a href="#" data-i18n="resource-1">Nostrud exercitation</a></li>
+            <li><a href="#" data-i18n="resource-2">Visual mockups</a></li>
+            <li><a href="#" data-i18n="resource-3">Nostrud exercitation</a></li>
+            <li><a href="#" data-i18n="resource-4">Visual mockups</a></li>
           </ul>
         </div>
         <div class="footer-col">
-          <h4>Company</h4>
+          <h4 data-i18n="company-title">Company</h4>
           <ul>
-            <li><a href="#">Consectetur adipiscing</a></li>
-            <li><a href="#">Labore et dolore</a></li>
-            <li><a href="#">Sed do eiusmod</a></li>
-            <li><a href="#">Tempor incididunt</a></li>
-            <li><a href="#">Labore et dolore</a></li>
+            <li><a href="#" data-i18n="company-1">Consectetur adipiscing</a></li>
+            <li><a href="#" data-i18n="company-2">Labore et dolore</a></li>
+            <li><a href="#" data-i18n="company-3">Sed do eiusmod</a></li>
+            <li><a href="#" data-i18n="company-4">Tempor incididunt</a></li>
+            <li><a href="#" data-i18n="company-5">Labore et dolore</a></li>
           </ul>
         </div>
       </div>
     </div>
     <div class="container footer-bottom">
         <div class="footer-bottom-left">
-            <p class="copyright">Made by <strong>Cruip</strong>. All right reserved</p>
+            <p class="copyright" data-i18n="copyright">Made by <strong>Cruip</strong>. All right reserved</p>
         </div>
         <div class="footer-bottom-right">
           <ul>
@@ -197,7 +199,31 @@
     </div>
   </footer>
 
+  <script src="../scripts/globalCounters.js"></script>
   <script src="../scripts/auth.js"></script>
+  <script src="../scripts/translate.js"></script>
+  <script src="../scripts/theme.js"></script>
+  <script src="../scripts/language-switcher.js"></script>
+  <script src="../scripts/user-settings.js"></script>
   <script src="../scripts/login.js"></script>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (window.themeManager) {
+        window.themeManager.loadSettings();
+      }
+      
+      await window.authService.init();
+      
+      const savedLang = localStorage.getItem('lang') || 'en';
+      if (window.getTranslate) {
+        window.getTranslate(savedLang);
+      }
+      
+      if (window.languageSwitcher) {
+        window.languageSwitcher.switchLanguage(savedLang);
+      }
+    });
+  </script>
 </body>
 </html>
