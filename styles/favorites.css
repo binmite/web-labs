@@ -10,7 +10,7 @@
 
 .favorites-header h1 {
   font-size: 2.5rem;
-  color: var(--color-D9E3EA);
+  color: var(--color-text-primary); 
   margin-bottom: 0.75rem;
   display: flex;
   align-items: center;
@@ -19,11 +19,11 @@
 }
 
 .favorites-header h1 i {
-  color: #ff4757;
+  color: var(--color-error); 
 }
 
 .favorites-header .subtitle {
-  color: var(--color-9BA9B4);
+  color: var(--color-text-secondary); 
   font-size: 1.1rem;
   max-width: 600px;
   margin: 0 auto;
@@ -38,10 +38,14 @@
 }
 
 .btn-danger {
-  background: #ef4444;
+  background: var(--color-error);
   color: var(--color-white);
-  border: 1px solid #ef4444;
+  border: 1px solid var(--color-error);
   padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-base);
 }
 
 .btn-danger:hover {
@@ -59,23 +63,36 @@
 }
 
 .favorite-card {
-  background: var(--color-25282C);
-  border-radius: var(--radius);
+  background: var(--color-bg-card);
+  border-radius: var(--radius-lg);
   overflow: hidden;
-  box-shadow: var(--shadow);
-  transition: all 0.3s ease;
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-base);
   position: relative;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--color-border);
 }
 
 .favorite-card:hover {
   transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--color-primary-light);
 }
 
 .favorite-card .service-image {
   position: relative;
+  height: 200px;
+  overflow: hidden;
+}
+
+.favorite-card .service-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-base);
+}
+
+.favorite-card:hover .service-image img {
+  transform: scale(1.05);
 }
 
 .favorite-card .service-actions {
@@ -91,23 +108,22 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: rgba(21, 23, 25, 0.8);
+  background: var(--color-bg-primary);
   backdrop-filter: blur(4px);
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  color: #ef4444;
+  border: 1px solid var(--color-error);
+  color: var(--color-error);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1rem;
-  transition: all 0.3s;
+  transition: all var(--transition-base);
 }
 
 .remove-favorite-btn:hover {
-  background: #ef4444;
+  background: var(--color-error);
   color: var(--color-white);
   transform: scale(1.1);
-  border-color: #ef4444;
 }
 
 .favorite-card .service-content {
@@ -117,8 +133,8 @@
 .favorite-card .service-category {
   display: inline-block;
   padding: 0.375rem 1rem;
-  background: rgba(79, 70, 229, 0.15);
-  color: var(--color-primary-light);
+  background: rgba(93, 93, 255, 0.1);
+  color: var(--color-primary);
   border-radius: 50px;
   font-size: 0.75rem;
   font-weight: 600;
@@ -129,14 +145,14 @@
 
 .favorite-card .service-title {
   font-size: 1.25rem;
-  color: var(--color-D9E3EA);
+  color: var(--color-text-primary); 
   margin-bottom: 0.75rem;
   line-height: 1.4;
   font-weight: 700;
 }
 
 .favorite-card .service-description {
-  color: var(--color-9BA9B4);
+  color: var(--color-text-secondary);
   font-size: 0.9375rem;
   line-height: 1.6;
   margin-bottom: 1.5rem;
@@ -150,7 +166,7 @@
   align-items: center;
   margin-bottom: 1.5rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .favorite-card .service-price {
@@ -170,11 +186,11 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #fbbf24;
+  color: #fbbf24; 
 }
 
 .favorite-card .rating-value {
-  color: var(--color-9BA9B4);
+  color: var(--color-text-secondary);
   font-weight: 500;
   font-size: 0.875rem;
 }
@@ -188,12 +204,12 @@
 .favorite-card .btn-details {
   flex: 1;
   padding: 0.75rem;
-  border-radius: var(--radius);
+  border-radius: var(--radius-md);
   border: none;
   cursor: pointer;
   font-weight: 600;
   font-size: 0.875rem;
-  transition: all 0.3s;
+  transition: all var(--transition-base);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -207,33 +223,33 @@
 }
 
 .favorite-card .btn-cart:hover {
-  background: #4338ca;
-  border-color: #4338ca;
+  background: var(--color-primary-dark);
+  border-color: var(--color-primary-dark);
   transform: translateY(-2px);
 }
 
 .favorite-card .btn-cart.in-cart {
   background: rgba(16, 185, 129, 0.15);
-  color: #10b981;
+  color: var(--color-success);
   border-color: rgba(16, 185, 129, 0.3);
 }
 
 .favorite-card .btn-cart.in-cart:hover {
   background: rgba(16, 185, 129, 0.25);
-  color: #10b981;
+  color: var(--color-success);
 }
 
 .favorite-card .btn-details {
   background: transparent;
-  color: var(--color-9BA9B4);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
   text-decoration: none;
 }
 
 .favorite-card .btn-details:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--color-bg-tertiary);
   border-color: var(--color-primary);
-  color: var(--color-primary-light);
+  color: var(--color-primary);
   transform: translateY(-2px);
 }
 
@@ -241,23 +257,26 @@
   text-align: center;
   padding: 4rem 2rem;
   grid-column: 1 / -1;
+  background: var(--color-bg-card);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
 }
 
 .empty-favorites i {
-  color: #ff4757;
+  color: var(--color-error);
   margin-bottom: 1.5rem;
-  opacity: 0.5;
+  opacity: 0.7;
   font-size: 4rem;
 }
 
 .empty-favorites h2 {
-  color: var(--color-D9E3EA);
+  color: var(--color-text-primary);
   margin-bottom: 0.75rem;
   font-size: 1.75rem;
 }
 
 .empty-favorites p {
-  color: var(--color-9BA9B4);
+  color: var(--color-text-secondary);
   margin-bottom: 2rem;
   font-size: 1.1rem;
   max-width: 400px;
@@ -267,30 +286,61 @@
 
 .empty-favorites .btn {
   padding: 0.75rem 2rem;
+  margin-top: 1rem;
 }
 
 .loading-spinner {
   grid-column: 1 / -1;
   text-align: center;
   padding: 3rem;
-  color: var(--color-9BA9B4);
+  color: var(--color-text-secondary);
 }
 
 .loading-spinner i {
   font-size: 2.5rem;
   margin-bottom: 1rem;
   animation: spin 1s linear infinite;
-  opacity: 0.7;
+  color: var(--color-primary);
 }
 
 .loading-spinner p {
-  color: var(--color-9BA9B4);
+  color: var(--color-text-secondary);
   font-size: 1rem;
 }
 
 @keyframes spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
+}
+
+[data-theme="light"] .favorite-card {
+  background: var(--color-white);
+  border-color: var(--color-border);
+}
+
+[data-theme="light"] .favorite-card:hover {
+  border-color: var(--color-primary);
+}
+
+[data-theme="light"] .remove-favorite-btn {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+[data-theme="light"] .favorite-card .service-meta {
+  border-bottom-color: var(--color-border-light);
+}
+
+[data-theme="light"] .favorite-card .btn-details {
+  border-color: var(--color-border);
+}
+
+[data-theme="light"] .favorite-card .btn-details:hover {
+  background: var(--color-bg-tertiary);
+}
+
+[data-theme="light"] .empty-favorites {
+  background: var(--color-white);
+  border-color: var(--color-border);
 }
 
 @media (max-width: 768px) {
@@ -331,6 +381,10 @@
   .empty-favorites p {
     font-size: 1rem;
   }
+  
+  .favorite-card .service-image {
+    height: 180px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -345,5 +399,21 @@
   .favorite-card .btn-cart,
   .favorite-card .btn-details {
     width: 100%;
+  }
+  
+  .favorite-card .service-image {
+    height: 160px;
+  }
+  
+  .favorite-card .service-content {
+    padding: 1.25rem;
+  }
+  
+  .favorite-card .service-title {
+    font-size: 1.125rem;
+  }
+  
+  .favorite-card .service-price {
+    font-size: 1.25rem;
   }
 }

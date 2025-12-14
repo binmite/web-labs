@@ -8,13 +8,13 @@
 }
 
 .feedback-header h1 {
-  color: var(--color-white);
+  color: var(--color-text-primary); 
   font-size: 2.5rem;
   margin-bottom: 10px;
 }
 
 .feedback-header .subtitle {
-  color: var(--color-9BA9B4);
+  color: var(--color-text-secondary); 
   max-width: 600px;
   margin: 0 auto;
 }
@@ -33,22 +33,29 @@
 
 .feedback-form-card,
 .feedback-list-card {
-  background: var(--color-25282C);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
+  background: var(--color-bg-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
   padding: 30px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--color-border);
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.feedback-form-card:hover,
+.feedback-list-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
 }
 
 .feedback-form-card h2,
 .feedback-list-card h2 {
-  color: var(--color-white);
+  color: var(--color-text-primary); 
   font-size: 1.5rem;
   margin-bottom: 10px;
 }
 
 .form-description {
-  color: var(--color-9BA9B4);
+  color: var(--color-text-secondary); 
   margin-bottom: 25px;
 }
 
@@ -70,20 +77,20 @@
 }
 
 .star-rating label {
-  color: var(--color-9BA9B4);
+  color: var(--color-text-muted); 
   font-size: 2rem;
   cursor: pointer;
-  transition: color 0.3s ease;
+  transition: color var(--transition-base);
 }
 
 .star-rating label:hover,
 .star-rating label:hover ~ label,
 .star-rating input:checked ~ label {
-  color: #fbbf24;
+  color: #fbbf24; 
 }
 
 .rating-hint {
-  color: var(--color-9BA9B4);
+  color: var(--color-text-muted);
   font-size: 0.9rem;
   margin-top: 5px;
 }
@@ -115,14 +122,14 @@ textarea {
 
 .stat-value {
   display: block;
-  color: var(--color-5D5DFF);
+  color: var(--color-primary);
   font-size: 1.5rem;
   font-weight: 700;
 }
 
 .stat-label {
   display: block;
-  color: var(--color-9BA9B4);
+  color: var(--color-text-secondary);
   font-size: 0.85rem;
   margin-top: 5px;
 }
@@ -142,18 +149,25 @@ textarea {
 }
 
 .filter-group label {
-  color: var(--color-D9E3EA);
+  color: var(--color-text-primary); 
   font-size: 0.9rem;
   white-space: nowrap;
 }
 
 .filter-select {
   padding: 8px 12px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: var(--radius);
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-input);
+  color: var(--color-text-primary);
   min-width: 150px;
+  transition: border-color var(--transition-fast);
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(93, 93, 255, 0.1);
 }
 
 .feedback-list {
@@ -166,16 +180,16 @@ textarea {
 }
 
 .feedback-item {
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: var(--radius);
+  background: var(--color-bg-tertiary);
+  border-radius: var(--radius-lg);
   padding: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid var(--color-border);
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
 }
 
 .feedback-item:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-md);
 }
 
 .feedback-header-info {
@@ -195,21 +209,22 @@ textarea {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: rgba(93, 93, 255, 0.2);
+  background: rgba(93, 93, 255, 0.1); 
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-5D5DFF);
+  color: var(--color-primary);
   font-weight: 600;
+  border: 2px solid rgba(93, 93, 255, 0.2);
 }
 
 .user-info h4 {
-  color: var(--color-white);
+  color: var(--color-text-primary);
   margin-bottom: 5px;
 }
 
 .user-info .user-role {
-  color: var(--color-9BA9B4);
+  color: var(--color-text-secondary);
   font-size: 0.85rem;
 }
 
@@ -218,31 +233,31 @@ textarea {
 }
 
 .feedback-service {
-  color: var(--color-5D5DFF);
+  color: var(--color-primary);
   font-weight: 600;
   margin-bottom: 5px;
 }
 
 .feedback-date {
-  color: var(--color-9BA9B4);
+  color: var(--color-text-muted);
   font-size: 0.85rem;
 }
 
 .feedback-title {
-  color: var(--color-white);
+  color: var(--color-text-primary);
   font-size: 1.1rem;
   margin-bottom: 10px;
   font-weight: 600;
 }
 
 .feedback-text {
-  color: var(--color-D9E3EA);
+  color: var(--color-text-secondary);
   line-height: 1.6;
   margin-bottom: 15px;
 }
 
 .feedback-rating {
-  color: #fbbf24;
+  color: #fbbf24; 
   font-size: 1rem;
   margin-bottom: 10px;
 }
@@ -252,7 +267,7 @@ textarea {
   justify-content: space-between;
   align-items: center;
   padding-top: 15px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid var(--color-border);
 }
 
 .feedback-helpful {
@@ -263,35 +278,35 @@ textarea {
 
 .helpful-btn {
   background: none;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: var(--color-9BA9B4);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
   padding: 6px 12px;
   border-radius: 20px;
   cursor: pointer;
   font-size: 0.85rem;
-  transition: all 0.3s ease;
+  transition: all var(--transition-base);
 }
 
 .helpful-btn:hover {
   background: rgba(93, 93, 255, 0.1);
-  color: var(--color-5D5DFF);
-  border-color: var(--color-5D5DFF);
+  color: var(--color-primary);
+  border-color: var(--color-primary);
 }
 
 .helpful-count {
-  color: var(--color-9BA9B4);
+  color: var(--color-text-secondary);
   font-size: 0.85rem;
 }
 
 .feedback-report {
-  color: var(--color-9BA9B4);
+  color: var(--color-text-muted);
   font-size: 0.85rem;
   cursor: pointer;
-  transition: color 0.3s ease;
+  transition: color var(--transition-base);
 }
 
 .feedback-report:hover {
-  color: #ef4444;
+  color: var(--color-error);
 }
 
 .no-feedback {
@@ -300,17 +315,17 @@ textarea {
 }
 
 .no-feedback i {
-  color: var(--color-9BA9B4);
+  color: var(--color-text-muted);
   margin-bottom: 20px;
 }
 
 .no-feedback h3 {
-  color: var(--color-white);
+  color: var(--color-text-primary);
   margin-bottom: 10px;
 }
 
 .no-feedback p {
-  color: var(--color-9BA9B4);
+  color: var(--color-text-secondary);
 }
 
 .loading-spinner {
@@ -319,13 +334,13 @@ textarea {
 }
 
 .loading-spinner i {
-  color: var(--color-5D5DFF);
+  color: var(--color-primary);
   font-size: 2rem;
   margin-bottom: 15px;
 }
 
 .loading-spinner p {
-  color: var(--color-9BA9B4);
+  color: var(--color-text-secondary);
 }
 
 .feedback-list::-webkit-scrollbar {
@@ -333,13 +348,40 @@ textarea {
 }
 
 .feedback-list::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--color-bg-tertiary);
   border-radius: 3px;
 }
 
 .feedback-list::-webkit-scrollbar-thumb {
-  background: var(--color-5D5DFF);
+  background: var(--color-primary);
   border-radius: 3px;
+}
+
+.feedback-list::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary-dark);
+}
+
+[data-theme="light"] .feedback-form-card,
+[data-theme="light"] .feedback-list-card {
+  background: var(--color-white);
+  border-color: var(--color-border);
+}
+
+[data-theme="light"] .feedback-item {
+  background: var(--color-bg-tertiary);
+}
+
+[data-theme="light"] .filter-select {
+  background: var(--color-white);
+}
+
+[data-theme="light"] .feedback-list::-webkit-scrollbar-track {
+  background: var(--color-border-light);
+}
+
+[data-theme="light"] .user-avatar {
+  background: rgba(93, 93, 255, 0.08);
+  border-color: rgba(93, 93, 255, 0.2);
 }
 
 @media (max-width: 768px) {
@@ -395,4 +437,42 @@ textarea {
     gap: 10px;
     align-items: flex-start;
   }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  color: var(--color-text-primary);
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  padding: 12px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-input);
+  color: var(--color-text-primary);
+  font-family: inherit;
+  font-size: 1rem;
+  transition: all var(--transition-fast);
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(93, 93, 255, 0.1);
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: var(--color-text-muted);
 }
