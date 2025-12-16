@@ -271,21 +271,71 @@ nav a:active { transform: scale(0.98); }
 }
 
 @media (max-width: 768px) {
+  .newsletter,
+  .hero h1,
+  .hero-buttons .btn,
+  .feature-card,
+  .btn-primary,
+  .solution-item,
+  .solution-text h3,
+  .play-button,
+  body,
+  .btn-primary::after {
+    animation: none !important;
+  }
+  
+  .btn,
+  .hero-image img,
+  .testimonial-card,
+  .newsletter-form input,
+  .expandable,
+  .header .logo img,
+  .footer-col a::after,
+  .btn-primary::before {
+    transition: none !important;
+  }
+  
   .hero h1,
   .hero-buttons .btn,
   .feature-card,
   .solution-item,
-  .testimonial-card,
-  .btn-primary::after {
-    animation: none !important;
+  .solution-text h3,
+  .play-button {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
   }
-
-  .btn,
-  .header .logo img,
-  .feature-card:hover .feature-icon {
-    transition: none !important;
+  
+  .btn:hover {
     transform: none !important;
   }
+  .feature-card:hover .feature-icon {
+    animation: none !important;
+    transform: none !important;
+  }
+  .hero-image img,
+  .hero-image:hover img,
+  .hero-image img:hover {
+    filter: none !important;
+  }
+  .testimonial-card:hover {
+    border-width: 2px !important;
+  }
+  .newsletter-form input:focus {
+    width: 200px !important;
+  }
+  .header .logo:hover img {
+    transform: none !important;
+  }
+  .footer-col a:hover::after {
+    width: 0 !important;
+  }
+  .btn-primary:hover::before {
+    opacity: 0 !important;
+  }
+  
+  a:hover { color: inherit !important; }
+  .solution-item:hover .solution-text h3 { color: inherit !important; }
 }
 
 .scroll-animate {
@@ -333,7 +383,6 @@ nav a:active { transform: scale(0.98); }
     transform: perspective(400px) rotateY(0);
 }
 
-/* Задержки для анимаций */
 .scroll-animate[data-delay="100"].animate {
     transition-delay: 0.1s;
 }

@@ -621,4 +621,12 @@ input::placeholder, textarea::placeholder {
   input, select, textarea {
     padding: 10px 14px;
   }
+
+  .input-with-prefix{
+    width: 100%;
+  }
+
+  .input-with-prefix input{
+    width: 100%;
+  }
 }

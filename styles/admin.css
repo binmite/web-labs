@@ -997,7 +997,7 @@
   background: #1D1D1D !important;
   border: 2px solid rgba(255, 255, 255, 0.2) !important;
   color: var(--color-white) !important;
-  padding: 10px 15px !important;
+  padding: 10px 10px !important;
   border-radius: var(--radius) !important;
   font-size: 0.95rem !important;
   appearance: none !important;
@@ -1008,5 +1008,4 @@
   background-repeat: no-repeat !important;
   background-position: right 15px center !important;
   background-size: 16px !important;
-  padding-right: 45px !important;
 }
