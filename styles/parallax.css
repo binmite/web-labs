@@ -447,6 +447,10 @@
     .floating-icon:not(.reverse-move) {
         display: none;
     }
+
+  .gallery-main, .interactive-elements, .media-info{
+    padding: 0;
+  }
 }
 
 @keyframes float {
