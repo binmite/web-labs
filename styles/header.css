@@ -32,3 +32,10 @@
 .nav-link:hover {
   color: var(--color-primary);
 }
+
+@media (max-width: 480px) {
+  .logo{
+    display: none;
+  }
+  
+}
