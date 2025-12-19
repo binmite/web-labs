@@ -429,6 +429,10 @@
     .parallax-title {
         font-size: 1.8rem;
     }
+
+    .features h2{
+        margin-bottom: -58px;
+    }
     
     .parallax-card {
         padding: 30px 20px;
